@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Greenwood High School</title>
+
+  <style>
+    :root {
+      --primary: #1a56db;
+      --primary-dark: #1e3a8a;
+      --primary-light: #dbeafe;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --text-dark: #111827;
+      --text-medium: #4b5563;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --border: #e5e7eb;
+      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font);
+      color: var(--text-dark);
+      background: var(--bg-light);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    .auth-header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+    }
+    .auth-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--primary);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .auth-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    }
+    .login-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px 36px;
+    }
+    .login-card h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .login-card .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-medium);
+      margin-bottom: 28px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: var(--bg-white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15);
+    }
+    .form-group input:disabled {
+      background: var(--bg-light);
+      cursor: not-allowed;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+      margin-top: 6px;
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+      box-shadow: 0 6px 18px rgba(26, 86, 219, 0.3);
+    }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+    .message {
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .message.show { display: block; }
+    .message.error {
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+      color: var(--danger);
+    }
+    .message.success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+      font-size: 0.85rem;
+      color: var(--text-medium);
+      font-weight: 600;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 30px 22px; }
+      .login-card h1 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="auth-header">
+    <a href="index.html" class="logo">
+      <span class="logo-mark">G</span>
+      Greenwood High — Admin
+    </a>
+  </header>
+
+  <main class="auth-main">
+    <div class="login-card">
+      <h1>Administrator Login</h1>
+      <p class="subtitle">Only the school principal can access the admin dashboard.</p>
+
+      <div id="messageBox" class="message"></div>
+
+      <form id="loginForm" autocomplete="on">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="principal@greenwoodhigh.edu" required autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn">Sign In</button>
+      </form>
+
+      <a href="index.html" class="back-link">← Back to school website</a>
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
+
+    const postbase = createClient(
+      'https://postbase-production-b4c8.up.railway.app',
+      'pb_anon_fsq2eoaBVsA3NcKwKJnp7iH4TEb-ZoUOzSSVsbwhbFT26sOrKq1zSE94esDhwIy1',
+      { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
+    );
+
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const messageBox = document.getElementById('messageBox');
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = 'message show ' + type;
+    }
+    function hideMessage() {
+      messageBox.className = 'message';
+      messageBox.textContent = '';
+    }
+
+    // If already logged in, skip straight to dashboard
+    (async function checkSession() {
+      const { data } = await postbase.auth.getSession();
+      if (data && data.session) {
+        window.location.replace('administration.html');
+      }
+    })();
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      hideMessage();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showMessage('Please enter both your email and password.', 'error');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      emailInput.disabled = true;
+      passwordInput.disabled = true;
+      loginBtn.innerHTML = '<span class="spinner"></span> Signing in…';
+
+      const { data, error } = await postbase.auth.signInWithPassword({
+        email,
+        password,
+        rememberMe: true
+      });
+
+      if (error) {
+        loginBtn.disabled = false;
+        emailInput.disabled = false;
+        passwordInput.disabled = false;
+        loginBtn.textContent = 'Sign In';
+
+        const msg = (error.message || '').toLowerCase();
+        if (msg.includes('invalid') || msg.includes('credentials') || msg.includes('password')) {
+          showMessage('Incorrect email or password. Please try again.', 'error');
+        } else if (msg.includes('not found') || msg.includes('no user')) {
+          showMessage('No account found with that email address.', 'error');
+        } else {
+          showMessage('Login failed: ' + (error.message || 'unknown error'), 'error');
+        }
+        return;
+      }
+
+      showMessage('Login successful. Redirecting…', 'success');
+      window.location.replace('administration.html');
+    });
+
+    [emailInput, passwordInput].forEach(input => {
+      input.addEventListener('input', hideMessage);
+    });
+  </script>
+
+</body>
+</html>
