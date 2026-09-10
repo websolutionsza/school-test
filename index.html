@@ -320,21 +320,7 @@
     }
 
     /* ----------------------------
-       9. PLACEHOLDER NOTE
-       ---------------------------- */
-    .placeholder-note {
-      background: #fef9e7;
-      border: 1px dashed #f0b429;
-      border-radius: var(--radius-sm);
-      padding: 14px 20px;
-      font-size: 0.86rem;
-      color: #8a5a00;
-      margin-bottom: 28px;
-      text-align: center;
-    }
-
-    /* ----------------------------
-       10. LOADING / EMPTY STATE
+       9. LOADING / EMPTY STATE
        ---------------------------- */
     .state-message {
       text-align: center;
@@ -356,7 +342,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ----------------------------
-       11. FOOTER
+       10. FOOTER
        ---------------------------- */
     .site-footer {
       background: #0f172a;
@@ -395,7 +381,7 @@
     }
 
     /* ----------------------------
-       12. RESPONSIVE
+       11. RESPONSIVE
        ---------------------------- */
     @media (max-width: 768px) {
       .hero { padding: 60px 0 52px; }
@@ -407,7 +393,7 @@
     }
 
     /* ----------------------------
-       13. ANIMATIONS
+       12. ANIMATIONS
        ---------------------------- */
     .fade-in {
       opacity: 0;
@@ -464,7 +450,7 @@
 
   <!-- ============================
        ANNOUNCEMENTS SECTION
-       (will be replaced by PostBase data in Stage 4)
+       (loaded from PostBase)
        ============================ -->
   <section class="section">
     <div class="container">
@@ -472,32 +458,16 @@
       <p class="section-subtitle">Important updates from the school administration.</p>
 
       <div id="announcementsGrid" class="card-grid">
-        <!-- PLACEHOLDER CARDS — will be replaced by JS in Stage 4 -->
-        <article class="card fade-in">
-          <span class="card-badge">Announcement</span>
-          <h3>School Reopens on 15 January</h3>
-          <p>All learners are expected to return to school on Monday, 15 January 2026. Please ensure your uniforms and stationery are ready.</p>
-          <div class="card-meta">📅 10 January 2026</div>
-        </article>
-        <article class="card fade-in">
-          <span class="card-badge">Announcement</span>
-          <h3>Parent-Teacher Meeting</h3>
-          <p>The first parent-teacher meeting of the year will be held on 28 January at 14:00 in the school hall.</p>
-          <div class="card-meta">📅 8 January 2026</div>
-        </article>
-        <article class="card fade-in">
-          <span class="card-badge">Announcement</span>
-          <h3>Sports Day Trials</h3>
-          <p>Trials for the inter-school athletics team will take place every Wednesday afternoon. All interested learners should sign up.</p>
-          <div class="card-meta">📅 5 January 2026</div>
-        </article>
+        <div class="state-message">
+          <span class="spinner"></span> Loading announcements…
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ============================
        NEWS / POSTS SECTION
-       (will be replaced by PostBase data in Stage 4)
+       (loaded from PostBase)
        ============================ -->
   <section class="section section-alt">
     <div class="container">
@@ -505,25 +475,9 @@
       <p class="section-subtitle">Stories, events, and highlights from our school community.</p>
 
       <div id="postsGrid" class="card-grid">
-        <!-- PLACEHOLDER CARDS — will be replaced by JS in Stage 4 -->
-        <article class="card fade-in">
-          <div class="card-icon">📚</div>
-          <h3>New Library Books Arrive</h3>
-          <p>Our library has received over 200 new titles covering science, history, and fiction. Learners are encouraged to visit during break times.</p>
-          <div class="card-meta">📅 6 January 2026</div>
-        </article>
-        <article class="card fade-in">
-          <div class="card-icon">🏆</div>
-          <h3>Debate Team Wins Regional Championship</h3>
-          <p>Congratulations to our debate team for winning the regional championship last weekend. We are proud of your hard work and dedication.</p>
-          <div class="card-meta">📅 3 January 2026</div>
-        </article>
-        <article class="card fade-in">
-          <div class="card-icon">🎨</div>
-          <h3>Art Exhibition a Great Success</h3>
-          <p>Thank you to everyone who attended our annual art exhibition. The creativity on display was truly inspiring.</p>
-          <div class="card-meta">📅 20 December 2025</div>
-        </article>
+        <div class="state-message">
+          <span class="spinner"></span> Loading posts…
+        </div>
       </div>
     </div>
   </section>
@@ -557,12 +511,11 @@
   </footer>
 
   <!-- ============================
-       JAVASCRIPT
+       JAVASCRIPT (Non-module)
+       Navigation toggle — must be in a regular script
+       so the onclick in the HTML can find it.
        ============================ -->
   <script>
-    // ----------------------------
-    // MOBILE NAVIGATION TOGGLE
-    // ----------------------------
     function toggleNav() {
       document.getElementById('navLinks').classList.toggle('open');
     }
@@ -571,18 +524,119 @@
         document.getElementById('navLinks').classList.remove('open');
       });
     });
+  </script>
+
+  <!-- ============================
+       JAVASCRIPT (Module)
+       PostBase SDK — loads from CDN, no installation needed.
+       ============================ -->
+  <script type="module">
+    // ----------------------------
+    // POSTBASE SDK SETUP
+    // ----------------------------
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
+
+    const postbase = createClient(
+      'https://postbase-production-b4c8.up.railway.app',
+      'pb_anon_fsq2eoaBVsA3NcKwKJnp7iH4TEb-ZoUOzSSVsbwhbFT26sOrKq1zSE94esDhwIy1',
+      { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
+    );
 
     // ----------------------------
-    // POSTBASE CONFIG
-    // (Not used yet — will be activated in Stage 4)
+    // HELPER: Escape HTML
+    // Prevents malicious content from being injected via the database.
     // ----------------------------
-    const POSTBASE_URL = 'https://postbase-production-b4c8.up.railway.app';
-    const POSTBASE_ANON_KEY = 'pb_anon_fsq2eoaBVsA3NcKwKJnp7iH4TEb-ZoUOzSSVsbwhbFT26sOrKq1zSE94esDhwIy1';
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
 
-    // Stage 4 will add:
-    // - fetchLatestAnnouncements()
-    // - fetchLatestPosts()
-    // and replace the placeholder cards.
+    // ----------------------------
+    // HELPER: Format date
+    // ----------------------------
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-ZA', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    // ----------------------------
+    // LOAD ANNOUNCEMENTS FROM POSTBASE
+    // ----------------------------
+    async function loadAnnouncements() {
+      const grid = document.getElementById('announcementsGrid');
+
+      const { data, error } = await postbase
+        .from('announcements')
+        .select('id, title, content, created_at')
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) {
+        console.error('Error loading announcements:', error);
+        grid.innerHTML = '<div class="state-message">⚠️ Could not load announcements. Please try again later.</div>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        grid.innerHTML = '<div class="state-message">No announcements yet. Check back soon!</div>';
+        return;
+      }
+
+      grid.innerHTML = data.map(item => `
+        <article class="card fade-in">
+          <span class="card-badge">Announcement</span>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.content)}</p>
+          <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+        </article>
+      `).join('');
+    }
+
+    // ----------------------------
+    // LOAD POSTS FROM POSTBASE
+    // ----------------------------
+    async function loadPosts() {
+      const grid = document.getElementById('postsGrid');
+
+      const { data, error } = await postbase
+        .from('posts')
+        .select('id, title, content, cover_image, created_at')
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) {
+        console.error('Error loading posts:', error);
+        grid.innerHTML = '<div class="state-message">⚠️ Could not load posts. Please try again later.</div>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        grid.innerHTML = '<div class="state-message">No posts yet. Check back soon!</div>';
+        return;
+      }
+
+      grid.innerHTML = data.map(item => `
+        <article class="card fade-in">
+          <div class="card-icon">📰</div>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.content)}</p>
+          <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+        </article>
+      `).join('');
+    }
+
+    // ----------------------------
+    // INITIAL LOAD
+    // ----------------------------
+    loadAnnouncements();
+    loadPosts();
   </script>
 
 </body>
