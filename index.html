@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greenwood High School — Home</title>
+  <meta name="description" content="Welcome to Greenwood High School. News, announcements, and information for learners, parents, and teachers.">
+
+  <!-- ============================
+       CSS
+       ============================ -->
+  <style>
+    /* ----------------------------
+       1. CSS VARIABLES
+       ---------------------------- */
+    :root {
+      --primary: #1a56db;
+      --primary-dark: #1e3a8a;
+      --primary-light: #dbeafe;
+      --accent: #f59e0b;
+      --text-dark: #111827;
+      --text-medium: #4b5563;
+      --text-light: #9ca3af;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --border: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --max-width: 1200px;
+    }
+
+    /* ----------------------------
+       2. RESET & BASE
+       ---------------------------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--text-dark);
+      background: var(--bg-light);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ----------------------------
+       3. UTILITY
+       ---------------------------- */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-medium);
+      margin-bottom: 32px;
+    }
+
+    /* ----------------------------
+       4. HEADER / NAVIGATION
+       ---------------------------- */
+    .site-header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+    }
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-medium);
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+    .nav-links .admin-link {
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-dark);
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+    .nav-toggle:hover { background: var(--bg-light); }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: var(--bg-white);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 20px 20px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 16px; }
+    }
+
+    /* ----------------------------
+       5. HERO
+       ---------------------------- */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 88px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%; right: -10%;
+      width: 60%; height: 180%;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 18px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 22px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: -1px;
+      line-height: 1.15;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      opacity: 0.92;
+      max-width: 640px;
+      margin: 0 auto 34px;
+      line-height: 1.7;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ----------------------------
+       6. BUTTONS
+       ---------------------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: #fff; color: var(--primary-dark); }
+    .btn-primary:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.55);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #fff;
+    }
+
+    /* ----------------------------
+       7. SECTIONS
+       ---------------------------- */
+    .section { padding: 72px 0; }
+    .section-alt { background: var(--bg-white); }
+
+    /* ----------------------------
+       8. CARD GRID
+       ---------------------------- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: transparent;
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+    .card h3 {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      line-height: 1.35;
+    }
+    .card p {
+      font-size: 0.94rem;
+      color: var(--text-medium);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .card-meta {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+    .card-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+
+    /* ----------------------------
+       9. PLACEHOLDER NOTE
+       ---------------------------- */
+    .placeholder-note {
+      background: #fef9e7;
+      border: 1px dashed #f0b429;
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      font-size: 0.86rem;
+      color: #8a5a00;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    /* ----------------------------
+       10. LOADING / EMPTY STATE
+       ---------------------------- */
+    .state-message {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-medium);
+      font-size: 0.95rem;
+      grid-column: 1 / -1;
+    }
+    .state-message .spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ----------------------------
+       11. FOOTER
+       ---------------------------- */
+    .site-footer {
+      background: #0f172a;
+      color: #cbd5e1;
+      padding: 56px 0 28px;
+      margin-top: 0;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 36px;
+      margin-bottom: 40px;
+    }
+    .footer-col h4 {
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      letter-spacing: 0.2px;
+    }
+    .footer-col p,
+    .footer-col a {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: #94a3b8;
+      display: block;
+      transition: color 0.15s;
+    }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #1e293b;
+      padding-top: 22px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+
+    /* ----------------------------
+       12. RESPONSIVE
+       ---------------------------- */
+    @media (max-width: 768px) {
+      .hero { padding: 60px 0 52px; }
+      .hero h1 { font-size: 1.9rem; }
+      .hero p { font-size: 1rem; }
+      .section { padding: 52px 0; }
+      .section-title { font-size: 1.45rem; }
+      .card { padding: 22px; }
+    }
+
+    /* ----------------------------
+       13. ANIMATIONS
+       ---------------------------- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in:nth-child(2) { animation-delay: 0.08s; }
+    .fade-in:nth-child(3) { animation-delay: 0.16s; }
+    .fade-in:nth-child(4) { animation-delay: 0.24s; }
+    .fade-in:nth-child(5) { animation-delay: 0.32s; }
+    .fade-in:nth-child(6) { animation-delay: 0.40s; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================
+       HEADER / NAVIGATION
+       ============================ -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav-bar">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">G</span>
+          Greenwood High
+        </a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="announcement.html">Announcements</a></li>
+          <li><a href="contacts.html">Contact</a></li>
+          <li><a href="admin-login.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================
+       HERO
+       ============================ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">Welcome to Our School</div>
+      <h1>Greenwood High School</h1>
+      <p>Empowering learners to achieve their full potential through quality education, strong values, and a supportive community.</p>
+      <div class="hero-buttons">
+        <a href="announcement.html" class="btn btn-primary">View Announcements →</a>
+        <a href="contacts.html" class="btn btn-outline">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       ANNOUNCEMENTS SECTION
+       (will be replaced by PostBase data in Stage 4)
+       ============================ -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Latest Announcements</h2>
+      <p class="section-subtitle">Important updates from the school administration.</p>
+
+      <div id="announcementsGrid" class="card-grid">
+        <!-- PLACEHOLDER CARDS — will be replaced by JS in Stage 4 -->
+        <article class="card fade-in">
+          <span class="card-badge">Announcement</span>
+          <h3>School Reopens on 15 January</h3>
+          <p>All learners are expected to return to school on Monday, 15 January 2026. Please ensure your uniforms and stationery are ready.</p>
+          <div class="card-meta">📅 10 January 2026</div>
+        </article>
+        <article class="card fade-in">
+          <span class="card-badge">Announcement</span>
+          <h3>Parent-Teacher Meeting</h3>
+          <p>The first parent-teacher meeting of the year will be held on 28 January at 14:00 in the school hall.</p>
+          <div class="card-meta">📅 8 January 2026</div>
+        </article>
+        <article class="card fade-in">
+          <span class="card-badge">Announcement</span>
+          <h3>Sports Day Trials</h3>
+          <p>Trials for the inter-school athletics team will take place every Wednesday afternoon. All interested learners should sign up.</p>
+          <div class="card-meta">📅 5 January 2026</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       NEWS / POSTS SECTION
+       (will be replaced by PostBase data in Stage 4)
+       ============================ -->
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">School News & Posts</h2>
+      <p class="section-subtitle">Stories, events, and highlights from our school community.</p>
+
+      <div id="postsGrid" class="card-grid">
+        <!-- PLACEHOLDER CARDS — will be replaced by JS in Stage 4 -->
+        <article class="card fade-in">
+          <div class="card-icon">📚</div>
+          <h3>New Library Books Arrive</h3>
+          <p>Our library has received over 200 new titles covering science, history, and fiction. Learners are encouraged to visit during break times.</p>
+          <div class="card-meta">📅 6 January 2026</div>
+        </article>
+        <article class="card fade-in">
+          <div class="card-icon">🏆</div>
+          <h3>Debate Team Wins Regional Championship</h3>
+          <p>Congratulations to our debate team for winning the regional championship last weekend. We are proud of your hard work and dedication.</p>
+          <div class="card-meta">📅 3 January 2026</div>
+        </article>
+        <article class="card fade-in">
+          <div class="card-icon">🎨</div>
+          <h3>Art Exhibition a Great Success</h3>
+          <p>Thank you to everyone who attended our annual art exhibition. The creativity on display was truly inspiring.</p>
+          <div class="card-meta">📅 20 December 2025</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       FOOTER
+       ============================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Greenwood High School</h4>
+          <p>123 School Road<br>Greenwood Estate<br>City, 00000</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="announcement.html">Announcements</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>📞 +27 00 000 0000</p>
+          <p>✉️ info@greenwoodhigh.edu</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Greenwood High School. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================
+       JAVASCRIPT
+       ============================ -->
+  <script>
+    // ----------------------------
+    // MOBILE NAVIGATION TOGGLE
+    // ----------------------------
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
+
+    // ----------------------------
+    // POSTBASE CONFIG
+    // (Not used yet — will be activated in Stage 4)
+    // ----------------------------
+    const POSTBASE_URL = 'https://postbase-production-b4c8.up.railway.app';
+    const POSTBASE_ANON_KEY = 'pb_anon_fsq2eoaBVsA3NcKwKJnp7iH4TEb-ZoUOzSSVsbwhbFT26sOrKq1zSE94esDhwIy1';
+
+    // Stage 4 will add:
+    // - fetchLatestAnnouncements()
+    // - fetchLatestPosts()
+    // and replace the placeholder cards.
+  </script>
+
+</body>
+</html>
