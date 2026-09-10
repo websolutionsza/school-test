@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Greenwood High School Admin</title>
+
+  <!-- ============================
+       CSS
+       ============================ -->
+  <style>
+    /* ----------------------------
+       1. CSS VARIABLES
+       ---------------------------- */
+    :root {
+      --primary: #1a56db;
+      --primary-dark: #1e3a8a;
+      --primary-light: #dbeafe;
+      --danger: #dc2626;
+      --danger-dark: #991b1b;
+      --danger-light: #fee2e2;
+      --success: #16a34a;
+      --success-light: #dcfce7;
+      --accent: #f59e0b;
+      --text-dark: #111827;
+      --text-medium: #4b5563;
+      --text-light: #9ca3af;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --bg-hover: #f1f5f9;
+      --border: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* ----------------------------
+       2. RESET & BASE
+       ---------------------------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--text-dark);
+      background: var(--bg-light);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+    input, textarea, select { font-family: inherit; }
+
+    /* ----------------------------
+       3. HEADER
+       ---------------------------- */
+    .admin-header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .admin-brand .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .admin-brand-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .admin-brand-text .title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .admin-brand-text .subtitle {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.2;
+      padding-right: 8px;
+    }
+    .user-chip .user-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .user-chip .user-email {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-white);
+      color: var(--text-medium);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-dark);
+    }
+    .icon-btn.danger {
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+    .icon-btn.danger:hover {
+      background: var(--danger-light);
+      color: var(--danger-dark);
+    }
+
+    @media (max-width: 640px) {
+      .user-chip { display: none; }
+      .admin-brand-text .title { font-size: 0.95rem; }
+    }
+
+    /* ----------------------------
+       4. MAIN LAYOUT
+       ---------------------------- */
+    .admin-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* ----------------------------
+       5. STATS CARDS
+       ---------------------------- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .stat-icon.accent {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .stat-icon.success {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .stat-info { min-width: 0; }
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-medium);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* ----------------------------
+       6. TABS
+       ---------------------------- */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-medium);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+    .tab-btn:hover { background: var(--bg-hover); color: var(--text-dark); }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* ----------------------------
+       7. SECTIONS
+       ---------------------------- */
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .section-header h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .section-header p {
+      font-size: 0.88rem;
+      color: var(--text-medium);
+      margin-top: 2px;
+    }
+
+    /* ----------------------------
+       8. BUTTONS
+       ---------------------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-dark);
+      box-shadow: 0 6px 18px rgba(26, 86, 219, 0.28);
+    }
+    .btn-secondary {
+      background: var(--bg-white);
+      color: var(--text-dark);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--bg-hover); }
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--danger-dark);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    /* ----------------------------
+       9. FORM PANEL
+       ---------------------------- */
+    .form-panel {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    .form-panel.open { display: block; }
+    .form-panel h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      letter-spacing: -0.2px;
+    }
+    .form-grid {
+      display: grid;
+      gap: 18px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="url"],
+    .form-group input[type="email"],
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: var(--bg-white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      color: var(--text-dark);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 130px;
+      line-height: 1.6;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15);
+    }
+    .form-group .hint {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    .form-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+    .form-checkbox input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    /* ----------------------------
+       10. ITEMS LIST
+       ---------------------------- */
+    .items-list {
+      display: grid;
+      gap: 12px;
+    }
+    .item-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .item-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .item-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .item-status {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .item-status.published {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .item-status.draft {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .item-body {
+      font-size: 0.92rem;
+      color: var(--text-medium);
+      line-height: 1.65;
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .item-date {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ----------------------------
+       11. STATE MESSAGES
+       ---------------------------- */
+    .state-box {
+      background: var(--bg-white);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--text-medium);
+      font-size: 0.95rem;
+    }
+    .state-box .icon {
+      display: block;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    .state-box.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: var(--danger);
+    }
+
+    /* ----------------------------
+       12. TOAST
+       ---------------------------- */
+    .toast-container {
+      position: fixed;
+      top: 88px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 340px;
+    }
+    .toast {
+      background: var(--text-dark);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      animation: slideIn 0.25s ease;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ----------------------------
+       13. LOADING OVERLAY
+       ---------------------------- */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-light);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .loading-overlay.hidden { display: none; }
+    .spinner-large {
+      width: 42px;
+      height: 42px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-overlay p {
+      font-size: 0.9rem;
+      color: var(--text-medium);
+      font-weight: 600;
+    }
+
+    /* ----------------------------
+       14. RESPONSIVE
+       ---------------------------- */
+    @media (max-width: 640px) {
+      .admin-main { padding: 20px 16px 60px; }
+      .admin-header-inner { padding: 0 16px; height: 64px; }
+      .form-panel { padding: 22px 18px; }
+      .item-card { padding: 18px; }
+      .toast-container { right: 12px; left: 12px; max-width: none; }
+      .stat-value { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================
+       LOADING OVERLAY (shown until auth check completes)
+       ============================ -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner-large"></div>
+    <p>Checking your session…</p>
+  </div>
+
+  <!-- ============================
+       HEADER
+       ============================ -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-brand">
+        <div class="logo-mark">G</div>
+        <div class="admin-brand-text">
+          <span class="title">Greenwood High</span>
+          <span class="subtitle">Admin Dashboard</span>
+        </div>
+      </div>
+      <div class="admin-header-actions">
+        <div class="user-chip">
+          <span class="user-name" id="userName">Loading…</span>
+          <span class="user-email" id="userEmail"></span>
+        </div>
+        <a href="index.html" class="icon-btn" title="View public site">🌐 Site</a>
+        <button id="logoutBtn" class="icon-btn danger" title="Sign out">↩ Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================
+       MAIN
+       ============================ -->
+  <main class="admin-main">
+
+    <!-- Stats -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📢</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statAnnouncements">—</div>
+          <div class="stat-label">Announcements</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon accent">📰</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statPosts">—</div>
+          <div class="stat-label">Posts</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon success">🖼️</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statMedia">—</div>
+          <div class="stat-label">Media files</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="announcements">📢 Announcements</button>
+      <button class="tab-btn" data-tab="posts">📰 Posts</button>
+    </nav>
+
+    <!-- ============================
+         ANNOUNCEMENTS SECTION
+         ============================ -->
+    <section id="section-announcements" class="admin-section active">
+      <div class="section-header">
+        <div>
+          <h2>Announcements</h2>
+          <p>Short updates shown on the home page and announcements page.</p>
+        </div>
+        <button id="newAnnouncementBtn" class="btn btn-primary">+ New Announcement</button>
+      </div>
+
+      <!-- Form panel -->
+      <div id="announcementFormPanel" class="form-panel">
+        <h3 id="announcementFormTitle">New Announcement</h3>
+        <form id="announcementForm">
+          <input type="hidden" id="announcementId" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="announcementTitle">Title</label>
+              <input type="text" id="announcementTitle" required maxlength="200" placeholder="e.g. School reopens on 15 January" />
+            </div>
+            <div class="form-group">
+              <label for="announcementContent">Content</label>
+              <textarea id="announcementContent" required placeholder="Write the full announcement here…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="announcementPublished" checked />
+                Publish immediately (visible on public site)
+              </label>
+              <p class="hint">Uncheck to save as draft. Drafts are invisible to the public.</p>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="announcementSubmitBtn">Create Announcement</button>
+            <button type="button" class="btn btn-secondary" id="announcementCancelBtn">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- List -->
+      <div id="announcementsList" class="items-list">
+        <div class="state-box"><span class="icon">⏳</span>Loading announcements…</div>
+      </div>
+    </section>
+
+    <!-- ============================
+         POSTS SECTION
+         ============================ -->
+    <section id="section-posts" class="admin-section">
+      <div class="section-header">
+        <div>
+          <h2>Posts</h2>
+          <p>Longer articles, stories, and news items.</p>
+        </div>
+        <button id="newPostBtn" class="btn btn-primary">+ New Post</button>
+      </div>
+
+      <!-- Form panel -->
+      <div id="postFormPanel" class="form-panel">
+        <h3 id="postFormTitle">New Post</h3>
+        <form id="postForm">
+          <input type="hidden" id="postId" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="postTitle">Title</label>
+              <input type="text" id="postTitle" required maxlength="200" placeholder="e.g. Debate team wins regional championship" />
+            </div>
+            <div class="form-group">
+              <label for="postContent">Content</label>
+              <textarea id="postContent" required placeholder="Write the full article here…"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="postCoverImage">Cover image URL (optional)</label>
+              <input type="url" id="postCoverImage" placeholder="https://…" />
+              <p class="hint">Leave blank for now. Image upload will be added in the next stage.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="postPublished" checked />
+                Publish immediately (visible on public site)
+              </label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="postSubmitBtn">Create Post</button>
+            <button type="button" class="btn btn-secondary" id="postCancelBtn">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- List -->
+      <div id="postsList" class="items-list">
+        <div class="state-box"><span class="icon">⏳</span>Loading posts…</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ============================
+       JAVASCRIPT
+       ============================ -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
+
+    const postbase = createClient(
+      'https://postbase-production-b4c8.up.railway.app',
+      'pb_anon_fsq2eoaBVsA3NcKwKJnp7iH4TEb-ZoUOzSSVsbwhbFT26sOrKq1zSE94esDhwIy1',
+      { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
+    );
+
+    // ----------------------------
+    // STATE
+    // ----------------------------
+    let currentUser = null;
+    let announcementsCache = [];
+    let postsCache = [];
+
+    // ----------------------------
+    // HELPERS
+    // ----------------------------
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-ZA', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = 'toast ' + type;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.3s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+      }, 3500);
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+
+    // ----------------------------
+    // AUTH GUARD
+    // If no session → redirect to login. If session → load dashboard.
+    // ----------------------------
+    async function requireAuth() {
+      try {
+        const { data, error } = await postbase.auth.getSession();
+        if (error) throw error;
+        if (!data || !data.session) {
+          window.location.replace('admin-login.html');
+          return false;
+        }
+        currentUser = data.session.user;
+        document.getElementById('userName').textContent = currentUser.name || 'Administrator';
+        document.getElementById('userEmail').textContent = currentUser.email || '';
+        return true;
+      } catch (err) {
+        console.error('Auth check failed:', err);
+        window.location.replace('admin-login.html');
+        return false;
+      }
+    }
+
+    // ----------------------------
+    // LOGOUT
+    // ----------------------------
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (!confirm('Sign out of the admin dashboard?')) return;
+      try {
+        await postbase.auth.signOut();
+      } catch (err) {
+        console.error('Sign out error:', err);
+      }
+      window.location.replace('admin-login.html');
+    });
+
+    // ----------------------------
+    // TAB SWITCHING
+    // ----------------------------
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        document.querySelectorAll('.admin-section').forEach(s => {
+          s.classList.toggle('active', s.id === 'section-' + tab);
+        });
+      });
+    });
+
+    // ============================
+    // ANNOUNCEMENTS
+    // ============================
+
+    async function loadAnnouncements() {
+      const container = document.getElementById('announcementsList');
+      container.innerHTML = '<div class="state-box"><span class="icon">⏳</span>Loading announcements…</div>';
+
+      const { data, error } = await postbase
+        .from('announcements')
+        .select('id, title, content, published, created_at, updated_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Load announcements error:', error);
+        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load announcements.<br>' + escapeHtml(error.message || 'Unknown error') + '</div>';
+        return;
+      }
+
+      announcementsCache = data || [];
+      document.getElementById('statAnnouncements').textContent = announcementsCache.length;
+
+      if (announcementsCache.length === 0) {
+        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No announcements yet. Click “+ New Announcement” to create one.</div>';
+        return;
+      }
+
+      container.innerHTML = announcementsCache.map(a => `
+        <div class="item-card">
+          <div class="item-header">
+            <div class="item-title">${escapeHtml(a.title)}</div>
+            <span class="item-status ${a.published ? 'published' : 'draft'}">${a.published ? 'Published' : 'Draft'}</span>
+          </div>
+          <div class="item-body">${escapeHtml(a.content)}</div>
+          <div class="item-footer">
+            <div class="item-date">📅 ${formatDate(a.created_at)}</div>
+            <div class="item-actions">
+              <button class="btn btn-secondary btn-sm" data-action="edit-announcement" data-id="${a.id}">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm" data-action="delete-announcement" data-id="${a.id}">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openAnnouncementForm(item = null) {
+      const panel = document.getElementById('announcementFormPanel');
+      const title = document.getElementById('announcementFormTitle');
+      const submitBtn = document.getElementById('announcementSubmitBtn');
+      panel.classList.add('open');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      if (item) {
+        title.textContent = 'Edit Announcement';
+        submitBtn.textContent = 'Save Changes';
+        document.getElementById('announcementId').value = item.id;
+        document.getElementById('announcementTitle').value = item.title;
+        document.getElementById('announcementContent').value = item.content;
+        document.getElementById('announcementPublished').checked = item.published;
+      } else {
+        title.textContent = 'New Announcement';
+        submitBtn.textContent = 'Create Announcement';
+        document.getElementById('announcementForm').reset();
+        document.getElementById('announcementId').value = '';
+        document.getElementById('announcementPublished').checked = true;
+      }
+    }
+
+    function closeAnnouncementForm() {
+      document.getElementById('announcementFormPanel').classList.remove('open');
+      document.getElementById('announcementForm').reset();
+      document.getElementById('announcementId').value = '';
+    }
+
+    document.getElementById('newAnnouncementBtn').addEventListener('click', () => openAnnouncementForm());
+    document.getElementById('announcementCancelBtn').addEventListener('click', closeAnnouncementForm);
+
+    document.getElementById('announcementForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('announcementId').value;
+      const title = document.getElementById('announcementTitle').value.trim();
+      const content = document.getElementById('announcementContent').value.trim();
+      const published = document.getElementById('announcementPublished').checked;
+      const submitBtn = document.getElementById('announcementSubmitBtn');
+
+      if (!title || !content) {
+        showToast('Please fill in both title and content.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      const originalLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Saving…';
+
+      let error;
+      if (id) {
+        // UPDATE
+        ({ error } = await postbase
+          .from('announcements')
+          .update({ title, content, published })
+          .eq('id', id));
+      } else {
+        // INSERT
+        ({ error } = await postbase
+          .from('announcements')
+          .insert({ title, content, published }));
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+
+      if (error) {
+        console.error('Save announcement error:', error);
+        showToast('Save failed: ' + (error.message || 'Unknown error'), 'error');
+        return;
+      }
+
+      showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
+      closeAnnouncementForm();
+      loadAnnouncements();
+    });
+
+    document.getElementById('announcementsList').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+
+      if (action === 'edit-announcement') {
+        const item = announcementsCache.find(a => a.id === id);
+        if (item) openAnnouncementForm(item);
+      }
+
+      if (action === 'delete-announcement') {
+        const item = announcementsCache.find(a => a.id === id);
+        if (!item) return;
+        if (!confirm('Delete "' + item.title + '"?\n\nThis cannot be undone.')) return;
+
+        btn.disabled = true;
+        const { error } = await postbase
+          .from('announcements')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          console.error('Delete announcement error:', error);
+          showToast('Delete failed: ' + (error.message || 'Unknown error'), 'error');
+          btn.disabled = false;
+          return;
+        }
+        showToast('Announcement deleted.', 'success');
+        loadAnnouncements();
+      }
+    });
+
+    // ============================
+    // POSTS
+    // ============================
+
+    async function loadPosts() {
+      const container = document.getElementById('postsList');
+      container.innerHTML = '<div class="state-box"><span class="icon">⏳</span>Loading posts…</div>';
+
+      const { data, error } = await postbase
+        .from('posts')
+        .select('id, title, content, cover_image, published, created_at, updated_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Load posts error:', error);
+        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load posts.<br>' + escapeHtml(error.message || 'Unknown error') + '</div>';
+        return;
+      }
+
+      postsCache = data || [];
+      document.getElementById('statPosts').textContent = postsCache.length;
+
+      if (postsCache.length === 0) {
+        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No posts yet. Click “+ New Post” to create one.</div>';
+        return;
+      }
+
+      container.innerHTML = postsCache.map(p => `
+        <div class="item-card">
+          <div class="item-header">
+            <div class="item-title">${escapeHtml(p.title)}</div>
+            <span class="item-status ${p.published ? 'published' : 'draft'}">${p.published ? 'Published' : 'Draft'}</span>
+          </div>
+          <div class="item-body">${escapeHtml(p.content)}</div>
+          <div class="item-footer">
+            <div class="item-date">📅 ${formatDate(p.created_at)}</div>
+            <div class="item-actions">
+              <button class="btn btn-secondary btn-sm" data-action="edit-post" data-id="${p.id}">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm" data-action="delete-post" data-id="${p.id}">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openPostForm(item = null) {
+      const panel = document.getElementById('postFormPanel');
+      const title = document.getElementById('postFormTitle');
+      const submitBtn = document.getElementById('postSubmitBtn');
+      panel.classList.add('open');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      if (item) {
+        title.textContent = 'Edit Post';
+        submitBtn.textContent = 'Save Changes';
+        document.getElementById('postId').value = item.id;
+        document.getElementById('postTitle').value = item.title;
+        document.getElementById('postContent').value = item.content;
+        document.getElementById('postCoverImage').value = item.cover_image || '';
+        document.getElementById('postPublished').checked = item.published;
+      } else {
+        title.textContent = 'New Post';
+        submitBtn.textContent = 'Create Post';
+        document.getElementById('postForm').reset();
+        document.getElementById('postId').value = '';
+        document.getElementById('postPublished').checked = true;
+      }
+    }
+
+    function closePostForm() {
+      document.getElementById('postFormPanel').classList.remove('open');
+      document.getElementById('postForm').reset();
+      document.getElementById('postId').value = '';
+    }
+
+    document.getElementById('newPostBtn').addEventListener('click', () => openPostForm());
+    document.getElementById('postCancelBtn').addEventListener('click', closePostForm);
+
+    document.getElementById('postForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('postId').value;
+      const title = document.getElementById('postTitle').value.trim();
+      const content = document.getElementById('postContent').value.trim();
+      const cover_image = document.getElementById('postCoverImage').value.trim() || null;
+      const published = document.getElementById('postPublished').checked;
+      const submitBtn = document.getElementById('postSubmitBtn');
+
+      if (!title || !content) {
+        showToast('Please fill in both title and content.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      const originalLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Saving…';
+
+      let error;
+      if (id) {
+        ({ error } = await postbase
+          .from('posts')
+          .update({ title, content, cover_image, published })
+          .eq('id', id));
+      } else {
+        ({ error } = await postbase
+          .from('posts')
+          .insert({ title, content, cover_image, published }));
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+
+      if (error) {
+        console.error('Save post error:', error);
+        showToast('Save failed: ' + (error.message || 'Unknown error'), 'error');
+        return;
+      }
+
+      showToast(id ? 'Post updated.' : 'Post created.', 'success');
+      closePostForm();
+      loadPosts();
+    });
+
+    document.getElementById('postsList').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+
+      if (action === 'edit-post') {
+        const item = postsCache.find(p => p.id === id);
+        if (item) openPostForm(item);
+      }
+
+      if (action === 'delete-post') {
+        const item = postsCache.find(p => p.id === id);
+        if (!item) return;
+        if (!confirm('Delete "' + item.title + '"?\n\nThis cannot be undone.')) return;
+
+        btn.disabled = true;
+        const { error } = await postbase
+          .from('posts')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          console.error('Delete post error:', error);
+          showToast('Delete failed: ' + (error.message || 'Unknown error'), 'error');
+          btn.disabled = false;
+          return;
+        }
+        showToast('Post deleted.', 'success');
+        loadPosts();
+      }
+    });
+
+    // ============================
+    // MEDIA STAT (count only — upload comes next stage)
+    // ============================
+    async function loadMediaCount() {
+      const { data, error } = await postbase
+        .from('media')
+        .select('id');
+      if (error) {
+        document.getElementById('statMedia').textContent = '0';
+        return;
+      }
+      document.getElementById('statMedia').textContent = (data || []).length;
+    }
+
+    // ============================
+    // BOOT
+    // ============================
+    (async function init() {
+      const authenticated = await requireAuth();
+      if (!authenticated) return;
+      hideLoading();
+      loadAnnouncements();
+      loadPosts();
+      loadMediaCount();
+    })();
+  </script>
+
+</body>
+</html>
