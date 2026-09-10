@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Greenwood High School</title>
+  <meta name="description" content="Contact Greenwood High School. Address, phone, email, and office hours.">
+
+  <!-- ============================
+       CSS
+       ============================ -->
+  <style>
+    /* ----------------------------
+       1. CSS VARIABLES (same as other pages)
+       ---------------------------- */
+    :root {
+      --primary: #1a56db;
+      --primary-dark: #1e3a8a;
+      --primary-light: #dbeafe;
+      --accent: #f59e0b;
+      --text-dark: #111827;
+      --text-medium: #4b5563;
+      --text-light: #9ca3af;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --border: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --max-width: 1200px;
+    }
+
+    /* ----------------------------
+       2. RESET & BASE
+       ---------------------------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--text-dark);
+      background: var(--bg-light);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ----------------------------
+       3. UTILITY
+       ---------------------------- */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ----------------------------
+       4. HEADER / NAVIGATION
+       ---------------------------- */
+    .site-header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+    }
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-medium);
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+    .nav-links .admin-link {
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-dark);
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+    .nav-toggle:hover { background: var(--bg-light); }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: var(--bg-white);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 20px 20px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 16px; }
+    }
+
+    /* ----------------------------
+       5. PAGE HERO
+       ---------------------------- */
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 64px 0 56px;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .page-hero p {
+      font-size: 1.05rem;
+      opacity: 0.92;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* ----------------------------
+       6. SECTION
+       ---------------------------- */
+    .section { padding: 64px 0 72px; }
+
+    /* ----------------------------
+       7. CONTACT GRID
+       ---------------------------- */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-bottom: 56px;
+    }
+    .contact-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 32px 28px;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    }
+    .contact-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: transparent;
+    }
+    .contact-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin: 0 auto 18px;
+    }
+    .contact-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+    }
+    .contact-card p {
+      font-size: 0.94rem;
+      color: var(--text-medium);
+      line-height: 1.7;
+    }
+    .contact-card a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .contact-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* ----------------------------
+       8. INFO BANNER
+       ---------------------------- */
+    .info-banner {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .info-banner h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+    .info-banner p {
+      color: var(--text-medium);
+      font-size: 1rem;
+      max-width: 640px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 8px 20px rgba(26, 86, 219, 0.3);
+    }
+    .btn:active { transform: scale(0.97); }
+
+    /* ----------------------------
+       9. MAP / LOCATION PLACEHOLDER
+       ---------------------------- */
+    .location-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--text-medium);
+      font-size: 0.95rem;
+    }
+    .location-box .map-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    /* ----------------------------
+       10. FOOTER
+       ---------------------------- */
+    .site-footer {
+      background: #0f172a;
+      color: #cbd5e1;
+      padding: 56px 0 28px;
+      margin-top: 0;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 36px;
+      margin-bottom: 40px;
+    }
+    .footer-col h4 {
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      letter-spacing: 0.2px;
+    }
+    .footer-col p,
+    .footer-col a {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: #94a3b8;
+      display: block;
+      transition: color 0.15s;
+    }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #1e293b;
+      padding-top: 22px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+
+    /* ----------------------------
+       11. RESPONSIVE
+       ---------------------------- */
+    @media (max-width: 768px) {
+      .page-hero { padding: 48px 0 40px; }
+      .page-hero h1 { font-size: 1.7rem; }
+      .page-hero p { font-size: 0.98rem; }
+      .section { padding: 44px 0 56px; }
+      .contact-card { padding: 26px 22px; }
+      .info-banner { padding: 32px 22px; }
+      .info-banner h2 { font-size: 1.25rem; }
+    }
+
+    /* ----------------------------
+       12. ANIMATIONS
+       ---------------------------- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in:nth-child(2) { animation-delay: 0.08s; }
+    .fade-in:nth-child(3) { animation-delay: 0.16s; }
+    .fade-in:nth-child(4) { animation-delay: 0.24s; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================
+       HEADER / NAVIGATION
+       ============================ -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav-bar">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">G</span>
+          Greenwood High
+        </a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="announcement.html">Announcements</a></li>
+          <li><a href="contacts.html" class="active">Contact</a></li>
+          <li><a href="admin-login.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================
+       PAGE HERO
+       ============================ -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>We would love to hear from you. Reach out to us using any of the details below.</p>
+    </div>
+  </section>
+
+  <!-- ============================
+       CONTACT CONTENT
+       ============================ -->
+  <section class="section">
+    <div class="container">
+
+      <!-- Contact method cards -->
+      <div class="contact-grid">
+        <div class="contact-card fade-in">
+          <div class="contact-icon">📍</div>
+          <h3>Visit Us</h3>
+          <p>
+            123 School Road<br>
+            Greenwood Estate<br>
+            City, 00000
+          </p>
+        </div>
+
+        <div class="contact-card fade-in">
+          <div class="contact-icon">📞</div>
+          <h3>Call Us</h3>
+          <p>
+            <a href="tel:+270000000000">+27 00 000 0000</a><br>
+            Mon–Fri, 08:00–16:00
+          </p>
+        </div>
+
+        <div class="contact-card fade-in">
+          <div class="contact-icon">✉️</div>
+          <h3>Email Us</h3>
+          <p>
+            <a href="mailto:info@greenwoodhigh.edu">info@greenwoodhigh.edu</a><br>
+            <a href="mailto:principal@greenwoodhigh.edu">principal@greenwoodhigh.edu</a>
+          </p>
+        </div>
+
+        <div class="contact-card fade-in">
+          <div class="contact-icon">🕒</div>
+          <h3>Office Hours</h3>
+          <p>
+            Monday – Friday<br>
+            07:30 – 16:30<br>
+            Closed on public holidays
+          </p>
+        </div>
+      </div>
+
+      <!-- Info banner -->
+      <div class="info-banner fade-in">
+        <h2>Have a Question?</h2>
+        <p>For enquiries about admissions, uniforms, fees, or general information, please send us an email or give the school office a call. We are always happy to assist.</p>
+        <a href="mailto:info@greenwoodhigh.edu" class="btn">✉️ Email the School Office</a>
+      </div>
+
+      <!-- Location placeholder -->
+      <div class="location-box fade-in">
+        <span class="map-icon">🗺️</span>
+        <strong>Find Us on the Map</strong>
+        <p style="margin-top: 8px;">A map showing the school location will appear here.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================
+       FOOTER
+       ============================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Greenwood High School</h4>
+          <p>123 School Road<br>Greenwood Estate<br>City, 00000</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="announcement.html">Announcements</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>📞 +27 00 000 0000</p>
+          <p>✉️ info@greenwoodhigh.edu</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Greenwood High School. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================
+       JAVASCRIPT
+       ============================ -->
+  <script>
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
+  </script>
+
+</body>
+</html>
