@@ -6,13 +6,7 @@
   <title>Announcements — Greenwood High School</title>
   <meta name="description" content="All announcements from Greenwood High School.">
 
-  <!-- ============================
-       CSS
-       ============================ -->
   <style>
-    /* ----------------------------
-       1. CSS VARIABLES (same as index.html)
-       ---------------------------- */
     :root {
       --primary: #1a56db;
       --primary-dark: #1e3a8a;
@@ -33,10 +27,6 @@
       --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       --max-width: 1200px;
     }
-
-    /* ----------------------------
-       2. RESET & BASE
-       ---------------------------- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -48,264 +38,162 @@
     }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
-    /* ----------------------------
-       3. UTILITY
-       ---------------------------- */
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ----------------------------
-       4. HEADER / NAVIGATION
-       ---------------------------- */
     .site-header {
       background: var(--bg-white);
       border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
-    .nav-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 72px;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 1.2rem;
-      color: var(--primary);
-      letter-spacing: -0.3px;
-    }
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.3px; }
     .logo-mark {
-      width: 40px;
-      height: 40px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.15rem;
-      font-weight: 800;
+      width: 40px; height: 40px; background: var(--primary); color: #fff;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; font-weight: 800;
     }
-    .nav-links {
-      display: flex;
-      gap: 6px;
-      list-style: none;
-      align-items: center;
-    }
+    .nav-links { display: flex; gap: 6px; list-style: none; align-items: center; }
     .nav-links a {
-      padding: 9px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-medium);
+      padding: 9px 16px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 600; color: var(--text-medium);
       transition: background 0.2s, color 0.2s;
     }
-    .nav-links a:hover,
-    .nav-links a.active {
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
-    .nav-links .admin-link {
-      color: var(--text-light);
-      font-size: 0.85rem;
-    }
+    .nav-links a:hover, .nav-links a.active { background: var(--primary-light); color: var(--primary-dark); }
+    .nav-links .admin-link { color: var(--text-light); font-size: 0.85rem; }
     .nav-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-dark);
-      padding: 8px;
-      border-radius: var(--radius-sm);
+      display: none; background: none; border: none;
+      font-size: 1.5rem; cursor: pointer; color: var(--text-dark);
+      padding: 8px; border-radius: var(--radius-sm);
     }
     .nav-toggle:hover { background: var(--bg-light); }
-
     @media (max-width: 768px) {
       .nav-toggle { display: block; }
       .nav-links {
-        display: none;
-        position: absolute;
-        top: 72px;
-        left: 0;
-        right: 0;
-        background: var(--bg-white);
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px 20px 20px;
-        border-bottom: 1px solid var(--border);
+        display: none; position: absolute; top: 72px; left: 0; right: 0;
+        background: var(--bg-white); flex-direction: column; align-items: stretch;
+        padding: 12px 20px 20px; border-bottom: 1px solid var(--border);
         box-shadow: var(--shadow-md);
       }
       .nav-links.open { display: flex; }
       .nav-links a { padding: 12px 16px; }
     }
 
-    /* ----------------------------
-       5. PAGE HERO (smaller than home)
-       ---------------------------- */
     .page-hero {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: #fff;
-      padding: 64px 0 56px;
-      text-align: center;
+      color: #fff; padding: 64px 0 56px; text-align: center;
     }
-    .page-hero h1 {
-      font-size: 2.25rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-      letter-spacing: -0.5px;
-    }
-    .page-hero p {
-      font-size: 1.05rem;
-      opacity: 0.92;
-      max-width: 560px;
-      margin: 0 auto;
-    }
+    .page-hero h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    .page-hero p { font-size: 1.05rem; opacity: 0.92; max-width: 560px; margin: 0 auto; }
 
-    /* ----------------------------
-       6. SECTION
-       ---------------------------- */
     .section { padding: 56px 0 72px; }
-
-    /* ----------------------------
-       7. CARD GRID
-       ---------------------------- */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-    }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
     .card {
       background: var(--bg-white);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 28px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
-      display: flex;
-      flex-direction: column;
-      min-height: 200px;
+      display: flex; flex-direction: column; min-height: 200px;
     }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: transparent;
-    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
     .card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--text-dark);
-      line-height: 1.35;
+      font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;
+      color: var(--text-dark); line-height: 1.35;
     }
     .card p {
-      font-size: 0.95rem;
-      color: var(--text-medium);
-      line-height: 1.7;
-      flex: 1;
+      font-size: 0.95rem; color: var(--text-medium);
+      line-height: 1.7; flex: 1;
       white-space: pre-wrap;
     }
     .card-meta {
-      font-size: 0.82rem;
-      color: var(--text-light);
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
+      font-size: 0.82rem; color: var(--text-light);
+      margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px; font-weight: 500;
     }
     .card-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
-      margin-bottom: 14px;
-      align-self: flex-start;
+      display: inline-block; font-size: 0.7rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 5px 11px; border-radius: 999px;
+      background: var(--accent); color: #fff;
+      margin-bottom: 14px; align-self: flex-start;
     }
 
-    /* ----------------------------
-       8. STATES (loading/empty/error)
-       ---------------------------- */
+    .card-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 6px;
+      margin-top: 16px;
+    }
+    .card-gallery img {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      border: 1px solid var(--border);
+    }
+    .card-gallery img:hover { transform: scale(1.03); opacity: 0.92; }
+    .card-gallery.gallery-1 { grid-template-columns: 1fr; }
+    .card-gallery.gallery-1 img { aspect-ratio: 16 / 10; border-radius: 8px; }
+    .card-gallery.gallery-2 { grid-template-columns: 1fr 1fr; }
+    .card-gallery.gallery-2 img { aspect-ratio: 1; }
+
+    .lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 999;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      cursor: zoom-out;
+      animation: fadeIn 0.2s ease;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 100%; max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      cursor: default;
+    }
+    .lightbox .close-btn {
+      position: absolute; top: 16px; right: 20px;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: none; font-size: 1.4rem;
+      cursor: pointer; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox .close-btn:hover { background: rgba(255,255,255,0.3); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
     .state-message {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-medium);
-      font-size: 0.98rem;
+      text-align: center; padding: 60px 20px;
+      color: var(--text-medium); font-size: 0.98rem;
       grid-column: 1 / -1;
     }
     .state-message .spinner {
-      display: inline-block;
-      width: 22px; height: 22px;
-      border: 2px solid var(--border);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-right: 10px;
-      vertical-align: middle;
+      display: inline-block; width: 22px; height: 22px;
+      border: 2px solid var(--border); border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      margin-right: 10px; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .state-message .icon {
-      display: block;
-      font-size: 2.5rem;
-      margin-bottom: 12px;
-    }
+    .state-message .icon { display: block; font-size: 2.5rem; margin-bottom: 12px; }
 
-    /* ----------------------------
-       9. FOOTER
-       ---------------------------- */
-    .site-footer {
-      background: #0f172a;
-      color: #cbd5e1;
-      padding: 56px 0 28px;
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 36px;
-      margin-bottom: 40px;
-    }
-    .footer-col h4 {
-      color: #fff;
-      font-size: 0.98rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      letter-spacing: 0.2px;
-    }
-    .footer-col p,
-    .footer-col a {
-      font-size: 0.9rem;
-      line-height: 1.9;
-      color: #94a3b8;
-      display: block;
-      transition: color 0.15s;
+    .site-footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 28px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 36px; margin-bottom: 40px; }
+    .footer-col h4 { color: #fff; font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.2px; }
+    .footer-col p, .footer-col a {
+      font-size: 0.9rem; line-height: 1.9; color: #94a3b8;
+      display: block; transition: color 0.15s;
     }
     .footer-col a:hover { color: #fff; }
     .footer-bottom {
-      border-top: 1px solid #1e293b;
-      padding-top: 22px;
-      text-align: center;
-      font-size: 0.82rem;
-      color: #64748b;
+      border-top: 1px solid #1e293b; padding-top: 22px;
+      text-align: center; font-size: 0.82rem; color: #64748b;
     }
 
-    /* ----------------------------
-       10. RESPONSIVE
-       ---------------------------- */
     @media (max-width: 768px) {
       .page-hero { padding: 48px 0 40px; }
       .page-hero h1 { font-size: 1.7rem; }
@@ -315,17 +203,8 @@
       .card-grid { grid-template-columns: 1fr; }
     }
 
-    /* ----------------------------
-       11. ANIMATIONS
-       ---------------------------- */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(16px);
-      animation: fadeUp 0.6s ease forwards;
-    }
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .fade-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
     .fade-in:nth-child(2) { animation-delay: 0.06s; }
     .fade-in:nth-child(3) { animation-delay: 0.12s; }
     .fade-in:nth-child(4) { animation-delay: 0.18s; }
@@ -335,9 +214,6 @@
 </head>
 <body>
 
-  <!-- ============================
-       HEADER / NAVIGATION
-       ============================ -->
   <header class="site-header">
     <div class="container">
       <nav class="nav-bar">
@@ -356,9 +232,6 @@
     </div>
   </header>
 
-  <!-- ============================
-       PAGE HERO
-       ============================ -->
   <section class="page-hero">
     <div class="container">
       <h1>School Announcements</h1>
@@ -366,22 +239,14 @@
     </div>
   </section>
 
-  <!-- ============================
-       ANNOUNCEMENTS LIST
-       ============================ -->
   <section class="section">
     <div class="container">
       <div id="announcementsGrid" class="card-grid">
-        <div class="state-message">
-          <span class="spinner"></span> Loading announcements…
-        </div>
+        <div class="state-message"><span class="spinner"></span> Loading announcements…</div>
       </div>
     </div>
   </section>
 
-  <!-- ============================
-       FOOTER
-       ============================ -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -407,9 +272,11 @@
     </div>
   </footer>
 
-  <!-- ============================
-       JAVASCRIPT (Non-module)
-       ============================ -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">✕</button>
+    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()" />
+  </div>
+
   <script>
     function toggleNav() {
       document.getElementById('navLinks').classList.toggle('open');
@@ -419,12 +286,27 @@
         document.getElementById('navLinks').classList.remove('open');
       });
     });
+    function openLightbox(url, event) {
+      if (event) event.stopPropagation();
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightboxImg');
+      img.src = url;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(event) {
+      if (event && event.target && event.target.tagName === 'IMG' &&
+          event.target.id === 'lightboxImg') return;
+      const lb = document.getElementById('lightbox');
+      lb.classList.remove('open');
+      document.getElementById('lightboxImg').src = '';
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
   </script>
 
-  <!-- ============================
-       JAVASCRIPT (Module)
-       PostBase connection + fetch
-       ============================ -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
 
@@ -435,18 +317,28 @@
     );
 
     function escapeHtml(text) {
-      if (!text) return '';
+      if (text === null || text === undefined) return '';
       const div = document.createElement('div');
-      div.textContent = text;
+      div.textContent = String(text);
       return div.innerHTML;
     }
-
     function formatDate(iso) {
       if (!iso) return '';
       const d = new Date(iso);
-      return d.toLocaleDateString('en-ZA', {
-        year: 'numeric', month: 'long', day: 'numeric'
-      });
+      return d.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    function galleryClass(n) {
+      if (n === 1) return 'card-gallery gallery-1';
+      if (n === 2) return 'card-gallery gallery-2';
+      return 'card-gallery';
+    }
+    function renderGallery(media) {
+      if (!media || media.length === 0) return '';
+      const items = media.map(m =>
+        `<img src="${escapeHtml(m.file_url)}" alt="" loading="lazy"
+              onclick="openLightbox('${escapeHtml(m.file_url).replace(/'/g, "\\'")}', event)" />`
+      ).join('');
+      return `<div class="${galleryClass(media.length)}">${items}</div>`;
     }
 
     async function loadAnnouncements() {
@@ -469,7 +361,6 @@
         `;
         return;
       }
-
       if (!data || data.length === 0) {
         grid.innerHTML = `
           <div class="state-message">
@@ -481,14 +372,31 @@
         return;
       }
 
-      grid.innerHTML = data.map(item => `
-        <article class="card fade-in">
-          <span class="card-badge">Announcement</span>
-          <h3>${escapeHtml(item.title)}</h3>
-          <p>${escapeHtml(item.content)}</p>
-          <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
-        </article>
-      `).join('');
+      // Fetch all media for these announcements in one query
+      const ids = data.map(a => a.id);
+      const { data: mediaRows } = await postbase
+        .from('media')
+        .select('id, file_url, announcement_id')
+        .in('announcement_id', ids);
+
+      const grouped = {};
+      (mediaRows || []).forEach(m => {
+        if (!grouped[m.announcement_id]) grouped[m.announcement_id] = [];
+        grouped[m.announcement_id].push(m);
+      });
+
+      grid.innerHTML = data.map(item => {
+        const media = grouped[item.id] || [];
+        return `
+          <article class="card fade-in">
+            <span class="card-badge">Announcement</span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.content)}</p>
+            ${renderGallery(media)}
+            <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+          </article>
+        `;
+      }).join('');
     }
 
     loadAnnouncements();
