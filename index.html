@@ -6,13 +6,7 @@
   <title>Greenwood High School — Home</title>
   <meta name="description" content="Welcome to Greenwood High School. News, announcements, and information for learners, parents, and teachers.">
 
-  <!-- ============================
-       CSS
-       ============================ -->
   <style>
-    /* ----------------------------
-       1. CSS VARIABLES
-       ---------------------------- */
     :root {
       --primary: #1a56db;
       --primary-dark: #1e3a8a;
@@ -33,10 +27,6 @@
       --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       --max-width: 1200px;
     }
-
-    /* ----------------------------
-       2. RESET & BASE
-       ---------------------------- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -48,341 +38,201 @@
     }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+    .section-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-bottom: 6px; letter-spacing: -0.3px; }
+    .section-subtitle { font-size: 1rem; color: var(--text-medium); margin-bottom: 32px; }
 
-    /* ----------------------------
-       3. UTILITY
-       ---------------------------- */
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .section-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--text-dark);
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
-    }
-    .section-subtitle {
-      font-size: 1rem;
-      color: var(--text-medium);
-      margin-bottom: 32px;
-    }
-
-    /* ----------------------------
-       4. HEADER / NAVIGATION
-       ---------------------------- */
     .site-header {
       background: var(--bg-white);
       border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
-    .nav-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 72px;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 1.2rem;
-      color: var(--primary);
-      letter-spacing: -0.3px;
-    }
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.3px; }
     .logo-mark {
-      width: 40px;
-      height: 40px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.15rem;
-      font-weight: 800;
+      width: 40px; height: 40px; background: var(--primary); color: #fff;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; font-weight: 800;
     }
-    .nav-links {
-      display: flex;
-      gap: 6px;
-      list-style: none;
-      align-items: center;
-    }
+    .nav-links { display: flex; gap: 6px; list-style: none; align-items: center; }
     .nav-links a {
-      padding: 9px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-medium);
+      padding: 9px 16px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 600; color: var(--text-medium);
       transition: background 0.2s, color 0.2s;
     }
-    .nav-links a:hover,
-    .nav-links a.active {
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
-    .nav-links .admin-link {
-      color: var(--text-light);
-      font-size: 0.85rem;
-    }
+    .nav-links a:hover, .nav-links a.active { background: var(--primary-light); color: var(--primary-dark); }
+    .nav-links .admin-link { color: var(--text-light); font-size: 0.85rem; }
     .nav-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-dark);
-      padding: 8px;
-      border-radius: var(--radius-sm);
+      display: none; background: none; border: none;
+      font-size: 1.5rem; cursor: pointer; color: var(--text-dark);
+      padding: 8px; border-radius: var(--radius-sm);
     }
     .nav-toggle:hover { background: var(--bg-light); }
-
     @media (max-width: 768px) {
       .nav-toggle { display: block; }
       .nav-links {
-        display: none;
-        position: absolute;
-        top: 72px;
-        left: 0;
-        right: 0;
-        background: var(--bg-white);
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px 20px 20px;
-        border-bottom: 1px solid var(--border);
+        display: none; position: absolute; top: 72px; left: 0; right: 0;
+        background: var(--bg-white); flex-direction: column; align-items: stretch;
+        padding: 12px 20px 20px; border-bottom: 1px solid var(--border);
         box-shadow: var(--shadow-md);
       }
       .nav-links.open { display: flex; }
       .nav-links a { padding: 12px 16px; }
     }
 
-    /* ----------------------------
-       5. HERO
-       ---------------------------- */
     .hero {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: #fff;
-      padding: 88px 0 80px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      color: #fff; padding: 88px 0 80px; text-align: center; position: relative; overflow: hidden;
     }
     .hero::before {
-      content: '';
-      position: absolute;
-      top: -40%; right: -10%;
+      content: ''; position: absolute; top: -40%; right: -10%;
       width: 60%; height: 180%;
       background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.15);
+      display: inline-block; background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 6px 18px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 22px;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
+      padding: 6px 18px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 700; margin-bottom: 22px;
+      letter-spacing: 0.4px; text-transform: uppercase;
     }
-    .hero h1 {
-      font-size: 2.75rem;
-      font-weight: 800;
-      margin-bottom: 14px;
-      letter-spacing: -1px;
-      line-height: 1.15;
-    }
-    .hero p {
-      font-size: 1.15rem;
-      opacity: 0.92;
-      max-width: 640px;
-      margin: 0 auto 34px;
-      line-height: 1.7;
-    }
-    .hero-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .hero h1 { font-size: 2.75rem; font-weight: 800; margin-bottom: 14px; letter-spacing: -1px; line-height: 1.15; }
+    .hero p { font-size: 1.15rem; opacity: 0.92; max-width: 640px; margin: 0 auto 34px; line-height: 1.7; }
+    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-    /* ----------------------------
-       6. BUTTONS
-       ---------------------------- */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      font-size: 0.95rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: var(--radius-sm);
+      font-weight: 700; font-size: 0.95rem;
       transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s;
-      cursor: pointer;
-      border: none;
-      font-family: inherit;
+      cursor: pointer; border: none; font-family: inherit;
     }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: #fff; color: var(--primary-dark); }
     .btn-primary:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }
-    .btn-outline {
-      background: transparent;
-      color: #fff;
-      border: 2px solid rgba(255, 255, 255, 0.55);
-    }
-    .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: #fff;
-    }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.55); }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.12); border-color: #fff; }
 
-    /* ----------------------------
-       7. SECTIONS
-       ---------------------------- */
     .section { padding: 72px 0; }
     .section-alt { background: var(--bg-white); }
 
-    /* ----------------------------
-       8. CARD GRID
-       ---------------------------- */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-    }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
     .card {
       background: var(--bg-white);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 28px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
-      display: flex;
-      flex-direction: column;
-      min-height: 200px;
+      display: flex; flex-direction: column; min-height: 200px;
     }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: transparent;
-    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
     .card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: var(--primary-light);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      margin-bottom: 18px;
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 18px;
     }
     .card h3 {
-      font-size: 1.12rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: var(--text-dark);
-      line-height: 1.35;
+      font-size: 1.12rem; font-weight: 700; margin-bottom: 8px;
+      color: var(--text-dark); line-height: 1.35;
     }
     .card p {
-      font-size: 0.94rem;
-      color: var(--text-medium);
-      line-height: 1.65;
-      flex: 1;
+      font-size: 0.94rem; color: var(--text-medium);
+      line-height: 1.65; flex: 1;
+      white-space: pre-wrap;
     }
     .card-meta {
-      font-size: 0.82rem;
-      color: var(--text-light);
-      margin-top: 18px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
+      font-size: 0.82rem; color: var(--text-light);
+      margin-top: 18px; display: flex; align-items: center;
+      gap: 6px; font-weight: 500;
     }
     .card-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
-      margin-bottom: 14px;
-      align-self: flex-start;
+      display: inline-block; font-size: 0.7rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 5px 11px; border-radius: 999px;
+      background: var(--accent); color: #fff;
+      margin-bottom: 14px; align-self: flex-start;
     }
 
-    /* ----------------------------
-       9. LOADING / EMPTY STATE
-       ---------------------------- */
+    /* Gallery inside a card */
+    .card-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 6px;
+      margin-top: 14px;
+      margin-bottom: 4px;
+    }
+    .card-gallery img {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      border: 1px solid var(--border);
+    }
+    .card-gallery img:hover { transform: scale(1.03); opacity: 0.92; }
+    .card-gallery.gallery-1 { grid-template-columns: 1fr; }
+    .card-gallery.gallery-1 img { aspect-ratio: 16 / 10; border-radius: 8px; }
+    .card-gallery.gallery-2 { grid-template-columns: 1fr 1fr; }
+    .card-gallery.gallery-2 img { aspect-ratio: 1; }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 999;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      cursor: zoom-out;
+      animation: fadeIn 0.2s ease;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 100%; max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      cursor: default;
+    }
+    .lightbox .close-btn {
+      position: absolute; top: 16px; right: 20px;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: none; font-size: 1.4rem;
+      cursor: pointer; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox .close-btn:hover { background: rgba(255,255,255,0.3); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
     .state-message {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-medium);
-      font-size: 0.95rem;
+      text-align: center; padding: 40px 20px;
+      color: var(--text-medium); font-size: 0.95rem;
       grid-column: 1 / -1;
     }
     .state-message .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 2px solid var(--border);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
+      display: inline-block; width: 20px; height: 20px;
+      border: 2px solid var(--border); border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      margin-right: 8px; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ----------------------------
-       10. FOOTER
-       ---------------------------- */
-    .site-footer {
-      background: #0f172a;
-      color: #cbd5e1;
-      padding: 56px 0 28px;
-      margin-top: 0;
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 36px;
-      margin-bottom: 40px;
-    }
-    .footer-col h4 {
-      color: #fff;
-      font-size: 0.98rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      letter-spacing: 0.2px;
-    }
-    .footer-col p,
-    .footer-col a {
-      font-size: 0.9rem;
-      line-height: 1.9;
-      color: #94a3b8;
-      display: block;
-      transition: color 0.15s;
+    .site-footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 28px; margin-top: 0; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 36px; margin-bottom: 40px; }
+    .footer-col h4 { color: #fff; font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.2px; }
+    .footer-col p, .footer-col a {
+      font-size: 0.9rem; line-height: 1.9; color: #94a3b8;
+      display: block; transition: color 0.15s;
     }
     .footer-col a:hover { color: #fff; }
     .footer-bottom {
-      border-top: 1px solid #1e293b;
-      padding-top: 22px;
-      text-align: center;
-      font-size: 0.82rem;
-      color: #64748b;
+      border-top: 1px solid #1e293b; padding-top: 22px;
+      text-align: center; font-size: 0.82rem; color: #64748b;
     }
 
-    /* ----------------------------
-       11. RESPONSIVE
-       ---------------------------- */
     @media (max-width: 768px) {
       .hero { padding: 60px 0 52px; }
       .hero h1 { font-size: 1.9rem; }
@@ -392,17 +242,8 @@
       .card { padding: 22px; }
     }
 
-    /* ----------------------------
-       12. ANIMATIONS
-       ---------------------------- */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(16px);
-      animation: fadeUp 0.6s ease forwards;
-    }
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .fade-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
     .fade-in:nth-child(2) { animation-delay: 0.08s; }
     .fade-in:nth-child(3) { animation-delay: 0.16s; }
     .fade-in:nth-child(4) { animation-delay: 0.24s; }
@@ -412,9 +253,6 @@
 </head>
 <body>
 
-  <!-- ============================
-       HEADER / NAVIGATION
-       ============================ -->
   <header class="site-header">
     <div class="container">
       <nav class="nav-bar">
@@ -433,9 +271,6 @@
     </div>
   </header>
 
-  <!-- ============================
-       HERO
-       ============================ -->
   <section class="hero">
     <div class="container">
       <div class="hero-badge">Welcome to Our School</div>
@@ -448,43 +283,26 @@
     </div>
   </section>
 
-  <!-- ============================
-       ANNOUNCEMENTS SECTION
-       (loaded from PostBase)
-       ============================ -->
   <section class="section">
     <div class="container">
       <h2 class="section-title">Latest Announcements</h2>
       <p class="section-subtitle">Important updates from the school administration.</p>
-
       <div id="announcementsGrid" class="card-grid">
-        <div class="state-message">
-          <span class="spinner"></span> Loading announcements…
-        </div>
+        <div class="state-message"><span class="spinner"></span> Loading announcements…</div>
       </div>
     </div>
   </section>
 
-  <!-- ============================
-       NEWS / POSTS SECTION
-       (loaded from PostBase)
-       ============================ -->
   <section class="section section-alt">
     <div class="container">
       <h2 class="section-title">School News & Posts</h2>
       <p class="section-subtitle">Stories, events, and highlights from our school community.</p>
-
       <div id="postsGrid" class="card-grid">
-        <div class="state-message">
-          <span class="spinner"></span> Loading posts…
-        </div>
+        <div class="state-message"><span class="spinner"></span> Loading posts…</div>
       </div>
     </div>
   </section>
 
-  <!-- ============================
-       FOOTER
-       ============================ -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -510,11 +328,12 @@
     </div>
   </footer>
 
-  <!-- ============================
-       JAVASCRIPT (Non-module)
-       Navigation toggle — must be in a regular script
-       so the onclick in the HTML can find it.
-       ============================ -->
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">✕</button>
+    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()" />
+  </div>
+
   <script>
     function toggleNav() {
       document.getElementById('navLinks').classList.toggle('open');
@@ -524,16 +343,30 @@
         document.getElementById('navLinks').classList.remove('open');
       });
     });
+
+    // ---------- Lightbox (global) ----------
+    function openLightbox(url, event) {
+      if (event) event.stopPropagation();
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightboxImg');
+      img.src = url;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(event) {
+      if (event && event.target && event.target.tagName === 'IMG' &&
+          event.target.id === 'lightboxImg') return;
+      const lb = document.getElementById('lightbox');
+      lb.classList.remove('open');
+      document.getElementById('lightboxImg').src = '';
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
   </script>
 
-  <!-- ============================
-       JAVASCRIPT (Module)
-       PostBase SDK — loads from CDN, no installation needed.
-       ============================ -->
   <script type="module">
-    // ----------------------------
-    // POSTBASE SDK SETUP
-    // ----------------------------
     import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
 
     const postbase = createClient(
@@ -542,31 +375,50 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
-    // ----------------------------
-    // HELPER: Escape HTML
-    // Prevents malicious content from being injected via the database.
-    // ----------------------------
     function escapeHtml(text) {
-      if (!text) return '';
+      if (text === null || text === undefined) return '';
       const div = document.createElement('div');
-      div.textContent = text;
+      div.textContent = String(text);
       return div.innerHTML;
     }
-
-    // ----------------------------
-    // HELPER: Format date
-    // ----------------------------
     function formatDate(iso) {
       if (!iso) return '';
       const d = new Date(iso);
-      return d.toLocaleDateString('en-ZA', {
-        year: 'numeric', month: 'long', day: 'numeric'
-      });
+      return d.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    function galleryClass(n) {
+      if (n === 1) return 'card-gallery gallery-1';
+      if (n === 2) return 'card-gallery gallery-2';
+      return 'card-gallery';
+    }
+    function renderGallery(media) {
+      if (!media || media.length === 0) return '';
+      const items = media.map(m =>
+        `<img src="${escapeHtml(m.file_url)}" alt="" loading="lazy"
+              onclick="openLightbox('${escapeHtml(m.file_url).replace(/'/g, "\\'")}', event)" />`
+      ).join('');
+      return `<div class="${galleryClass(media.length)}">${items}</div>`;
     }
 
-    // ----------------------------
-    // LOAD ANNOUNCEMENTS FROM POSTBASE
-    // ----------------------------
+    async function fetchMediaFor(parentColumn, ids) {
+      if (!ids || ids.length === 0) return {};
+      const { data, error } = await postbase
+        .from('media')
+        .select('id, file_url, ' + parentColumn)
+        .in(parentColumn, ids);
+      if (error) {
+        console.error('Media fetch error:', error);
+        return {};
+      }
+      const grouped = {};
+      (data || []).forEach(m => {
+        const key = m[parentColumn];
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(m);
+      });
+      return grouped;
+    }
+
     async function loadAnnouncements() {
       const grid = document.getElementById('announcementsGrid');
 
@@ -582,25 +434,27 @@
         grid.innerHTML = '<div class="state-message">⚠️ Could not load announcements. Please try again later.</div>';
         return;
       }
-
       if (!data || data.length === 0) {
         grid.innerHTML = '<div class="state-message">No announcements yet. Check back soon!</div>';
         return;
       }
 
-      grid.innerHTML = data.map(item => `
-        <article class="card fade-in">
-          <span class="card-badge">Announcement</span>
-          <h3>${escapeHtml(item.title)}</h3>
-          <p>${escapeHtml(item.content)}</p>
-          <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
-        </article>
-      `).join('');
+      const mediaByAnnouncement = await fetchMediaFor('announcement_id', data.map(a => a.id));
+
+      grid.innerHTML = data.map(item => {
+        const media = mediaByAnnouncement[item.id] || [];
+        return `
+          <article class="card fade-in">
+            <span class="card-badge">Announcement</span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.content)}</p>
+            ${renderGallery(media)}
+            <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+          </article>
+        `;
+      }).join('');
     }
 
-    // ----------------------------
-    // LOAD POSTS FROM POSTBASE
-    // ----------------------------
     async function loadPosts() {
       const grid = document.getElementById('postsGrid');
 
@@ -616,25 +470,27 @@
         grid.innerHTML = '<div class="state-message">⚠️ Could not load posts. Please try again later.</div>';
         return;
       }
-
       if (!data || data.length === 0) {
         grid.innerHTML = '<div class="state-message">No posts yet. Check back soon!</div>';
         return;
       }
 
-      grid.innerHTML = data.map(item => `
-        <article class="card fade-in">
-          <div class="card-icon">📰</div>
-          <h3>${escapeHtml(item.title)}</h3>
-          <p>${escapeHtml(item.content)}</p>
-          <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
-        </article>
-      `).join('');
+      const mediaByPost = await fetchMediaFor('post_id', data.map(p => p.id));
+
+      grid.innerHTML = data.map(item => {
+        const media = mediaByPost[item.id] || [];
+        return `
+          <article class="card fade-in">
+            <div class="card-icon">📰</div>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.content)}</p>
+            ${renderGallery(media)}
+            <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+          </article>
+        `;
+      }).join('');
     }
 
-    // ----------------------------
-    // INITIAL LOAD
-    // ----------------------------
     loadAnnouncements();
     loadPosts();
   </script>
