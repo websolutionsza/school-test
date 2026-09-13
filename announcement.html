@@ -3,36 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Greenwood High School Admin</title>
-  <!-- ⬇ THIS IS THE TURNSTILE SCRIPT TAG ⬇ -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  <!-- ⬆ THIS IS THE TURNSTILE SCRIPT TAG ⬆ -->
+  <title>Announcements — Greenwood High School</title>
+  <meta name="description" content="All announcements from Greenwood High School.">
 
   <style>
     :root {
       --primary: #1a56db;
       --primary-dark: #1e3a8a;
       --primary-light: #dbeafe;
-      --danger: #dc2626;
-      --danger-dark: #991b1b;
-      --danger-light: #fee2e2;
-      --success: #16a34a;
-      --success-light: #dcfce7;
       --accent: #f59e0b;
       --text-dark: #111827;
       --text-medium: #4b5563;
       --text-light: #9ca3af;
       --bg-white: #ffffff;
       --bg-light: #f8fafc;
-      --bg-hover: #f1f5f9;
       --border: #e5e7eb;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
       --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
       --radius-sm: 8px;
       --radius-md: 14px;
-      --radius-lg: 20px;
+      --radius-lg: 22px;
       --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --max-width: 1200px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -42,583 +35,459 @@
       background: var(--bg-light);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
     }
+    img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
-    button { font-family: inherit; }
-    input, textarea, select { font-family: inherit; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
-    .admin-header {
+    /* HEADER */
+    .site-header {
       background: var(--bg-white);
       border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
-    .admin-header-inner {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.3px; }
+    .logo-mark {
+      width: 40px; height: 40px; background: var(--primary); color: #fff;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; font-weight: 800;
     }
-    .admin-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .admin-brand .logo-mark {
-      width: 40px; height: 40px;
-      background: var(--primary); color: #fff;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.15rem; font-weight: 800; flex-shrink: 0;
-    }
-    .admin-brand-text { display: flex; flex-direction: column; min-width: 0; }
-    .admin-brand-text .title {
-      font-weight: 800; font-size: 1.05rem; color: var(--primary);
-      letter-spacing: -0.3px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .admin-brand-text .subtitle {
-      font-size: 0.75rem; color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;
-    }
-    .admin-header-actions { display: flex; align-items: center; gap: 10px; }
-    .user-chip { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; padding-right: 8px; }
-    .user-chip .user-name { font-weight: 700; font-size: 0.85rem; }
-    .user-chip .user-email { font-size: 0.75rem; color: var(--text-light); }
-    .icon-btn {
-      display: inline-flex; align-items: center; gap: 6px;
+    .nav-links { display: flex; gap: 6px; list-style: none; align-items: center; }
+    .nav-links a {
       padding: 9px 16px; border-radius: var(--radius-sm);
-      font-size: 0.85rem; font-weight: 600;
-      border: 1px solid var(--border);
-      background: var(--bg-white); color: var(--text-medium);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      font-size: 0.95rem; font-weight: 600; color: var(--text-medium);
+      transition: background 0.2s, color 0.2s;
     }
-    .icon-btn:hover { background: var(--bg-hover); color: var(--text-dark); }
-    .icon-btn.danger { color: var(--danger); border-color: #fecaca; }
-    .icon-btn.danger:hover { background: var(--danger-light); color: var(--danger-dark); }
-    @media (max-width: 640px) {
-      .user-chip { display: none; }
-      .admin-brand-text .title { font-size: 0.95rem; }
+    .nav-links a:hover, .nav-links a.active { background: var(--primary-light); color: var(--primary-dark); }
+    .nav-links .admin-link { color: var(--text-light); font-size: 0.85rem; }
+    .nav-toggle {
+      display: none; background: none; border: none;
+      font-size: 1.5rem; cursor: pointer; color: var(--text-dark);
+      padding: 8px; border-radius: var(--radius-sm);
+    }
+    .nav-toggle:hover { background: var(--bg-light); }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none; position: absolute; top: 72px; left: 0; right: 0;
+        background: var(--bg-white); flex-direction: column; align-items: stretch;
+        padding: 12px 20px 20px; border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 16px; }
     }
 
-    .admin-main { max-width: 1400px; margin: 0 auto; padding: 32px 24px 80px; }
+    /* HERO */
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff; padding: 64px 0 56px; text-align: center;
+    }
+    .page-hero h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    .page-hero p { font-size: 1.05rem; opacity: 0.92; max-width: 560px; margin: 0 auto; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    .stat-card {
-      background: var(--bg-white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 22px 24px;
-      display: flex; align-items: center; gap: 16px;
-    }
-    .stat-icon {
-      width: 48px; height: 48px; border-radius: 12px;
-      background: var(--primary-light); color: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; flex-shrink: 0;
-    }
-    .stat-icon.accent { background: #fef3c7; color: #b45309; }
-    .stat-icon.success { background: var(--success-light); color: var(--success); }
-    .stat-info { min-width: 0; }
-    .stat-value {
-      font-size: 1.6rem; font-weight: 800; line-height: 1;
-      color: var(--text-dark); letter-spacing: -0.5px;
-    }
-    .stat-label { font-size: 0.82rem; color: var(--text-medium); margin-top: 4px; font-weight: 600; }
+    /* SECTIONS */
+    .section { padding: 56px 0 72px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
 
-    .tabs {
-      display: flex; gap: 6px;
-      background: var(--bg-white); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 5px;
-      margin-bottom: 24px; overflow-x: auto;
-    }
-    .tab-btn {
-      padding: 10px 20px; border-radius: 6px;
-      font-size: 0.92rem; font-weight: 700;
-      color: var(--text-medium); background: transparent;
-      border: none; cursor: pointer; white-space: nowrap;
-      transition: background 0.15s, color 0.15s;
-    }
-    .tab-btn:hover { background: var(--bg-hover); color: var(--text-dark); }
-    .tab-btn.active { background: var(--primary); color: #fff; }
-
-    .admin-section { display: none; }
-    .admin-section.active { display: block; }
-
-    .section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
-    }
-    .section-header h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.3px; }
-    .section-header p { font-size: 0.88rem; color: var(--text-medium); margin-top: 2px; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 11px 22px; border-radius: var(--radius-sm);
-      font-weight: 700; font-size: 0.9rem;
-      cursor: pointer; border: none; font-family: inherit;
-      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-dark);
-      box-shadow: 0 6px 18px rgba(26, 86, 219, 0.28);
-    }
-    .btn-secondary {
-      background: var(--bg-white); color: var(--text-dark);
-      border: 1px solid var(--border);
-    }
-    .btn-secondary:hover { background: var(--bg-hover); }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-danger:hover:not(:disabled) { background: var(--danger-dark); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-sm { padding: 7px 14px; font-size: 0.82rem; font-weight: 700; }
-
-    .form-panel {
+    /* CARDS */
+    .card {
       background: var(--bg-white);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 28px;
-      margin-bottom: 24px;
-      display: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+      display: flex; flex-direction: column; min-height: 200px;
     }
-    .form-panel.open { display: block; }
-    .form-panel h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.2px; }
-    .form-grid { display: grid; gap: 18px; }
-    .form-group label {
-      display: block; font-size: 0.85rem; font-weight: 700;
-      color: var(--text-dark); margin-bottom: 6px;
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
+    .card h3 {
+      font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;
+      color: var(--text-dark); line-height: 1.35;
     }
-    .form-group input[type="text"],
-    .form-group textarea {
-      width: 100%; padding: 12px 14px;
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      font-size: 0.95rem; font-family: inherit;
-      background: var(--bg-white);
-      transition: border-color 0.15s, box-shadow 0.15s;
-      color: var(--text-dark);
+    .card p {
+      font-size: 0.95rem; color: var(--text-medium);
+      line-height: 1.7; flex: 1;
+      white-space: pre-wrap;
     }
-    .form-group textarea {
-      resize: vertical; min-height: 130px; line-height: 1.6;
+    .card-meta {
+      font-size: 0.82rem; color: var(--text-light);
+      margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px; font-weight: 500;
     }
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none; border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15);
+    .card-badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 5px 11px; border-radius: 999px;
+      background: var(--accent); color: #fff;
+      margin-bottom: 14px; align-self: flex-start;
     }
-    .form-group .hint { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
-    .form-checkbox {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.9rem; color: var(--text-dark); font-weight: 600;
-    }
-    .form-checkbox input {
-      width: 18px; height: 18px;
-      accent-color: var(--primary); cursor: pointer;
-    }
-    .form-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
 
-    .upload-area {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      background: var(--bg-light);
-    }
-    .upload-area:hover, .upload-area.dragover {
-      border-color: var(--primary);
-      background: var(--primary-light);
-    }
-    .upload-area .upload-icon { font-size: 2rem; margin-bottom: 6px; display: block; }
-    .upload-area .upload-text { font-weight: 700; color: var(--text-dark); font-size: 0.95rem; }
-    .upload-area .upload-hint { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
-    .upload-area.disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .previews {
+    /* MEDIA GRID (images + videos) */
+    .card-media {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      gap: 12px;
-      margin-top: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 6px;
+      margin-top: 16px;
     }
-    .preview-item {
-      position: relative;
-      aspect-ratio: 1;
-      border-radius: var(--radius-sm);
-      overflow: hidden;
+    .card-media img,
+    .card-media video {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
       border: 1px solid var(--border);
+    }
+    .card-media img:hover,
+    .card-media video:hover { transform: scale(1.03); opacity: 0.92; }
+    .card-media.gallery-1 { grid-template-columns: 1fr; }
+    .card-media.gallery-1 img,
+    .card-media.gallery-1 video { aspect-ratio: 16 / 10; border-radius: 8px; }
+    .card-media.gallery-2 { grid-template-columns: 1fr 1fr; }
+    .card-media.gallery-2 img,
+    .card-media.gallery-2 video { aspect-ratio: 1; }
+
+    /* ATTACHMENTS (audio, PDF, docs) */
+    .card-attachments {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+    .attachment-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
       background: var(--bg-light);
-      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
     }
-    .preview-item img,
-    .preview-item video {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
+    .attachment-item .attach-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
     }
-    .preview-item .file-icon {
-      font-size: 2.5rem;
-      color: var(--text-light);
+    .attachment-item .attach-body {
+      flex: 1;
+      min-width: 0;
     }
-    .preview-item .preview-name {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      font-size: 0.65rem;
-      padding: 3px 6px;
+    .attachment-item .attach-name {
+      font-weight: 700;
+      color: var(--text-dark);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-align: center;
     }
-    .preview-item .preview-tag {
-      position: absolute;
-      top: 6px; left: 6px;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      font-size: 0.62rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 999px;
+    .attachment-item .attach-type {
+      font-size: 0.72rem;
+      color: var(--text-light);
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
-    .preview-remove {
-      position: absolute;
-      top: 6px; right: 6px;
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      border: none;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-      transition: background 0.15s;
-      z-index: 3;
-    }
-    .preview-remove:hover { background: var(--danger); }
-
-    .turnstile-box {
-      background: var(--bg-light);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px;
+    .attachment-actions {
       display: flex;
-      justify-content: center;
-      min-height: 68px;
-      align-items: center;
-    }
-    .turnstile-hint {
-      font-size: 0.78rem;
-      color: var(--text-light);
-      margin-top: 6px;
-      text-align: center;
-    }
-
-    .items-list { display: grid; gap: 12px; }
-    .item-card {
-      background: var(--bg-white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 20px 22px;
-      transition: box-shadow 0.15s, border-color 0.15s;
-    }
-    .item-card:hover { box-shadow: var(--shadow-md); border-color: #cbd5e1; }
-    .item-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 16px; margin-bottom: 10px;
-    }
-    .item-title {
-      font-size: 1.05rem; font-weight: 700;
-      color: var(--text-dark); line-height: 1.35;
-      word-break: break-word;
-    }
-    .item-status {
-      display: inline-block; font-size: 0.68rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.6px;
-      padding: 4px 10px; border-radius: 999px; flex-shrink: 0;
-    }
-    .item-status.published { background: var(--success-light); color: var(--success); }
-    .item-status.draft { background: #fef3c7; color: #b45309; }
-    .item-body {
-      font-size: 0.92rem; color: var(--text-medium);
-      line-height: 1.65; margin-bottom: 14px;
-      white-space: pre-wrap; word-break: break-word;
-    }
-    .item-media-strip {
-      display: flex; gap: 6px; margin-bottom: 14px;
-      overflow-x: auto; padding-bottom: 4px;
-      flex-wrap: wrap;
-    }
-    .item-media-strip .media-thumb {
-      width: 56px; height: 56px;
-      border-radius: 6px;
-      object-fit: cover;
+      gap: 6px;
       flex-shrink: 0;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem;
-      background: var(--bg-light);
-      color: var(--text-light);
     }
-    .item-footer {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 12px; flex-wrap: wrap;
+    .attachment-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .item-date { font-size: 0.8rem; color: var(--text-light); font-weight: 500; }
-    .item-actions { display: flex; gap: 8px; }
+    .attachment-btn:hover { opacity: 0.85; }
+    .attachment-btn.view { background: var(--primary); color: #fff; }
+    .attachment-btn.download { background: var(--bg-white); color: var(--text-dark); border: 1px solid var(--border); }
 
-    .state-box {
-      background: var(--bg-white);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-md);
-      padding: 48px 24px;
-      text-align: center;
-      color: var(--text-medium);
-      font-size: 0.95rem;
-    }
-    .state-box .icon { display: block; font-size: 2.5rem; margin-bottom: 10px; }
-    .state-box.error { background: #fef2f2; border-color: #fecaca; color: var(--danger); }
-
-    .toast-container {
-      position: fixed; top: 88px; right: 24px;
-      z-index: 200;
-      display: flex; flex-direction: column; gap: 10px;
-      max-width: 340px;
-    }
-    .toast {
-      background: var(--text-dark); color: #fff;
-      padding: 14px 20px; border-radius: var(--radius-sm);
-      font-size: 0.9rem; font-weight: 600;
-      box-shadow: var(--shadow-lg);
-      animation: slideIn 0.25s ease;
-    }
-    .toast.success { background: var(--success); }
-    .toast.error { background: var(--danger); }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .loading-overlay {
+    /* LIGHTBOX */
+    .lightbox {
+      display: none;
       position: fixed; inset: 0;
-      background: var(--bg-light);
-      z-index: 500;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 16px;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 999;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      cursor: zoom-out;
+      animation: fadeIn 0.2s ease;
     }
-    .loading-overlay.hidden { display: none; }
-    .spinner-large {
+    .lightbox.open { display: flex; }
+    .lightbox img,
+    .lightbox video {
+      max-width: 100%; max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      cursor: default;
+    }
+    .lightbox .close-btn {
+      position: absolute; top: 16px; right: 20px;
       width: 42px; height: 42px;
-      border: 3px solid var(--border);
-      border-top-color: var(--primary);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: none; font-size: 1.4rem;
+      cursor: pointer; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .lightbox .close-btn:hover { background: rgba(255,255,255,0.3); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* PDF VIEWER MODAL */
+    .pdf-viewer {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 1000;
+      flex-direction: column;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    .pdf-viewer.open { display: flex; }
+    .pdf-viewer-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 12px;
+      color: #fff;
+    }
+    .pdf-viewer-header .pdf-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 12px;
+    }
+    .pdf-viewer-close {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: none; font-size: 1.4rem;
+      cursor: pointer; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .pdf-viewer-close:hover { background: rgba(255,255,255,0.3); }
+    .pdf-viewer iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .pdf-viewer-actions {
+      padding-top: 12px;
+      display: flex; gap: 10px; justify-content: flex-end;
+    }
+
+    /* STATE MESSAGES */
+    .state-message {
+      text-align: center; padding: 60px 20px;
+      color: var(--text-medium); font-size: 0.98rem;
+      grid-column: 1 / -1;
+    }
+    .state-message .spinner {
+      display: inline-block; width: 22px; height: 22px;
+      border: 2px solid var(--border); border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      margin-right: 10px; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-overlay p { font-size: 0.9rem; color: var(--text-medium); font-weight: 600; }
+    .state-message .icon { display: block; font-size: 2.5rem; margin-bottom: 12px; }
 
-    @media (max-width: 640px) {
-      .admin-main { padding: 20px 16px 60px; }
-      .admin-header-inner { padding: 0 16px; height: 64px; }
-      .form-panel { padding: 22px 18px; }
-      .item-card { padding: 18px; }
-      .toast-container { right: 12px; left: 12px; max-width: none; }
-      .stat-value { font-size: 1.4rem; }
-      .previews { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+    /* FOOTER */
+    .site-footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 28px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 36px; margin-bottom: 40px; }
+    .footer-col h4 { color: #fff; font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.2px; }
+    .footer-col p, .footer-col a {
+      font-size: 0.9rem; line-height: 1.9; color: #94a3b8;
+      display: block; transition: color 0.15s;
     }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #1e293b; padding-top: 22px;
+      text-align: center; font-size: 0.82rem; color: #64748b;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .page-hero { padding: 48px 0 40px; }
+      .page-hero h1 { font-size: 1.7rem; }
+      .page-hero p { font-size: 0.98rem; }
+      .section { padding: 40px 0 56px; }
+      .card { padding: 22px; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ANIMATIONS */
+    .fade-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .fade-in:nth-child(2) { animation-delay: 0.06s; }
+    .fade-in:nth-child(3) { animation-delay: 0.12s; }
+    .fade-in:nth-child(4) { animation-delay: 0.18s; }
+    .fade-in:nth-child(5) { animation-delay: 0.24s; }
+    .fade-in:nth-child(6) { animation-delay: 0.30s; }
   </style>
 </head>
 <body>
 
-  <div id="loadingOverlay" class="loading-overlay">
-    <div class="spinner-large"></div>
-    <p>Checking your session…</p>
-  </div>
-
-  <header class="admin-header">
-    <div class="admin-header-inner">
-      <div class="admin-brand">
-        <div class="logo-mark">G</div>
-        <div class="admin-brand-text">
-          <span class="title">Greenwood High</span>
-          <span class="subtitle">Admin Dashboard</span>
-        </div>
-      </div>
-      <div class="admin-header-actions">
-        <div class="user-chip">
-          <span class="user-name" id="userName">Loading…</span>
-          <span class="user-email" id="userEmail"></span>
-        </div>
-        <a href="index.html" class="icon-btn" title="View public site">🌐 Site</a>
-        <button id="logoutBtn" class="icon-btn danger" title="Sign out">↩ Logout</button>
-      </div>
+  <!-- ============================
+       HEADER / NAV
+       ============================ -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav-bar">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">G</span>
+          Greenwood High
+        </a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="announcement.html" class="active">Announcements</a></li>
+          <li><a href="contacts.html">Contact</a></li>
+          <li><a href="admin-login.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
     </div>
   </header>
 
-  <main class="admin-main">
+  <!-- ============================
+       PAGE HERO
+       ============================ -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>School Announcements</h1>
+      <p>All the latest updates, notices, and important information from the school administration.</p>
+    </div>
+  </section>
 
-    <section class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">📢</div>
-        <div class="stat-info">
-          <div class="stat-value" id="statAnnouncements">—</div>
-          <div class="stat-label">Announcements</div>
+  <!-- ============================
+       ANNOUNCEMENTS LIST
+       ============================ -->
+  <section class="section">
+    <div class="container">
+      <div id="announcementsGrid" class="card-grid">
+        <div class="state-message"><span class="spinner"></span> Loading announcements…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       FOOTER
+       ============================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Greenwood High School</h4>
+          <p>123 School Road<br>Greenwood Estate<br>City, 00000</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="announcement.html">Announcements</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>📞 +27 00 000 0000</p>
+          <p>✉️ info@greenwoodhigh.edu</p>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon accent">📰</div>
-        <div class="stat-info">
-          <div class="stat-value" id="statPosts">—</div>
-          <div class="stat-label">Posts</div>
-        </div>
+      <div class="footer-bottom">
+        &copy; 2026 Greenwood High School. All rights reserved.
       </div>
-      <div class="stat-card">
-        <div class="stat-icon success">📁</div>
-        <div class="stat-info">
-          <div class="stat-value" id="statMedia">—</div>
-          <div class="stat-label">Media files</div>
-        </div>
-      </div>
-    </section>
+    </div>
+  </footer>
 
-    <nav class="tabs">
-      <button class="tab-btn active" data-tab="announcements">📢 Announcements</button>
-      <button class="tab-btn" data-tab="posts">📰 Posts</button>
-    </nav>
+  <!-- Lightbox for images/videos -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">✕</button>
+    <div id="lightboxContent"></div>
+  </div>
 
-    <!-- ANNOUNCEMENTS -->
-    <section id="section-announcements" class="admin-section active">
-      <div class="section-header">
-        <div>
-          <h2>Announcements</h2>
-          <p>Short updates shown on the home page and announcements page.</p>
-        </div>
-        <button id="newAnnouncementBtn" class="btn btn-primary">+ New Announcement</button>
-      </div>
+  <!-- PDF viewer modal -->
+  <div id="pdfViewer" class="pdf-viewer">
+    <div class="pdf-viewer-header">
+      <span class="pdf-title" id="pdfTitle">Document</span>
+      <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
+    </div>
+    <iframe id="pdfFrame" src=""></iframe>
+    <div class="pdf-viewer-actions">
+      <button class="attachment-btn download" onclick="downloadCurrentPdf()">⬇ Download</button>
+    </div>
+  </div>
 
-      <div id="announcementFormPanel" class="form-panel">
-        <h3 id="announcementFormTitle">New Announcement</h3>
-        <form id="announcementForm">
-          <input type="hidden" id="announcementId" />
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="announcementTitle">Title</label>
-              <input type="text" id="announcementTitle" required maxlength="200" placeholder="e.g. School reopens on 15 January" />
-            </div>
-            <div class="form-group">
-              <label for="announcementContent">Content</label>
-              <textarea id="announcementContent" required placeholder="Write the full announcement here…"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Attach files (any type, up to 10)</label>
-              <div class="upload-area" id="announcementUploadArea" onclick="document.getElementById('announcementFileInput').click()">
-                <span class="upload-icon">📎</span>
-                <div class="upload-text">Click to choose files</div>
-                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files</div>
-              </div>
-              <input type="file" id="announcementFileInput" multiple style="display:none" />
-              <div id="announcementPreviews" class="previews"></div>
-            </div>
-            <div class="form-group">
-              <label>Verify you're human</label>
-              <div class="turnstile-box">
-                <div id="announcementTurnstile"></div>
-              </div>
-              <div class="turnstile-hint">Required by the file host (SwiftCDN) before uploading files.</div>
-            </div>
-            <div class="form-group">
-              <label class="form-checkbox">
-                <input type="checkbox" id="announcementPublished" checked />
-                Publish immediately (visible on public site)
-              </label>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" id="announcementSubmitBtn">Create Announcement</button>
-            <button type="button" class="btn btn-secondary" id="announcementCancelBtn">Cancel</button>
-          </div>
-        </form>
-      </div>
+  <script>
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
 
-      <div id="announcementsList" class="items-list">
-        <div class="state-box"><span class="icon">⏳</span>Loading announcements…</div>
-      </div>
-    </section>
+    // Lightbox
+    function openLightbox(url, type, event) {
+      if (event) event.stopPropagation();
+      const lb = document.getElementById('lightbox');
+      const content = document.getElementById('lightboxContent');
+      if (type === 'video') {
+        content.innerHTML = `<video src="${url}" controls autoplay></video>`;
+      } else {
+        content.innerHTML = `<img src="${url}" alt="" />`;
+      }
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(event) {
+      if (event && event.target && event.target.closest('#lightboxContent')) {
+        if (event.target.tagName === 'VIDEO' || event.target.tagName === 'IMG') return;
+      }
+      const lb = document.getElementById('lightbox');
+      lb.classList.remove('open');
+      document.getElementById('lightboxContent').innerHTML = '';
+      document.body.style.overflow = '';
+    }
 
-    <!-- POSTS -->
-    <section id="section-posts" class="admin-section">
-      <div class="section-header">
-        <div>
-          <h2>Posts</h2>
-          <p>Longer articles, stories, and news items.</p>
-        </div>
-        <button id="newPostBtn" class="btn btn-primary">+ New Post</button>
-      </div>
+    // PDF viewer
+    let currentPdfUrl = '';
+    function openPdfViewer(url, name) {
+      currentPdfUrl = url;
+      document.getElementById('pdfTitle').textContent = name || 'Document';
+      document.getElementById('pdfFrame').src = url;
+      document.getElementById('pdfViewer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePdfViewer() {
+      document.getElementById('pdfViewer').classList.remove('open');
+      document.getElementById('pdfFrame').src = '';
+      currentPdfUrl = '';
+      document.body.style.overflow = '';
+    }
+    function downloadCurrentPdf() {
+      if (!currentPdfUrl) return;
+      const a = document.createElement('a');
+      a.href = currentPdfUrl;
+      a.download = 'document.pdf';
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
 
-      <div id="postFormPanel" class="form-panel">
-        <h3 id="postFormTitle">New Post</h3>
-        <form id="postForm">
-          <input type="hidden" id="postId" />
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="postTitle">Title</label>
-              <input type="text" id="postTitle" required maxlength="200" placeholder="e.g. Debate team wins regional championship" />
-            </div>
-            <div class="form-group">
-              <label for="postContent">Content</label>
-              <textarea id="postContent" required placeholder="Write the full article here…"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Attach files (any type, up to 10)</label>
-              <div class="upload-area" id="postUploadArea" onclick="document.getElementById('postFileInput').click()">
-                <span class="upload-icon">📎</span>
-                <div class="upload-text">Click to choose files</div>
-                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files</div>
-              </div>
-              <input type="file" id="postFileInput" multiple style="display:none" />
-              <div id="postPreviews" class="previews"></div>
-            </div>
-            <div class="form-group">
-              <label>Verify you're human</label>
-              <div class="turnstile-box">
-                <div id="postTurnstile"></div>
-              </div>
-              <div class="turnstile-hint">Required by the file host (SwiftCDN) before uploading files.</div>
-            </div>
-            <div class="form-group">
-              <label class="form-checkbox">
-                <input type="checkbox" id="postPublished" checked />
-                Publish immediately (visible on public site)
-              </label>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" id="postSubmitBtn">Create Post</button>
-            <button type="button" class="btn btn-secondary" id="postCancelBtn">Cancel</button>
-          </div>
-        </form>
-      </div>
-
-      <div id="postsList" class="items-list">
-        <div class="state-box"><span class="icon">⏳</span>Loading posts…</div>
-      </div>
-    </section>
-
-  </main>
-
-  <div id="toastContainer" class="toast-container"></div>
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeLightbox(); closePdfViewer(); }
+    });
+  </script>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
@@ -629,818 +498,172 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
-    // SwiftCDN configuration
-    const SWIFT_API_KEY = 'sk_288c109051c5fcd77f6ac796069e1de737fc673900a3e355';
-    const SWIFT_UPLOAD_URL = 'https://swift.subnp.com/api/files';
-    const MAX_FILES = 10;
-
-    // Cloudflare Turnstile site key (required by SwiftCDN)
-    const TURNSTILE_SITE_KEY = '0x4AAAAAAEy7spRgcgKt1pQE';
-
-    let currentUser = null;
-    let announcementsCache = [];
-    let postsCache = [];
-
-    // Turnstile tokens
-    let announcementTurnstileToken = null;
-    let postTurnstileToken = null;
-    // Turnstile widget IDs (returned by turnstile.render)
-    let announcementTurnstileWidgetId = null;
-    let postTurnstileWidgetId = null;
-
-    const formState = {
-      announcement: { existing: [], removed: [], pending: [] },
-      post:         { existing: [], removed: [], pending: [] }
-    };
-
-    // ---------- helpers ----------
     function escapeHtml(text) {
       if (text === null || text === undefined) return '';
       const div = document.createElement('div');
       div.textContent = String(text);
       return div.innerHTML;
     }
+
     function formatDate(iso) {
       if (!iso) return '';
       const d = new Date(iso);
       return d.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
     }
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const el = document.createElement('div');
-      el.className = 'toast ' + type;
-      el.textContent = message;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.style.transition = 'opacity 0.3s';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 300);
-      }, 3500);
-    }
-    function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
 
-    function getFileTypeFromMime(mimeType, filename) {
-      if (!mimeType) mimeType = '';
-      if (mimeType.startsWith('image/')) return 'image';
-      if (mimeType.startsWith('video/')) return 'video';
-      if (mimeType.startsWith('audio/')) return 'audio';
-      if (mimeType === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) return 'pdf';
-      return 'document';
-    }
+    function renderMediaCard(media) {
+      if (!media || media.length === 0) return '';
 
-    function getFileIcon(type) {
-      if (type === 'image') return '🖼️';
-      if (type === 'video') return '🎬';
-      if (type === 'audio') return '🎵';
-      if (type === 'pdf') return '📄';
-      return '📎';
-    }
+      const imagesAndVideos = media.filter(m => m.file_type === 'image' || m.file_type === 'video');
+      const audios = media.filter(m => m.file_type === 'audio');
+      const pdfs = media.filter(m => m.file_type === 'pdf');
+      const docs = media.filter(m => m.file_type === 'document');
 
-    // ---------- Turnstile ----------
-    // Wait for Cloudflare's script to load (it may arrive after our module runs).
-    function waitForTurnstile() {
-      return new Promise((resolve) => {
-        if (typeof turnstile !== 'undefined' && turnstile.render) {
-          resolve(true);
-          return;
-        }
-        let attempts = 0;
-        const interval = setInterval(() => {
-          attempts++;
-          if (typeof turnstile !== 'undefined' && turnstile.render) {
-            clearInterval(interval);
-            resolve(true);
-          } else if (attempts > 100) { // 10 seconds
-            clearInterval(interval);
-            resolve(false);
+      let html = '';
+
+      // Images and videos
+      if (imagesAndVideos.length > 0) {
+        const cls = imagesAndVideos.length === 1 ? 'card-media gallery-1'
+                 : imagesAndVideos.length === 2 ? 'card-media gallery-2'
+                 : 'card-media';
+        const items = imagesAndVideos.map(m => {
+          const url = escapeHtml(m.file_url).replace(/'/g, "\\'");
+          if (m.file_type === 'video') {
+            return `<video src="${escapeHtml(m.file_url)}" muted preload="metadata"
+              onclick="openLightbox('${url}', 'video', event)"></video>`;
           }
-        }, 100);
-      });
-    }
-
-    async function initTurnstileWidgets() {
-      const loaded = await waitForTurnstile();
-      if (!loaded) {
-        console.error('Turnstile failed to load after 10 seconds.');
-        showToast('Cloudflare verification script failed to load. Please refresh the page.', 'error');
-        return;
+          return `<img src="${escapeHtml(m.file_url)}" alt="" loading="lazy"
+            onclick="openLightbox('${url}', 'image', event)" />`;
+        }).join('');
+        html += `<div class="${cls}">${items}</div>`;
       }
-      try {
-        announcementTurnstileWidgetId = turnstile.render('#announcementTurnstile', {
-          sitekey: TURNSTILE_SITE_KEY,
-          theme: 'light',
-          callback: (token) => { announcementTurnstileToken = token; },
-          'expired-callback': () => { announcementTurnstileToken = null; },
-          'error-callback': () => {
-            announcementTurnstileToken = null;
-            showToast('Turnstile could not load. Please refresh.', 'error');
-          }
+
+      // Audio
+      if (audios.length > 0) {
+        html += '<div class="card-attachments">';
+        audios.forEach(m => {
+          html += `
+            <div class="attachment-item">
+              <span class="attach-icon">🎵</span>
+              <div class="attach-body">
+                <div class="attach-name">Audio file</div>
+                <audio controls src="${escapeHtml(m.file_url)}" style="width:100%; margin-top:4px;"></audio>
+              </div>
+            </div>`;
         });
-        postTurnstileWidgetId = turnstile.render('#postTurnstile', {
-          sitekey: TURNSTILE_SITE_KEY,
-          theme: 'light',
-          callback: (token) => { postTurnstileToken = token; },
-          'expired-callback': () => { postTurnstileToken = null; },
-          'error-callback': () => {
-            postTurnstileToken = null;
-            showToast('Turnstile could not load. Please refresh.', 'error');
-          }
+        html += '</div>';
+      }
+
+      // PDFs
+      if (pdfs.length > 0) {
+        html += '<div class="card-attachments">';
+        pdfs.forEach(m => {
+          const name = (m.file_url || '').split('/').pop().substring(0, 30) || 'Document.pdf';
+          const url = escapeHtml(m.file_url).replace(/'/g, "\\'");
+          const safeName = escapeHtml(name).replace(/'/g, "\\'");
+          html += `
+            <div class="attachment-item">
+              <span class="attach-icon">📄</span>
+              <div class="attach-body">
+                <div class="attach-name">${escapeHtml(name)}</div>
+                <div class="attach-type">PDF Document</div>
+              </div>
+              <div class="attachment-actions">
+                <button class="attachment-btn view"
+                  onclick="openPdfViewer('${url}', '${safeName}')">View</button>
+                <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank" rel="noopener">Download</a>
+              </div>
+            </div>`;
         });
-        console.log('Turnstile widgets rendered.');
-      } catch (err) {
-        console.error('Turnstile init error:', err);
+        html += '</div>';
       }
-    }
 
-    function resetTurnstile(kind) {
-      try {
-        if (typeof turnstile === 'undefined') return;
-        if (kind === 'announcement') {
-          announcementTurnstileToken = null;
-          if (announcementTurnstileWidgetId !== null) {
-            turnstile.reset(announcementTurnstileWidgetId);
-          }
-        } else {
-          postTurnstileToken = null;
-          if (postTurnstileWidgetId !== null) {
-            turnstile.reset(postTurnstileWidgetId);
-          }
-        }
-      } catch (err) { /* ignore */ }
-    }
-
-    // ---------- auth guard ----------
-    async function requireAuth() {
-      try {
-        const { data, error } = await postbase.auth.getSession();
-        if (error) throw error;
-        if (!data || !data.session) { window.location.replace('admin-login.html'); return false; }
-        currentUser = data.session.user;
-        document.getElementById('userName').textContent = currentUser.name || 'Administrator';
-        document.getElementById('userEmail').textContent = currentUser.email || '';
-        return true;
-      } catch (err) {
-        console.error('Auth check failed:', err);
-        window.location.replace('admin-login.html');
-        return false;
-      }
-    }
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      if (!confirm('Sign out of the admin dashboard?')) return;
-      try { await postbase.auth.signOut(); } catch (err) { console.error(err); }
-      window.location.replace('admin-login.html');
-    });
-
-    // ---------- tabs ----------
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
-        document.querySelectorAll('.admin-section').forEach(s => {
-          s.classList.toggle('active', s.id === 'section-' + tab);
+      // Other documents
+      if (docs.length > 0) {
+        html += '<div class="card-attachments">';
+        docs.forEach(m => {
+          const name = (m.file_url || '').split('/').pop().substring(0, 30) || 'File';
+          html += `
+            <div class="attachment-item">
+              <span class="attach-icon">📎</span>
+              <div class="attach-body">
+                <div class="attach-name">${escapeHtml(name)}</div>
+                <div class="attach-type">File</div>
+              </div>
+              <div class="attachment-actions">
+                <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank" rel="noopener">Download</a>
+              </div>
+            </div>`;
         });
-      });
-    });
-
-    // ==========================================================
-    // SWIFTCDN UPLOAD (with Turnstile token)
-    // ==========================================================
-    async function uploadToSwiftCDN(file, turnstileToken) {
-      if (!turnstileToken) {
-        throw new Error('Please complete the "Verify you are human" check first.');
+        html += '</div>';
       }
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('cf-turnstile-response', turnstileToken);
-
-      const res = await fetch(SWIFT_UPLOAD_URL, {
-        method: 'POST',
-        headers: { 'x-api-key': SWIFT_API_KEY },
-        body: formData
-      });
-
-      if (!res.ok) {
-        let text = '';
-        try { text = await res.text(); } catch (e) { /* ignore */ }
-        throw new Error(`Upload failed (${res.status}): ${text.substring(0, 150)}`);
-      }
-
-      const json = await res.json();
-      const url = json.cdnUrl || json.rawUrl;
-      if (!url) throw new Error('No URL returned from upload');
-      return url;
+      return html;
     }
 
-    // ---------- media UI ----------
-    function renderPreviews(kind) {
-      const container = document.getElementById(kind + 'Previews');
-      const state = formState[kind];
-      const total = state.existing.length + state.pending.length;
-      const area = document.getElementById(kind + 'UploadArea');
-
-      if (total >= MAX_FILES) area.classList.add('disabled');
-      else area.classList.remove('disabled');
-
-      const existingHtml = state.existing.map((m) => `
-        <div class="preview-item" data-kind="existing" data-id="${m.id}">
-          <span class="preview-tag">Saved</span>
-          <button type="button" class="preview-remove" title="Remove">✕</button>
-          ${m.file_type === 'image'
-            ? `<img src="${escapeHtml(m.file_url)}" alt="" />`
-            : `<span class="file-icon">${getFileIcon(m.file_type)}</span>`}
-          <span class="preview-name">${escapeHtml((m.file_url || '').split('/').pop().substring(0, 20))}</span>
-        </div>
-      `).join('');
-
-      const pendingHtml = state.pending.map((file, i) => {
-        const type = getFileTypeFromMime(file.type, file.name);
-        let previewContent;
-        if (type === 'image') {
-          previewContent = `<img src="${URL.createObjectURL(file)}" alt="" />`;
-        } else if (type === 'video') {
-          previewContent = `<video src="${URL.createObjectURL(file)}" muted></video>`;
-        } else {
-          previewContent = `<span class="file-icon">${getFileIcon(type)}</span>`;
-        }
-        return `
-          <div class="preview-item" data-kind="pending" data-idx="${i}">
-            <span class="preview-tag">New</span>
-            <button type="button" class="preview-remove" title="Remove">✕</button>
-            ${previewContent}
-            <span class="preview-name">${escapeHtml(file.name.substring(0, 20))}</span>
-          </div>
-        `;
-      }).join('');
-
-      container.innerHTML = existingHtml + pendingHtml;
-
-      container.querySelectorAll('.preview-remove').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const item = btn.closest('.preview-item');
-          if (item.dataset.kind === 'existing') {
-            const id = item.dataset.id;
-            const idx = state.existing.findIndex(m => m.id === id);
-            if (idx >= 0) {
-              state.removed.push(state.existing[idx].id);
-              state.existing.splice(idx, 1);
-            }
-          } else {
-            const idx = parseInt(item.dataset.idx, 10);
-            state.pending.splice(idx, 1);
-          }
-          renderPreviews(kind);
-        });
-      });
-    }
-
-    function handleFiles(kind, fileList) {
-      const state = formState[kind];
-      const room = MAX_FILES - (state.existing.length + state.pending.length);
-      if (room <= 0) {
-        showToast('You can add up to ' + MAX_FILES + ' files.', 'error');
-        return;
-      }
-      const files = Array.from(fileList);
-      const accepted = files.slice(0, room);
-      state.pending.push(...accepted);
-      if (files.length > room) {
-        showToast(`Only ${room} more file${room === 1 ? '' : 's'} could be added.`, 'error');
-      }
-      renderPreviews(kind);
-    }
-
-    function setupUploadArea(kind) {
-      const area = document.getElementById(kind + 'UploadArea');
-      const input = document.getElementById(kind + 'FileInput');
-
-      input.addEventListener('change', (e) => {
-        handleFiles(kind, e.target.files);
-        input.value = '';
-      });
-
-      area.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (!area.classList.contains('disabled')) area.classList.add('dragover');
-      });
-      area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-      area.addEventListener('drop', (e) => {
-        e.preventDefault();
-        area.classList.remove('dragover');
-        if (area.classList.contains('disabled')) return;
-        if (e.dataTransfer.files.length) handleFiles(kind, e.dataTransfer.files);
-      });
-    }
-
-    async function loadExistingMedia(kind, parentId) {
-      const column = kind === 'announcement' ? 'announcement_id' : 'post_id';
-      const { data, error } = await postbase
-        .from('media')
-        .select('id, file_url, file_type, created_at')
-        .eq(column, parentId);
-      if (error) { console.error('Load media error:', error); return []; }
-      return (data || []).sort((a, b) =>
-        (a.created_at || '').localeCompare(b.created_at || '')
-      );
-    }
-
-    async function saveMediaChanges(kind, parentId, turnstileToken) {
-      const state = formState[kind];
-      const column = kind === 'announcement' ? 'announcement_id' : 'post_id';
-
-      // Delete removed rows
-      for (const id of state.removed) {
-        await postbase.from('media').delete().eq('id', id);
-      }
-
-      if (state.pending.length === 0) return { success: true, uploaded: 0, failed: 0 };
-
-      if (!turnstileToken) {
-        throw new Error('Please complete the "Verify you are human" check before uploading.');
-      }
-
-      let uploaded = 0;
-      let failed = 0;
-
-      for (const file of state.pending) {
-        try {
-          const url = await uploadToSwiftCDN(file, turnstileToken);
-          const fileType = getFileTypeFromMime(file.type, file.name);
-          const payload = { file_url: url, file_type: fileType };
-          payload[column] = parentId;
-          const { error } = await postbase.from('media').insert(payload);
-          if (error) {
-            console.error('Insert media error:', error);
-            failed++;
-          } else {
-            uploaded++;
-          }
-        } catch (err) {
-          console.error('Upload failed for', file.name, ':', err);
-          failed++;
-        }
-      }
-
-      return { success: true, uploaded, failed };
-    }
-
-    function resetFormMedia(kind) {
-      formState[kind] = { existing: [], removed: [], pending: [] };
-      renderPreviews(kind);
-    }
-
-    // ==========================================================
-    // ANNOUNCEMENTS
-    // ==========================================================
     async function loadAnnouncements() {
-      const container = document.getElementById('announcementsList');
-      container.innerHTML = '<div class="state-box"><span class="icon">⏳</span>Loading announcements…</div>';
+      const grid = document.getElementById('announcementsGrid');
 
       const { data, error } = await postbase
         .from('announcements')
-        .select('id, title, content, published, created_at, updated_at')
+        .select('id, title, content, created_at')
+        .eq('published', true)
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Load announcements error:', error);
-        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load announcements.</div>';
-        return;
-      }
-
-      announcementsCache = data || [];
-      document.getElementById('statAnnouncements').textContent = announcementsCache.length;
-
-      if (announcementsCache.length === 0) {
-        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No announcements yet.</div>';
-        updateMediaStat();
-        return;
-      }
-
-      const mediaCounts = await Promise.all(announcementsCache.map(async a => {
-        const { data: media } = await postbase
-          .from('media')
-          .select('id, file_url, file_type')
-          .eq('announcement_id', a.id);
-        return { id: a.id, media: media || [] };
-      }));
-      const mediaMap = Object.fromEntries(mediaCounts.map(m => [m.id, m.media]));
-
-      container.innerHTML = announcementsCache.map(a => {
-        const media = mediaMap[a.id] || [];
-        const thumbs = media.slice(0, 8).map(m => {
-          if (m.file_type === 'image') {
-            return `<img src="${escapeHtml(m.file_url)}" class="media-thumb" alt="" />`;
-          }
-          return `<div class="media-thumb">${getFileIcon(m.file_type)}</div>`;
-        }).join('');
-        return `
-          <div class="item-card">
-            <div class="item-header">
-              <div class="item-title">${escapeHtml(a.title)}</div>
-              <span class="item-status ${a.published ? 'published' : 'draft'}">${a.published ? 'Published' : 'Draft'}</span>
-            </div>
-            <div class="item-body">${escapeHtml(a.content)}</div>
-            ${thumbs ? `<div class="item-media-strip">${thumbs}</div>` : ''}
-            <div class="item-footer">
-              <div class="item-date">📅 ${formatDate(a.created_at)} • 📁 ${media.length} file${media.length === 1 ? '' : 's'}</div>
-              <div class="item-actions">
-                <button class="btn btn-secondary btn-sm" data-action="edit-announcement" data-id="${a.id}">✏️ Edit</button>
-                <button class="btn btn-danger btn-sm" data-action="delete-announcement" data-id="${a.id}">🗑️ Delete</button>
-              </div>
-            </div>
+        console.error('Error loading announcements:', error);
+        grid.innerHTML = `
+          <div class="state-message">
+            <span class="icon">⚠️</span>
+            Could not load announcements right now.<br>
+            Please refresh the page or try again later.
           </div>
         `;
-      }).join('');
-
-      updateMediaStat();
-    }
-
-    function openAnnouncementForm(item = null) {
-      const panel = document.getElementById('announcementFormPanel');
-      const title = document.getElementById('announcementFormTitle');
-      const submitBtn = document.getElementById('announcementSubmitBtn');
-      panel.classList.add('open');
-      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      resetFormMedia('announcement');
-      resetTurnstile('announcement');
-
-      if (item) {
-        title.textContent = 'Edit Announcement';
-        submitBtn.textContent = 'Save Changes';
-        document.getElementById('announcementId').value = item.id;
-        document.getElementById('announcementTitle').value = item.title;
-        document.getElementById('announcementContent').value = item.content;
-        document.getElementById('announcementPublished').checked = item.published;
-
-        loadExistingMedia('announcement', item.id).then(rows => {
-          formState.announcement.existing = rows;
-          renderPreviews('announcement');
-        });
-      } else {
-        title.textContent = 'New Announcement';
-        submitBtn.textContent = 'Create Announcement';
-        document.getElementById('announcementForm').reset();
-        document.getElementById('announcementId').value = '';
-        document.getElementById('announcementPublished').checked = true;
-      }
-    }
-
-    function closeAnnouncementForm() {
-      document.getElementById('announcementFormPanel').classList.remove('open');
-      document.getElementById('announcementForm').reset();
-      document.getElementById('announcementId').value = '';
-      resetFormMedia('announcement');
-      resetTurnstile('announcement');
-    }
-
-    document.getElementById('newAnnouncementBtn').addEventListener('click', () => openAnnouncementForm());
-    document.getElementById('announcementCancelBtn').addEventListener('click', closeAnnouncementForm);
-
-    document.getElementById('announcementForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('announcementId').value;
-      const title = document.getElementById('announcementTitle').value.trim();
-      const content = document.getElementById('announcementContent').value.trim();
-      const published = document.getElementById('announcementPublished').checked;
-      const submitBtn = document.getElementById('announcementSubmitBtn');
-      const pendingCount = formState.announcement.pending.length;
-
-      if (!title || !content) {
-        showToast('Please fill in both title and content.', 'error');
         return;
       }
-
-      if (pendingCount > 0 && !announcementTurnstileToken) {
-        showToast('Please wait for the "Verify you are human" check to finish.', 'error');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      const originalLabel = submitBtn.textContent;
-      submitBtn.textContent = 'Saving…';
-
-      let savedId = id;
-      let error;
-
-      if (id) {
-        ({ error } = await postbase
-          .from('announcements')
-          .update({ title, content, published })
-          .eq('id', id));
-      } else {
-        const result = await postbase
-          .from('announcements')
-          .insert({ title, content, published })
-          .select();
-        error = result.error;
-        if (!error && result.data && result.data[0]) savedId = result.data[0].id;
-      }
-
-      if (error) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalLabel;
-        showToast('Save failed: ' + (error.message || 'Unknown error'), 'error');
-        return;
-      }
-
-      if (!savedId) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalLabel;
-        showToast('Saved, but could not link files.', 'error');
-        closeAnnouncementForm();
-        loadAnnouncements();
-        return;
-      }
-
-      if (pendingCount > 0) {
-        submitBtn.textContent = 'Uploading ' + pendingCount + ' file' + (pendingCount === 1 ? '' : 's') + '…';
-        try {
-          const result = await saveMediaChanges('announcement', savedId, announcementTurnstileToken);
-          if (result.failed > 0) {
-            showToast(`${result.uploaded} uploaded, ${result.failed} failed.`, 'error');
-          } else {
-            showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
-          }
-        } catch (err) {
-          console.error('saveMediaChanges error:', err);
-          showToast('File upload failed: ' + err.message, 'error');
-        }
-      } else {
-        showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
-      }
-
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalLabel;
-      closeAnnouncementForm();
-      loadAnnouncements();
-    });
-
-    document.getElementById('announcementsList').addEventListener('click', async (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
-      const id = btn.dataset.id;
-      const action = btn.dataset.action;
-
-      if (action === 'edit-announcement') {
-        const item = announcementsCache.find(a => a.id === id);
-        if (item) openAnnouncementForm(item);
-      }
-
-      if (action === 'delete-announcement') {
-        const item = announcementsCache.find(a => a.id === id);
-        if (!item) return;
-        if (!confirm('Delete "' + item.title + '"?\n\nThis cannot be undone.')) return;
-
-        btn.disabled = true;
-        const { error } = await postbase.from('announcements').delete().eq('id', id);
-        if (error) {
-          showToast('Delete failed: ' + (error.message || 'Unknown error'), 'error');
-          btn.disabled = false;
-          return;
-        }
-        showToast('Announcement deleted.', 'success');
-        loadAnnouncements();
-      }
-    });
-
-    // ==========================================================
-    // POSTS
-    // ==========================================================
-    async function loadPosts() {
-      const container = document.getElementById('postsList');
-      container.innerHTML = '<div class="state-box"><span class="icon">⏳</span>Loading posts…</div>';
-
-      const { data, error } = await postbase
-        .from('posts')
-        .select('id, title, content, published, created_at, updated_at')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Load posts error:', error);
-        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load posts.</div>';
-        return;
-      }
-
-      postsCache = data || [];
-      document.getElementById('statPosts').textContent = postsCache.length;
-
-      if (postsCache.length === 0) {
-        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No posts yet.</div>';
-        updateMediaStat();
-        return;
-      }
-
-      const mediaCounts = await Promise.all(postsCache.map(async p => {
-        const { data: media } = await postbase
-          .from('media')
-          .select('id, file_url, file_type')
-          .eq('post_id', p.id);
-        return { id: p.id, media: media || [] };
-      }));
-      const mediaMap = Object.fromEntries(mediaCounts.map(m => [m.id, m.media]));
-
-      container.innerHTML = postsCache.map(p => {
-        const media = mediaMap[p.id] || [];
-        const thumbs = media.slice(0, 8).map(m => {
-          if (m.file_type === 'image') {
-            return `<img src="${escapeHtml(m.file_url)}" class="media-thumb" alt="" />`;
-          }
-          return `<div class="media-thumb">${getFileIcon(m.file_type)}</div>`;
-        }).join('');
-        return `
-          <div class="item-card">
-            <div class="item-header">
-              <div class="item-title">${escapeHtml(p.title)}</div>
-              <span class="item-status ${p.published ? 'published' : 'draft'}">${p.published ? 'Published' : 'Draft'}</span>
-            </div>
-            <div class="item-body">${escapeHtml(p.content)}</div>
-            ${thumbs ? `<div class="item-media-strip">${thumbs}</div>` : ''}
-            <div class="item-footer">
-              <div class="item-date">📅 ${formatDate(p.created_at)} • 📁 ${media.length} file${media.length === 1 ? '' : 's'}</div>
-              <div class="item-actions">
-                <button class="btn btn-secondary btn-sm" data-action="edit-post" data-id="${p.id}">✏️ Edit</button>
-                <button class="btn btn-danger btn-sm" data-action="delete-post" data-id="${p.id}">🗑️ Delete</button>
-              </div>
-            </div>
+      if (!data || data.length === 0) {
+        grid.innerHTML = `
+          <div class="state-message">
+            <span class="icon">📭</span>
+            No announcements have been posted yet.<br>
+            Please check back soon.
           </div>
         `;
+        return;
+      }
+
+      // Fetch all media for these announcements in one query
+      const ids = data.map(a => a.id);
+      const { data: mediaRows, error: mediaError } = await postbase
+        .from('media')
+        .select('id, file_url, file_type, announcement_id')
+        .in('announcement_id', ids);
+
+      if (mediaError) {
+        console.error('Media fetch error:', mediaError);
+      }
+
+      const grouped = {};
+      (mediaRows || []).forEach(m => {
+        if (!grouped[m.announcement_id]) grouped[m.announcement_id] = [];
+        grouped[m.announcement_id].push(m);
+      });
+
+      grid.innerHTML = data.map(item => {
+        const media = grouped[item.id] || [];
+        return `
+          <article class="card fade-in">
+            <span class="card-badge">Announcement</span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.content)}</p>
+            ${renderMediaCard(media)}
+            <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+          </article>
+        `;
       }).join('');
-
-      updateMediaStat();
     }
 
-    function openPostForm(item = null) {
-      const panel = document.getElementById('postFormPanel');
-      const title = document.getElementById('postFormTitle');
-      const submitBtn = document.getElementById('postSubmitBtn');
-      panel.classList.add('open');
-      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      resetFormMedia('post');
-      resetTurnstile('post');
-
-      if (item) {
-        title.textContent = 'Edit Post';
-        submitBtn.textContent = 'Save Changes';
-        document.getElementById('postId').value = item.id;
-        document.getElementById('postTitle').value = item.title;
-        document.getElementById('postContent').value = item.content;
-        document.getElementById('postPublished').checked = item.published;
-
-        loadExistingMedia('post', item.id).then(rows => {
-          formState.post.existing = rows;
-          renderPreviews('post');
-        });
-      } else {
-        title.textContent = 'New Post';
-        submitBtn.textContent = 'Create Post';
-        document.getElementById('postForm').reset();
-        document.getElementById('postId').value = '';
-        document.getElementById('postPublished').checked = true;
-      }
-    }
-
-    function closePostForm() {
-      document.getElementById('postFormPanel').classList.remove('open');
-      document.getElementById('postForm').reset();
-      document.getElementById('postId').value = '';
-      resetFormMedia('post');
-      resetTurnstile('post');
-    }
-
-    document.getElementById('newPostBtn').addEventListener('click', () => openPostForm());
-    document.getElementById('postCancelBtn').addEventListener('click', closePostForm);
-
-    document.getElementById('postForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('postId').value;
-      const title = document.getElementById('postTitle').value.trim();
-      const content = document.getElementById('postContent').value.trim();
-      const published = document.getElementById('postPublished').checked;
-      const submitBtn = document.getElementById('postSubmitBtn');
-      const pendingCount = formState.post.pending.length;
-
-      if (!title || !content) {
-        showToast('Please fill in both title and content.', 'error');
-        return;
-      }
-
-      if (pendingCount > 0 && !postTurnstileToken) {
-        showToast('Please wait for the "Verify you are human" check to finish.', 'error');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      const originalLabel = submitBtn.textContent;
-      submitBtn.textContent = 'Saving…';
-
-      let savedId = id;
-      let error;
-
-      if (id) {
-        ({ error } = await postbase
-          .from('posts')
-          .update({ title, content, published })
-          .eq('id', id));
-      } else {
-        const result = await postbase
-          .from('posts')
-          .insert({ title, content, published })
-          .select();
-        error = result.error;
-        if (!error && result.data && result.data[0]) savedId = result.data[0].id;
-      }
-
-      if (error) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalLabel;
-        showToast('Save failed: ' + (error.message || 'Unknown error'), 'error');
-        return;
-      }
-
-      if (!savedId) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalLabel;
-        showToast('Saved, but could not link files.', 'error');
-        closePostForm();
-        loadPosts();
-        return;
-      }
-
-      if (pendingCount > 0) {
-        submitBtn.textContent = 'Uploading ' + pendingCount + ' file' + (pendingCount === 1 ? '' : 's') + '…';
-        try {
-          const result = await saveMediaChanges('post', savedId, postTurnstileToken);
-          if (result.failed > 0) {
-            showToast(`${result.uploaded} uploaded, ${result.failed} failed.`, 'error');
-          } else {
-            showToast(id ? 'Post updated.' : 'Post created.', 'success');
-          }
-        } catch (err) {
-          console.error('saveMediaChanges error:', err);
-          showToast('File upload failed: ' + err.message, 'error');
-        }
-      } else {
-        showToast(id ? 'Post updated.' : 'Post created.', 'success');
-      }
-
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalLabel;
-      closePostForm();
-      loadPosts();
-    });
-
-    document.getElementById('postsList').addEventListener('click', async (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
-      const id = btn.dataset.id;
-      const action = btn.dataset.action;
-
-      if (action === 'edit-post') {
-        const item = postsCache.find(p => p.id === id);
-        if (item) openPostForm(item);
-      }
-
-      if (action === 'delete-post') {
-        const item = postsCache.find(p => p.id === id);
-        if (!item) return;
-        if (!confirm('Delete "' + item.title + '"?\n\nThis cannot be undone.')) return;
-
-        btn.disabled = true;
-        const { error } = await postbase.from('posts').delete().eq('id', id);
-        if (error) {
-          showToast('Delete failed: ' + (error.message || 'Unknown error'), 'error');
-          btn.disabled = false;
-          return;
-        }
-        showToast('Post deleted.', 'success');
-        loadPosts();
-      }
-    });
-
-    // ==========================================================
-    // MEDIA STAT
-    // ==========================================================
-    async function updateMediaStat() {
-      const { data, error } = await postbase.from('media').select('id');
-      if (error) { document.getElementById('statMedia').textContent = '0'; return; }
-      document.getElementById('statMedia').textContent = (data || []).length;
-    }
-
-    // ==========================================================
-    // BOOT
-    // ==========================================================
-    (async function init() {
-      const authenticated = await requireAuth();
-      if (!authenticated) return;
-      hideLoading();
-      setupUploadArea('announcement');
-      setupUploadArea('post');
-      loadAnnouncements();
-      loadPosts();
-      initTurnstileWidgets();
-    })();
+    loadAnnouncements();
   </script>
 
 </body>
