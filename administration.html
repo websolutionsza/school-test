@@ -196,7 +196,6 @@
       color: var(--text-dark); margin-bottom: 6px;
     }
     .form-group input[type="text"],
-    .form-group input[type="url"],
     .form-group textarea {
       width: 100%; padding: 12px 14px;
       border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -224,7 +223,6 @@
     }
     .form-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
 
-    /* Image upload area */
     .upload-area {
       border: 2px dashed var(--border);
       border-radius: var(--radius-md);
@@ -243,9 +241,9 @@
     .upload-area .upload-hint { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
     .upload-area.disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .image-previews {
+    .previews {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
       gap: 12px;
       margin-top: 14px;
     }
@@ -256,57 +254,57 @@
       overflow: hidden;
       border: 1px solid var(--border);
       background: var(--bg-light);
+      display: flex; align-items: center; justify-content: center;
     }
-    .preview-item img {
+    .preview-item img,
+    .preview-item video {
       width: 100%; height: 100%;
       object-fit: cover; display: block;
     }
-    .preview-remove {
-      position: absolute;
-      top: 6px; right: 6px;
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      border: none;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-      transition: background 0.15s;
+    .preview-item .file-icon {
+      font-size: 2.5rem;
+      color: var(--text-light);
     }
-    .preview-remove:hover { background: var(--danger); }
+    .preview-item .preview-name {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 3px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+    }
     .preview-item .preview-tag {
       position: absolute;
-      bottom: 6px; left: 6px;
+      top: 6px; left: 6px;
       background: rgba(0,0,0,0.65);
       color: #fff;
-      font-size: 0.68rem;
+      font-size: 0.62rem;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
-    .preview-item.uploading::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .preview-item.uploading::before {
-      content: '';
+    .preview-remove {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 22px; height: 22px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-top-color: #fff;
+      top: 6px; right: 6px;
+      width: 24px; height: 24px;
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      z-index: 2;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      border: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      transition: background 0.15s;
+      z-index: 3;
     }
-    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    .preview-remove:hover { background: var(--danger); }
 
     .items-list { display: grid; gap: 12px; }
     .item-card {
@@ -341,13 +339,18 @@
     .item-media-strip {
       display: flex; gap: 6px; margin-bottom: 14px;
       overflow-x: auto; padding-bottom: 4px;
+      flex-wrap: wrap;
     }
-    .item-media-strip img {
-      width: 60px; height: 60px;
+    .item-media-strip .media-thumb {
+      width: 56px; height: 56px;
       border-radius: 6px;
       object-fit: cover;
       flex-shrink: 0;
       border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      background: var(--bg-light);
+      color: var(--text-light);
     }
     .item-footer {
       display: flex; justify-content: space-between; align-items: center;
@@ -413,7 +416,7 @@
       .item-card { padding: 18px; }
       .toast-container { right: 12px; left: 12px; max-width: none; }
       .stat-value { font-size: 1.4rem; }
-      .image-previews { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+      .previews { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
     }
   </style>
 </head>
@@ -462,10 +465,10 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon success">🖼️</div>
+        <div class="stat-icon success">📁</div>
         <div class="stat-info">
           <div class="stat-value" id="statMedia">—</div>
-          <div class="stat-label">Images</div>
+          <div class="stat-label">Media files</div>
         </div>
       </div>
     </section>
@@ -499,14 +502,14 @@
               <textarea id="announcementContent" required placeholder="Write the full announcement here…"></textarea>
             </div>
             <div class="form-group">
-              <label>Images (up to 6)</label>
+              <label>Attach files (any type, up to 10)</label>
               <div class="upload-area" id="announcementUploadArea" onclick="document.getElementById('announcementFileInput').click()">
-                <span class="upload-icon">📷</span>
-                <div class="upload-text">Click to choose images</div>
-                <div class="upload-hint">or drag &amp; drop • JPG, PNG, GIF, WebP • max 6 images</div>
+                <span class="upload-icon">📎</span>
+                <div class="upload-text">Click to choose files</div>
+                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files</div>
               </div>
-              <input type="file" id="announcementFileInput" accept="image/*" multiple style="display:none" />
-              <div id="announcementPreviews" class="image-previews"></div>
+              <input type="file" id="announcementFileInput" multiple style="display:none" />
+              <div id="announcementPreviews" class="previews"></div>
             </div>
             <div class="form-group">
               <label class="form-checkbox">
@@ -551,14 +554,14 @@
               <textarea id="postContent" required placeholder="Write the full article here…"></textarea>
             </div>
             <div class="form-group">
-              <label>Images (up to 6)</label>
+              <label>Attach files (any type, up to 10)</label>
               <div class="upload-area" id="postUploadArea" onclick="document.getElementById('postFileInput').click()">
-                <span class="upload-icon">📷</span>
-                <div class="upload-text">Click to choose images</div>
-                <div class="upload-hint">or drag &amp; drop • JPG, PNG, GIF, WebP • max 6 images</div>
+                <span class="upload-icon">📎</span>
+                <div class="upload-text">Click to choose files</div>
+                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files</div>
               </div>
-              <input type="file" id="postFileInput" accept="image/*" multiple style="display:none" />
-              <div id="postPreviews" class="image-previews"></div>
+              <input type="file" id="postFileInput" multiple style="display:none" />
+              <div id="postPreviews" class="previews"></div>
             </div>
             <div class="form-group">
               <label class="form-checkbox">
@@ -592,16 +595,15 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
-    // ImgBB API key — replace with a fresh key before going public.
-    const IMGBB_API_KEY = 'b52efb81c7edc26c9d602c1355315015';
-    const IMGBB_ENDPOINT = 'https://api.imgbb.com/1/upload';
-    const MAX_IMAGES = 6;
+    // SwiftCDN configuration
+    const SWIFT_API_KEY = 'sk_288c109051c5fcd77f6ac796069e1de737fc673900a3e355';
+    const SWIFT_UPLOAD_URL = 'https://swift.subnp.com/api/files';
+    const MAX_FILES = 10;
 
     let currentUser = null;
     let announcementsCache = [];
     let postsCache = [];
 
-    // Per-form media state
     const formState = {
       announcement: { existing: [], removed: [], pending: [] },
       post:         { existing: [], removed: [], pending: [] }
@@ -632,6 +634,23 @@
       }, 3500);
     }
     function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
+
+    function getFileTypeFromMime(mimeType, filename) {
+      if (!mimeType) mimeType = '';
+      if (mimeType.startsWith('image/')) return 'image';
+      if (mimeType.startsWith('video/')) return 'video';
+      if (mimeType.startsWith('audio/')) return 'audio';
+      if (mimeType === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) return 'pdf';
+      return 'document';
+    }
+
+    function getFileIcon(type) {
+      if (type === 'image') return '🖼️';
+      if (type === 'video') return '🎬';
+      if (type === 'audio') return '🎵';
+      if (type === 'pdf') return '📄';
+      return '📎';
+    }
 
     // ---------- auth guard ----------
     async function requireAuth() {
@@ -668,52 +687,67 @@
     });
 
     // ==========================================================
-    // IMG UPLOAD (ImgBB)
+    // SWIFTCDN UPLOAD
     // ==========================================================
-    async function uploadToImgBB(file) {
+    async function uploadToSwiftCDN(file) {
       const formData = new FormData();
-      formData.append('image', file);
-      const res = await fetch(`${IMGBB_ENDPOINT}?key=${IMGBB_API_KEY}`, {
+      formData.append('file', file);
+
+      const res = await fetch(SWIFT_UPLOAD_URL, {
         method: 'POST',
+        headers: { 'x-api-key': SWIFT_API_KEY },
         body: formData
       });
-      if (!res.ok) throw new Error(`ImgBB HTTP ${res.status}`);
-      const json = await res.json();
-      if (!json.success || !json.data) {
-        throw new Error(json.error?.message || 'ImgBB upload failed');
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Upload failed (${res.status}): ${text.substring(0, 100)}`);
       }
-      return json.data.display_url || json.data.url;
+      const json = await res.json();
+      const url = json.cdnUrl || json.rawUrl;
+      if (!url) throw new Error('No URL returned from upload');
+      return url;
     }
 
-    // ---------- media UI helpers ----------
+    // ---------- media UI ----------
     function renderPreviews(kind) {
       const container = document.getElementById(kind + 'Previews');
       const state = formState[kind];
       const total = state.existing.length + state.pending.length;
       const area = document.getElementById(kind + 'UploadArea');
 
-      if (total >= MAX_IMAGES) {
-        area.classList.add('disabled');
-      } else {
-        area.classList.remove('disabled');
-      }
+      if (total >= MAX_FILES) area.classList.add('disabled');
+      else area.classList.remove('disabled');
 
-      const existingHtml = state.existing.map((m, i) => `
+      const existingHtml = state.existing.map((m) => `
         <div class="preview-item" data-kind="existing" data-id="${m.id}">
-          <img src="${escapeHtml(m.file_url)}" alt="" />
-          <button type="button" class="preview-remove" title="Remove image">✕</button>
           <span class="preview-tag">Saved</span>
+          <button type="button" class="preview-remove" title="Remove">✕</button>
+          ${m.file_type === 'image' || m.file_type === 'video'
+            ? `<img src="${escapeHtml(m.file_url)}" alt="" />`
+            : `<span class="file-icon">${getFileIcon(m.file_type)}</span>`}
+          <span class="preview-name">${escapeHtml((m.file_url || '').split('/').pop().substring(0, 20))}</span>
         </div>
       `).join('');
 
       const pendingHtml = state.pending.map((file, i) => {
-        const url = URL.createObjectURL(file);
+        const type = getFileTypeFromMime(file.type, file.name);
+        let previewContent;
+        if (type === 'image') {
+          previewContent = `<img src="${URL.createObjectURL(file)}" alt="" />`;
+        } else if (type === 'video') {
+          previewContent = `<video src="${URL.createObjectURL(file)}" muted></video>`;
+        } else {
+          previewContent = `<span class="file-icon">${getFileIcon(type)}</span>`;
+        }
         return `
-        <div class="preview-item" data-kind="pending" data-idx="${i}">
-          <img src="${url}" alt="" />
-          <button type="button" class="preview-remove" title="Remove image">✕</button>
-          <span class="preview-tag">New</span>
-        </div>`;
+          <div class="preview-item" data-kind="pending" data-idx="${i}">
+            <span class="preview-tag">New</span>
+            <button type="button" class="preview-remove" title="Remove">✕</button>
+            ${previewContent}
+            <span class="preview-name">${escapeHtml(file.name.substring(0, 20))}</span>
+          </div>
+        `;
       }).join('');
 
       container.innerHTML = existingHtml + pendingHtml;
@@ -740,21 +774,16 @@
 
     function handleFiles(kind, fileList) {
       const state = formState[kind];
-      const currentTotal = state.existing.length + state.pending.length;
-      const room = MAX_IMAGES - currentTotal;
+      const room = MAX_FILES - (state.existing.length + state.pending.length);
       if (room <= 0) {
-        showToast('You can add up to ' + MAX_IMAGES + ' images per item.', 'error');
+        showToast('You can add up to ' + MAX_FILES + ' files.', 'error');
         return;
       }
-      const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
-      if (files.length === 0) {
-        showToast('Only image files are allowed.', 'error');
-        return;
-      }
+      const files = Array.from(fileList);
       const accepted = files.slice(0, room);
       state.pending.push(...accepted);
       if (files.length > room) {
-        showToast(`Only ${room} more image${room === 1 ? '' : 's'} could be added (max ${MAX_IMAGES}).`, 'error');
+        showToast(`Only ${room} more file${room === 1 ? '' : 's'} could be added.`, 'error');
       }
       renderPreviews(kind);
     }
@@ -777,54 +806,42 @@
         e.preventDefault();
         area.classList.remove('dragover');
         if (area.classList.contains('disabled')) return;
-        if (e.dataTransfer.files && e.dataTransfer.files.length) {
-          handleFiles(kind, e.dataTransfer.files);
-        }
+        if (e.dataTransfer.files.length) handleFiles(kind, e.dataTransfer.files);
       });
     }
 
-    // Fetch existing media for one post or announcement
     async function loadExistingMedia(kind, parentId) {
       const column = kind === 'announcement' ? 'announcement_id' : 'post_id';
       const { data, error } = await postbase
         .from('media')
-        .select('id, file_url, created_at')
+        .select('id, file_url, file_type, created_at')
         .eq(column, parentId);
-      if (error) {
-        console.error('Load media error:', error);
-        return [];
-      }
-      // Sort client-side by created_at asc so display is stable
+      if (error) { console.error('Load media error:', error); return []; }
       return (data || []).sort((a, b) =>
         (a.created_at || '').localeCompare(b.created_at || '')
       );
     }
 
-    // Save media changes after creating/updating the parent record
     async function saveMediaChanges(kind, parentId) {
       const state = formState[kind];
       const column = kind === 'announcement' ? 'announcement_id' : 'post_id';
 
-      // 1) Delete removed rows
+      // Delete removed rows
       for (const id of state.removed) {
-        const { error } = await postbase.from('media').delete().eq('id', id);
-        if (error) console.error('Delete media error:', error);
+        await postbase.from('media').delete().eq('id', id);
       }
 
-      // 2) Upload new files and insert rows
+      // Upload new files
       for (const file of state.pending) {
         try {
-          const url = await uploadToImgBB(file);
-          const payload = { file_url: url, file_type: 'image' };
+          const url = await uploadToSwiftCDN(file);
+          const fileType = getFileTypeFromMime(file.type, file.name);
+          const payload = { file_url: url, file_type: fileType };
           payload[column] = parentId;
-          const { error } = await postbase.from('media').insert(payload);
-          if (error) {
-            console.error('Insert media error:', error);
-            showToast('Image saved to ImgBB but not linked to the ' + kind + '.', 'error');
-          }
+          await postbase.from('media').insert(payload);
         } catch (err) {
-          console.error('ImgBB upload failed:', err);
-          showToast('Image upload failed: ' + err.message, 'error');
+          console.error('Upload failed:', err);
+          showToast('Upload failed: ' + err.message, 'error');
         }
       }
     }
@@ -848,7 +865,7 @@
 
       if (error) {
         console.error('Load announcements error:', error);
-        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load announcements.<br>' + escapeHtml(error.message || 'Unknown error') + '</div>';
+        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load announcements.</div>';
         return;
       }
 
@@ -856,16 +873,15 @@
       document.getElementById('statAnnouncements').textContent = announcementsCache.length;
 
       if (announcementsCache.length === 0) {
-        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No announcements yet. Click “+ New Announcement” to create one.</div>';
+        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No announcements yet.</div>';
         updateMediaStat();
         return;
       }
 
-      // Preload media counts for each announcement (parallel)
       const mediaCounts = await Promise.all(announcementsCache.map(async a => {
         const { data: media } = await postbase
           .from('media')
-          .select('id, file_url')
+          .select('id, file_url, file_type')
           .eq('announcement_id', a.id);
         return { id: a.id, media: media || [] };
       }));
@@ -873,9 +889,12 @@
 
       container.innerHTML = announcementsCache.map(a => {
         const media = mediaMap[a.id] || [];
-        const thumbs = media.slice(0, 6).map(m =>
-          `<img src="${escapeHtml(m.file_url)}" alt="" />`
-        ).join('');
+        const thumbs = media.slice(0, 8).map(m => {
+          if (m.file_type === 'image') {
+            return `<img src="${escapeHtml(m.file_url)}" class="media-thumb" alt="" />`;
+          }
+          return `<div class="media-thumb">${getFileIcon(m.file_type)}</div>`;
+        }).join('');
         return `
           <div class="item-card">
             <div class="item-header">
@@ -885,7 +904,7 @@
             <div class="item-body">${escapeHtml(a.content)}</div>
             ${thumbs ? `<div class="item-media-strip">${thumbs}</div>` : ''}
             <div class="item-footer">
-              <div class="item-date">📅 ${formatDate(a.created_at)} • 🖼️ ${media.length} image${media.length === 1 ? '' : 's'}</div>
+              <div class="item-date">📅 ${formatDate(a.created_at)} • 📁 ${media.length} file${media.length === 1 ? '' : 's'}</div>
               <div class="item-actions">
                 <button class="btn btn-secondary btn-sm" data-action="edit-announcement" data-id="${a.id}">✏️ Edit</button>
                 <button class="btn btn-danger btn-sm" data-action="delete-announcement" data-id="${a.id}">🗑️ Delete</button>
@@ -904,7 +923,6 @@
       const submitBtn = document.getElementById('announcementSubmitBtn');
       panel.classList.add('open');
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
       resetFormMedia('announcement');
 
       if (item) {
@@ -964,15 +982,12 @@
           .update({ title, content, published })
           .eq('id', id));
       } else {
-        // Insert and request the new row back so we get its id
         const result = await postbase
           .from('announcements')
           .insert({ title, content, published })
           .select();
         error = result.error;
-        if (!error && result.data && result.data[0]) {
-          savedId = result.data[0].id;
-        }
+        if (!error && result.data && result.data[0]) savedId = result.data[0].id;
       }
 
       if (error) {
@@ -985,13 +1000,13 @@
       if (!savedId) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalLabel;
-        showToast('Saved, but could not link images (missing id).', 'error');
+        showToast('Saved, but could not link files.', 'error');
         closeAnnouncementForm();
         loadAnnouncements();
         return;
       }
 
-      submitBtn.textContent = 'Uploading images…';
+      submitBtn.textContent = 'Uploading files…';
       await saveMediaChanges('announcement', savedId);
 
       submitBtn.disabled = false;
@@ -1021,7 +1036,6 @@
         btn.disabled = true;
         const { error } = await postbase.from('announcements').delete().eq('id', id);
         if (error) {
-          console.error('Delete error:', error);
           showToast('Delete failed: ' + (error.message || 'Unknown error'), 'error');
           btn.disabled = false;
           return;
@@ -1040,12 +1054,12 @@
 
       const { data, error } = await postbase
         .from('posts')
-        .select('id, title, content, cover_image, published, created_at, updated_at')
+        .select('id, title, content, published, created_at, updated_at')
         .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Load posts error:', error);
-        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load posts.<br>' + escapeHtml(error.message || 'Unknown error') + '</div>';
+        container.innerHTML = '<div class="state-box error"><span class="icon">⚠️</span>Could not load posts.</div>';
         return;
       }
 
@@ -1053,7 +1067,7 @@
       document.getElementById('statPosts').textContent = postsCache.length;
 
       if (postsCache.length === 0) {
-        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No posts yet. Click “+ New Post” to create one.</div>';
+        container.innerHTML = '<div class="state-box"><span class="icon">📭</span>No posts yet.</div>';
         updateMediaStat();
         return;
       }
@@ -1061,7 +1075,7 @@
       const mediaCounts = await Promise.all(postsCache.map(async p => {
         const { data: media } = await postbase
           .from('media')
-          .select('id, file_url')
+          .select('id, file_url, file_type')
           .eq('post_id', p.id);
         return { id: p.id, media: media || [] };
       }));
@@ -1069,9 +1083,12 @@
 
       container.innerHTML = postsCache.map(p => {
         const media = mediaMap[p.id] || [];
-        const thumbs = media.slice(0, 6).map(m =>
-          `<img src="${escapeHtml(m.file_url)}" alt="" />`
-        ).join('');
+        const thumbs = media.slice(0, 8).map(m => {
+          if (m.file_type === 'image') {
+            return `<img src="${escapeHtml(m.file_url)}" class="media-thumb" alt="" />`;
+          }
+          return `<div class="media-thumb">${getFileIcon(m.file_type)}</div>`;
+        }).join('');
         return `
           <div class="item-card">
             <div class="item-header">
@@ -1081,7 +1098,7 @@
             <div class="item-body">${escapeHtml(p.content)}</div>
             ${thumbs ? `<div class="item-media-strip">${thumbs}</div>` : ''}
             <div class="item-footer">
-              <div class="item-date">📅 ${formatDate(p.created_at)} • 🖼️ ${media.length} image${media.length === 1 ? '' : 's'}</div>
+              <div class="item-date">📅 ${formatDate(p.created_at)} • 📁 ${media.length} file${media.length === 1 ? '' : 's'}</div>
               <div class="item-actions">
                 <button class="btn btn-secondary btn-sm" data-action="edit-post" data-id="${p.id}">✏️ Edit</button>
                 <button class="btn btn-danger btn-sm" data-action="delete-post" data-id="${p.id}">🗑️ Delete</button>
@@ -1100,7 +1117,6 @@
       const submitBtn = document.getElementById('postSubmitBtn');
       panel.classList.add('open');
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
       resetFormMedia('post');
 
       if (item) {
@@ -1165,9 +1181,7 @@
           .insert({ title, content, published })
           .select();
         error = result.error;
-        if (!error && result.data && result.data[0]) {
-          savedId = result.data[0].id;
-        }
+        if (!error && result.data && result.data[0]) savedId = result.data[0].id;
       }
 
       if (error) {
@@ -1180,13 +1194,13 @@
       if (!savedId) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalLabel;
-        showToast('Saved, but could not link images (missing id).', 'error');
+        showToast('Saved, but could not link files.', 'error');
         closePostForm();
         loadPosts();
         return;
       }
 
-      submitBtn.textContent = 'Uploading images…';
+      submitBtn.textContent = 'Uploading files…';
       await saveMediaChanges('post', savedId);
 
       submitBtn.disabled = false;
@@ -1216,7 +1230,6 @@
         btn.disabled = true;
         const { error } = await postbase.from('posts').delete().eq('id', id);
         if (error) {
-          console.error('Delete error:', error);
           showToast('Delete failed: ' + (error.message || 'Unknown error'), 'error');
           btn.disabled = false;
           return;
