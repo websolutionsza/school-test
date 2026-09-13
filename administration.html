@@ -506,7 +506,7 @@
               <div class="upload-area" id="announcementUploadArea" onclick="document.getElementById('announcementFileInput').click()">
                 <span class="upload-icon">📎</span>
                 <div class="upload-text">Click to choose files</div>
-                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files</div>
+                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files • 50 MB each</div>
               </div>
               <input type="file" id="announcementFileInput" multiple style="display:none" />
               <div id="announcementPreviews" class="previews"></div>
@@ -558,7 +558,7 @@
               <div class="upload-area" id="postUploadArea" onclick="document.getElementById('postFileInput').click()">
                 <span class="upload-icon">📎</span>
                 <div class="upload-text">Click to choose files</div>
-                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files</div>
+                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files • 50 MB each</div>
               </div>
               <input type="file" id="postFileInput" multiple style="display:none" />
               <div id="postPreviews" class="previews"></div>
@@ -595,9 +595,11 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
-    // SwiftCDN configuration
-    const SWIFT_API_KEY = 'sk_288c109051c5fcd77f6ac796069e1de737fc673900a3e355';
-    const SWIFT_UPLOAD_URL = 'https://swift.subnp.com/api/files';
+    // ==========================================================
+    // POSTFILE CONFIGURATION
+    // ==========================================================
+    const POSTFILE_API_KEY = 'pf_lyIGJBVbqHrpTE4qy8BLeJv6KxgJ4NoRzT_cXaz4cQs';
+    const POSTFILE_UPLOAD_URL = 'https://postfile.net/v1/upload';
     const MAX_FILES = 10;
 
     let currentUser = null;
@@ -687,24 +689,30 @@
     });
 
     // ==========================================================
-    // SWIFTCDN UPLOAD
+    // POSTFILE UPLOAD
     // ==========================================================
-    async function uploadToSwiftCDN(file) {
+    async function uploadToPostFile(file) {
+      if (!POSTFILE_API_KEY) {
+        throw new Error('POSTFILE_API_KEY is missing.');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch(SWIFT_UPLOAD_URL, {
+      const res = await fetch(POSTFILE_UPLOAD_URL, {
         method: 'POST',
-        headers: { 'x-api-key': SWIFT_API_KEY },
+        headers: { 'X-API-Key': POSTFILE_API_KEY },
         body: formData
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Upload failed (${res.status}): ${text.substring(0, 100)}`);
+        let text = '';
+        try { text = await res.text(); } catch (e) { /* ignore */ }
+        throw new Error(`Upload failed (${res.status}): ${text.substring(0, 150)}`);
       }
+
       const json = await res.json();
-      const url = json.cdnUrl || json.rawUrl;
+      const url = json.url;
       if (!url) throw new Error('No URL returned from upload');
       return url;
     }
@@ -723,7 +731,7 @@
         <div class="preview-item" data-kind="existing" data-id="${m.id}">
           <span class="preview-tag">Saved</span>
           <button type="button" class="preview-remove" title="Remove">✕</button>
-          ${m.file_type === 'image' || m.file_type === 'video'
+          ${m.file_type === 'image'
             ? `<img src="${escapeHtml(m.file_url)}" alt="" />`
             : `<span class="file-icon">${getFileIcon(m.file_type)}</span>`}
           <span class="preview-name">${escapeHtml((m.file_url || '').split('/').pop().substring(0, 20))}</span>
@@ -831,19 +839,31 @@
         await postbase.from('media').delete().eq('id', id);
       }
 
-      // Upload new files
+      if (state.pending.length === 0) return { success: true, uploaded: 0, failed: 0 };
+
+      let uploaded = 0;
+      let failed = 0;
+
       for (const file of state.pending) {
         try {
-          const url = await uploadToSwiftCDN(file);
+          const url = await uploadToPostFile(file);
           const fileType = getFileTypeFromMime(file.type, file.name);
           const payload = { file_url: url, file_type: fileType };
           payload[column] = parentId;
-          await postbase.from('media').insert(payload);
+          const { error } = await postbase.from('media').insert(payload);
+          if (error) {
+            console.error('Insert media error:', error);
+            failed++;
+          } else {
+            uploaded++;
+          }
         } catch (err) {
-          console.error('Upload failed:', err);
-          showToast('Upload failed: ' + err.message, 'error');
+          console.error('Upload failed for', file.name, ':', err);
+          failed++;
         }
       }
+
+      return { success: true, uploaded, failed };
     }
 
     function resetFormMedia(kind) {
@@ -963,6 +983,7 @@
       const content = document.getElementById('announcementContent').value.trim();
       const published = document.getElementById('announcementPublished').checked;
       const submitBtn = document.getElementById('announcementSubmitBtn');
+      const pendingCount = formState.announcement.pending.length;
 
       if (!title || !content) {
         showToast('Please fill in both title and content.', 'error');
@@ -1006,13 +1027,25 @@
         return;
       }
 
-      submitBtn.textContent = 'Uploading files…';
-      await saveMediaChanges('announcement', savedId);
+      if (pendingCount > 0) {
+        submitBtn.textContent = 'Uploading ' + pendingCount + ' file' + (pendingCount === 1 ? '' : 's') + '…';
+        try {
+          const result = await saveMediaChanges('announcement', savedId);
+          if (result.failed > 0) {
+            showToast(`${result.uploaded} uploaded, ${result.failed} failed.`, 'error');
+          } else {
+            showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
+          }
+        } catch (err) {
+          console.error('saveMediaChanges error:', err);
+          showToast('File upload failed: ' + err.message, 'error');
+        }
+      } else {
+        showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
+      }
 
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
-
-      showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
       closeAnnouncementForm();
       loadAnnouncements();
     });
@@ -1157,6 +1190,7 @@
       const content = document.getElementById('postContent').value.trim();
       const published = document.getElementById('postPublished').checked;
       const submitBtn = document.getElementById('postSubmitBtn');
+      const pendingCount = formState.post.pending.length;
 
       if (!title || !content) {
         showToast('Please fill in both title and content.', 'error');
@@ -1200,13 +1234,25 @@
         return;
       }
 
-      submitBtn.textContent = 'Uploading files…';
-      await saveMediaChanges('post', savedId);
+      if (pendingCount > 0) {
+        submitBtn.textContent = 'Uploading ' + pendingCount + ' file' + (pendingCount === 1 ? '' : 's') + '…';
+        try {
+          const result = await saveMediaChanges('post', savedId);
+          if (result.failed > 0) {
+            showToast(`${result.uploaded} uploaded, ${result.failed} failed.`, 'error');
+          } else {
+            showToast(id ? 'Post updated.' : 'Post created.', 'success');
+          }
+        } catch (err) {
+          console.error('saveMediaChanges error:', err);
+          showToast('File upload failed: ' + err.message, 'error');
+        }
+      } else {
+        showToast(id ? 'Post updated.' : 'Post created.', 'success');
+      }
 
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
-
-      showToast(id ? 'Post updated.' : 'Post created.', 'success');
       closePostForm();
       loadPosts();
     });
