@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — Greenwood High School Admin</title>
+  <!-- ⬇ THIS IS THE TURNSTILE SCRIPT TAG ⬇ -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- ⬆ THIS IS THE TURNSTILE SCRIPT TAG ⬆ -->
 
   <style>
     :root {
@@ -642,6 +644,9 @@
     // Turnstile tokens
     let announcementTurnstileToken = null;
     let postTurnstileToken = null;
+    // Turnstile widget IDs (returned by turnstile.render)
+    let announcementTurnstileWidgetId = null;
+    let postTurnstileWidgetId = null;
 
     const formState = {
       announcement: { existing: [], removed: [], pending: [] },
@@ -692,46 +697,74 @@
     }
 
     // ---------- Turnstile ----------
-    function initTurnstileWidgets() {
-      if (typeof turnstile === 'undefined') {
-        setTimeout(initTurnstileWidgets, 150);
+    // Wait for Cloudflare's script to load (it may arrive after our module runs).
+    function waitForTurnstile() {
+      return new Promise((resolve) => {
+        if (typeof turnstile !== 'undefined' && turnstile.render) {
+          resolve(true);
+          return;
+        }
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          if (typeof turnstile !== 'undefined' && turnstile.render) {
+            clearInterval(interval);
+            resolve(true);
+          } else if (attempts > 100) { // 10 seconds
+            clearInterval(interval);
+            resolve(false);
+          }
+        }, 100);
+      });
+    }
+
+    async function initTurnstileWidgets() {
+      const loaded = await waitForTurnstile();
+      if (!loaded) {
+        console.error('Turnstile failed to load after 10 seconds.');
+        showToast('Cloudflare verification script failed to load. Please refresh the page.', 'error');
         return;
       }
       try {
-        turnstile.render('#announcementTurnstile', {
+        announcementTurnstileWidgetId = turnstile.render('#announcementTurnstile', {
           sitekey: TURNSTILE_SITE_KEY,
           theme: 'light',
           callback: (token) => { announcementTurnstileToken = token; },
           'expired-callback': () => { announcementTurnstileToken = null; },
           'error-callback': () => {
             announcementTurnstileToken = null;
-            showToast('Turnstile failed to load. Please refresh.', 'error');
+            showToast('Turnstile could not load. Please refresh.', 'error');
           }
         });
-        turnstile.render('#postTurnstile', {
+        postTurnstileWidgetId = turnstile.render('#postTurnstile', {
           sitekey: TURNSTILE_SITE_KEY,
           theme: 'light',
           callback: (token) => { postTurnstileToken = token; },
           'expired-callback': () => { postTurnstileToken = null; },
           'error-callback': () => {
             postTurnstileToken = null;
-            showToast('Turnstile failed to load. Please refresh.', 'error');
+            showToast('Turnstile could not load. Please refresh.', 'error');
           }
         });
+        console.log('Turnstile widgets rendered.');
       } catch (err) {
         console.error('Turnstile init error:', err);
       }
     }
 
-    // Reset a Turnstile widget so it produces a new token
     function resetTurnstile(kind) {
       try {
+        if (typeof turnstile === 'undefined') return;
         if (kind === 'announcement') {
           announcementTurnstileToken = null;
-          if (typeof turnstile !== 'undefined') turnstile.reset('#announcementTurnstile');
+          if (announcementTurnstileWidgetId !== null) {
+            turnstile.reset(announcementTurnstileWidgetId);
+          }
         } else {
           postTurnstileToken = null;
-          if (typeof turnstile !== 'undefined') turnstile.reset('#postTurnstile');
+          if (postTurnstileWidgetId !== null) {
+            turnstile.reset(postTurnstileWidgetId);
+          }
         }
       } catch (err) { /* ignore */ }
     }
@@ -924,7 +957,6 @@
 
       if (state.pending.length === 0) return { success: true, uploaded: 0, failed: 0 };
 
-      // Check token once — it's the same for all files in this batch
       if (!turnstileToken) {
         throw new Error('Please complete the "Verify you are human" check before uploading.');
       }
@@ -1080,7 +1112,6 @@
         return;
       }
 
-      // If we have files to upload, check that Turnstile has been completed
       if (pendingCount > 0 && !announcementTurnstileToken) {
         showToast('Please wait for the "Verify you are human" check to finish.', 'error');
         return;
