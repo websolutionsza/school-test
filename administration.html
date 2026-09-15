@@ -595,11 +595,15 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
-// ==========================================================
-// UPLOAD PROXY CONFIGURATION (Cloudflare Pages Function)
-// ==========================================================
-const UPLOAD_PROXY_URL = '/api/upload';
-const MAX_FILES = 10;
+    // ==========================================================
+    // UPLOAD PROXY CONFIGURATION (Cloudflare Pages Function)
+    // ==========================================================
+    const UPLOAD_PROXY_URL = '/api/upload';
+    const MAX_FILES = 10;
+
+    let currentUser = null;
+    let announcementsCache = [];
+    let postsCache = [];
 
     const formState = {
       announcement: { existing: [], removed: [], pending: [] },
@@ -684,28 +688,22 @@ const MAX_FILES = 10;
     });
 
     // ==========================================================
-    // POSTFILE UPLOAD
+    // UPLOAD via Cloudflare Pages Function proxy
     // ==========================================================
     async function uploadToPostFile(file) {
-  const formData = new FormData();
-  formData.append('file', file);
+      const formData = new FormData();
+      formData.append('file', file);
 
-  const res = await fetch(UPLOAD_PROXY_URL, {
-    method: 'POST',
-    body: formData
-  });
+      const res = await fetch(UPLOAD_PROXY_URL, {
+        method: 'POST',
+        body: formData
+      });
 
-  if (!res.ok) {
-    let text = '';
-    try { text = await res.text(); } catch (e) { /* ignore */ }
-    throw new Error(`Upload failed (${res.status}): ${text.substring(0, 150)}`);
-  }
-
-  const json = await res.json();
-  const url = json.url;
-  if (!url) throw new Error('No URL returned from upload');
-  return url;
-}
+      if (!res.ok) {
+        let text = '';
+        try { text = await res.text(); } catch (e) { /* ignore */ }
+        throw new Error(`Upload failed (${res.status}): ${text.substring(0, 150)}`);
+      }
 
       const json = await res.json();
       const url = json.url;
@@ -830,7 +828,6 @@ const MAX_FILES = 10;
       const state = formState[kind];
       const column = kind === 'announcement' ? 'announcement_id' : 'post_id';
 
-      // Delete removed rows
       for (const id of state.removed) {
         await postbase.from('media').delete().eq('id', id);
       }
