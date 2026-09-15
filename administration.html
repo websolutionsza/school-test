@@ -409,6 +409,71 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-overlay p { font-size: 0.9rem; color: var(--text-medium); font-weight: 600; }
 
+    /* ==========================================================
+       MODALS (inactivity + draft recovery)
+       ========================================================== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      max-width: 440px;
+      width: 100%;
+      padding: 32px 28px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+      text-align: center;
+      animation: popIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 18px;
+    }
+    .modal-icon.warn { background: #fef3c7; color: #b45309; }
+    .modal-card h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+    .modal-card p {
+      font-size: 0.92rem;
+      color: var(--text-medium);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+    .modal-countdown {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+      margin: 8px 0 22px;
+      letter-spacing: -1px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .modal-actions .btn { min-width: 120px; }
+
     @media (max-width: 640px) {
       .admin-main { padding: 20px 16px 60px; }
       .admin-header-inner { padding: 0 16px; height: 64px; }
@@ -586,6 +651,36 @@
 
   <div id="toastContainer" class="toast-container"></div>
 
+  <!-- Inactivity warning modal -->
+  <div id="inactivityModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-icon warn">⏱️</div>
+      <h2>Are you still there?</h2>
+      <p>You've been inactive for a while. For security, we'll sign you out when the countdown reaches zero.</p>
+      <div class="modal-countdown" id="inactivityCountdown">20</div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="imHereBtn">Yes, I'm here</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Draft recovery modal -->
+  <div id="draftModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-icon">📝</div>
+      <h2>Unsaved work found</h2>
+      <p>
+        We found unsaved work on a previous <span id="draftModalName">form</span>.
+        Would you like to continue where you left off?
+      </p>
+      <p id="draftModalFiles" style="font-size:0.82rem; color:var(--text-light); margin-top:-10px;"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="draftDiscardBtn">Discard</button>
+        <button type="button" class="btn btn-primary" id="draftContinueBtn">Continue</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/postbasejs/+esm';
 
@@ -601,6 +696,13 @@
     const UPLOAD_PROXY_URL = '/api/upload';
     const MAX_FILES = 10;
 
+    // ==========================================================
+    // INACTIVITY / SESSION CONFIG
+    // ==========================================================
+    const IDLE_MS = 60 * 1000;          // 1 minute idle before warning
+    const COUNTDOWN_SECONDS = 20;       // countdown length
+    const SESSION_FLAG = 'admin_tab_authenticated';
+
     let currentUser = null;
     let announcementsCache = [];
     let postsCache = [];
@@ -610,7 +712,9 @@
       post:         { existing: [], removed: [], pending: [] }
     };
 
-    // ---------- helpers ----------
+    // ==========================================================
+    // HELPERS
+    // ==========================================================
     function escapeHtml(text) {
       if (text === null || text === undefined) return '';
       const div = document.createElement('div');
@@ -644,7 +748,6 @@
       if (mimeType === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) return 'pdf';
       return 'document';
     }
-
     function getFileIcon(type) {
       if (type === 'image') return '🖼️';
       if (type === 'video') return '🎬';
@@ -653,30 +756,185 @@
       return '📎';
     }
 
-    // ---------- auth guard ----------
+    // ==========================================================
+    // AUTH GUARD — requires the per-tab flag AND a valid PostBase session
+    // ==========================================================
     async function requireAuth() {
+      const tabAuthed = sessionStorage.getItem(SESSION_FLAG) === 'true';
+      if (!tabAuthed) {
+        // Fresh tab (or tab was closed) — always ask for password again
+        window.location.replace('admin-login.html');
+        return false;
+      }
+
       try {
         const { data, error } = await postbase.auth.getSession();
         if (error) throw error;
-        if (!data || !data.session) { window.location.replace('admin-login.html'); return false; }
+        if (!data || !data.session) {
+          sessionStorage.removeItem(SESSION_FLAG);
+          window.location.replace('admin-login.html');
+          return false;
+        }
         currentUser = data.session.user;
         document.getElementById('userName').textContent = currentUser.name || 'Administrator';
         document.getElementById('userEmail').textContent = currentUser.email || '';
         return true;
       } catch (err) {
         console.error('Auth check failed:', err);
+        sessionStorage.removeItem(SESSION_FLAG);
         window.location.replace('admin-login.html');
         return false;
       }
     }
 
+    async function performLogout() {
+      try { await postbase.auth.signOut(); } catch (err) { /* ignore */ }
+      sessionStorage.removeItem(SESSION_FLAG);
+      window.location.replace('admin-login.html');
+    }
+
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       if (!confirm('Sign out of the admin dashboard?')) return;
-      try { await postbase.auth.signOut(); } catch (err) { console.error(err); }
-      window.location.replace('admin-login.html');
+      await performLogout();
     });
 
-    // ---------- tabs ----------
+    // ==========================================================
+    // INACTIVITY TIMER
+    // ==========================================================
+    let idleTimer = null;
+    let countdownInterval = null;
+    let countdownRemaining = COUNTDOWN_SECONDS;
+    let inactivityModalOpen = false;
+
+    function resetIdleTimer() {
+      if (inactivityModalOpen) return;
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(showInactivityModal, IDLE_MS);
+    }
+
+    function showInactivityModal() {
+      inactivityModalOpen = true;
+      countdownRemaining = COUNTDOWN_SECONDS;
+      document.getElementById('inactivityCountdown').textContent = countdownRemaining;
+      document.getElementById('inactivityModal').classList.remove('hidden');
+
+      countdownInterval = setInterval(() => {
+        countdownRemaining--;
+        document.getElementById('inactivityCountdown').textContent = countdownRemaining;
+        if (countdownRemaining <= 0) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          performLogout();
+        }
+      }, 1000);
+    }
+
+    function dismissInactivityModal() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+      inactivityModalOpen = false;
+      document.getElementById('inactivityModal').classList.add('hidden');
+      resetIdleTimer();
+    }
+
+    document.getElementById('imHereBtn').addEventListener('click', dismissInactivityModal);
+
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+      document.addEventListener(evt, resetIdleTimer, { passive: true });
+    });
+
+    // ==========================================================
+    // DRAFT SAVE / RESTORE
+    // ==========================================================
+    const DRAFT_KEYS = {
+      announcement: 'ghs_draft_announcement',
+      post: 'ghs_draft_post'
+    };
+
+    function saveDraft(kind) {
+      const idEl = document.getElementById(kind + 'Id');
+      const titleEl = document.getElementById(kind + 'Title');
+      const contentEl = document.getElementById(kind + 'Content');
+      const publishedEl = document.getElementById(kind + 'Published');
+      if (!idEl || !titleEl || !contentEl) return;
+
+      const title = titleEl.value;
+      const content = contentEl.value;
+      const id = idEl.value;
+      const published = publishedEl.checked;
+      const pendingFiles = formState[kind].pending.map(f => f.name);
+
+      if (!title && !content && pendingFiles.length === 0) {
+        localStorage.removeItem(DRAFT_KEYS[kind]);
+        return;
+      }
+
+      try {
+        localStorage.setItem(DRAFT_KEYS[kind], JSON.stringify({
+          id, title, content, published,
+          pendingFiles,
+          savedAt: Date.now()
+        }));
+      } catch (e) { /* quota errors are ignorable */ }
+    }
+
+    function getDraft(kind) {
+      try {
+        const raw = localStorage.getItem(DRAFT_KEYS[kind]);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) { return null; }
+    }
+
+    function clearDraft(kind) {
+      try { localStorage.removeItem(DRAFT_KEYS[kind]); } catch (e) {}
+    }
+
+    function askToRecoverDraft(kind, draft) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('draftModal');
+        const nameEl = document.getElementById('draftModalName');
+        const filesEl = document.getElementById('draftModalFiles');
+        const yesBtn = document.getElementById('draftContinueBtn');
+        const noBtn = document.getElementById('draftDiscardBtn');
+
+        nameEl.textContent = kind === 'announcement' ? 'announcement' : 'post';
+
+        if (draft.pendingFiles && draft.pendingFiles.length > 0) {
+          filesEl.textContent = 'Files you had selected: ' + draft.pendingFiles.join(', ') +
+            ' — you\'ll need to re-select them.';
+        } else {
+          filesEl.textContent = '';
+        }
+
+        modal.classList.remove('hidden');
+
+        function cleanup() {
+          modal.classList.add('hidden');
+          yesBtn.removeEventListener('click', onYes);
+          noBtn.removeEventListener('click', onNo);
+        }
+        function onYes() { cleanup(); resolve(true); }
+        function onNo() { cleanup(); clearDraft(kind); resolve(false); }
+
+        yesBtn.addEventListener('click', onYes);
+        noBtn.addEventListener('click', onNo);
+      });
+    }
+
+    // Wire draft-save to inputs
+    ['announcement', 'post'].forEach(kind => {
+      const titleEl = document.getElementById(kind + 'Title');
+      const contentEl = document.getElementById(kind + 'Content');
+      if (titleEl) titleEl.addEventListener('input', () => saveDraft(kind));
+      if (contentEl) contentEl.addEventListener('input', () => saveDraft(kind));
+    });
+
+    // ==========================================================
+    // TABS
+    // ==========================================================
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
@@ -688,7 +946,7 @@
     });
 
     // ==========================================================
-    // UPLOAD via Cloudflare Pages Function proxy
+    // UPLOAD
     // ==========================================================
     async function uploadToPostFile(file) {
       const formData = new FormData();
@@ -711,7 +969,9 @@
       return url;
     }
 
-    // ---------- media UI ----------
+    // ==========================================================
+    // MEDIA UI
+    // ==========================================================
     function renderPreviews(kind) {
       const container = document.getElementById(kind + 'Previews');
       const state = formState[kind];
@@ -770,6 +1030,7 @@
             state.pending.splice(idx, 1);
           }
           renderPreviews(kind);
+          saveDraft(kind);
         });
       });
     }
@@ -788,6 +1049,7 @@
         showToast(`Only ${room} more file${room === 1 ? '' : 's'} could be added.`, 'error');
       }
       renderPreviews(kind);
+      saveDraft(kind);
     }
 
     function setupUploadArea(kind) {
@@ -930,13 +1192,42 @@
       updateMediaStat();
     }
 
-    function openAnnouncementForm(item = null) {
+    async function openAnnouncementForm(item = null) {
       const panel = document.getElementById('announcementFormPanel');
       const title = document.getElementById('announcementFormTitle');
       const submitBtn = document.getElementById('announcementSubmitBtn');
       panel.classList.add('open');
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       resetFormMedia('announcement');
+
+      // Check for a draft that matches this form (new form, or editing the same id)
+      const draft = getDraft('announcement');
+      const draftMatches = draft && (
+        (item && draft.id === item.id) ||
+        (!item && !draft.id)
+      );
+
+      if (draftMatches) {
+        const recover = await askToRecoverDraft('announcement', draft);
+        if (recover) {
+          document.getElementById('announcementId').value = draft.id || '';
+          document.getElementById('announcementTitle').value = draft.title || '';
+          document.getElementById('announcementContent').value = draft.content || '';
+          document.getElementById('announcementPublished').checked = draft.published !== false;
+          if (draft.id) {
+            title.textContent = 'Edit Announcement';
+            submitBtn.textContent = 'Save Changes';
+            loadExistingMedia('announcement', draft.id).then(rows => {
+              formState.announcement.existing = rows;
+              renderPreviews('announcement');
+            });
+          } else {
+            title.textContent = 'New Announcement';
+            submitBtn.textContent = 'Create Announcement';
+          }
+          return;
+        }
+      }
 
       if (item) {
         title.textContent = 'Edit Announcement';
@@ -964,6 +1255,7 @@
       document.getElementById('announcementForm').reset();
       document.getElementById('announcementId').value = '';
       resetFormMedia('announcement');
+      // Do NOT clear the draft here — the user may reopen to continue
     }
 
     document.getElementById('newAnnouncementBtn').addEventListener('click', () => openAnnouncementForm());
@@ -1036,6 +1328,9 @@
       } else {
         showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
       }
+
+      // Success — clear the draft
+      clearDraft('announcement');
 
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
@@ -1137,13 +1432,41 @@
       updateMediaStat();
     }
 
-    function openPostForm(item = null) {
+    async function openPostForm(item = null) {
       const panel = document.getElementById('postFormPanel');
       const title = document.getElementById('postFormTitle');
       const submitBtn = document.getElementById('postSubmitBtn');
       panel.classList.add('open');
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       resetFormMedia('post');
+
+      const draft = getDraft('post');
+      const draftMatches = draft && (
+        (item && draft.id === item.id) ||
+        (!item && !draft.id)
+      );
+
+      if (draftMatches) {
+        const recover = await askToRecoverDraft('post', draft);
+        if (recover) {
+          document.getElementById('postId').value = draft.id || '';
+          document.getElementById('postTitle').value = draft.title || '';
+          document.getElementById('postContent').value = draft.content || '';
+          document.getElementById('postPublished').checked = draft.published !== false;
+          if (draft.id) {
+            title.textContent = 'Edit Post';
+            submitBtn.textContent = 'Save Changes';
+            loadExistingMedia('post', draft.id).then(rows => {
+              formState.post.existing = rows;
+              renderPreviews('post');
+            });
+          } else {
+            title.textContent = 'New Post';
+            submitBtn.textContent = 'Create Post';
+          }
+          return;
+        }
+      }
 
       if (item) {
         title.textContent = 'Edit Post';
@@ -1244,6 +1567,8 @@
         showToast(id ? 'Post updated.' : 'Post created.', 'success');
       }
 
+      clearDraft('post');
+
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
       closePostForm();
@@ -1298,6 +1623,7 @@
       setupUploadArea('post');
       loadAnnouncements();
       loadPosts();
+      resetIdleTimer();
     })();
   </script>
 
