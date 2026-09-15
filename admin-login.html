@@ -249,11 +249,18 @@
       messageBox.textContent = '';
     }
 
-    // If already logged in, skip straight to dashboard
+    // If this tab already authenticated, and PostBase session exists, skip the form.
+    // Otherwise, always show the login form (even if a PostBase session lingers
+    // from a previous visit — this enforces re-login on a fresh tab).
     (async function checkSession() {
+      const tabAuthed = sessionStorage.getItem('admin_tab_authenticated') === 'true';
+      if (!tabAuthed) return; // fresh tab → require login
+
       const { data } = await postbase.auth.getSession();
       if (data && data.session) {
         window.location.replace('administration.html');
+      } else {
+        sessionStorage.removeItem('admin_tab_authenticated');
       }
     })();
 
@@ -296,6 +303,9 @@
         }
         return;
       }
+
+      // Mark this tab as authenticated (clears when the tab is closed).
+      sessionStorage.setItem('admin_tab_authenticated', 'true');
 
       showMessage('Login successful. Redirecting…', 'success');
       window.location.replace('administration.html');
