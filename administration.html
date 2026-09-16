@@ -256,8 +256,7 @@
       background: var(--bg-light);
       display: flex; align-items: center; justify-content: center;
     }
-    .preview-item img,
-    .preview-item video {
+    .preview-item img {
       width: 100%; height: 100%;
       object-fit: cover; display: block;
     }
@@ -409,9 +408,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-overlay p { font-size: 0.9rem; color: var(--text-medium); font-weight: 600; }
 
-    /* ==========================================================
-       MODALS (inactivity + draft recovery)
-       ========================================================== */
+    /* Modals */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.65);
@@ -567,13 +564,15 @@
               <textarea id="announcementContent" required placeholder="Write the full announcement here…"></textarea>
             </div>
             <div class="form-group">
-              <label>Attach files (any type, up to 10)</label>
+              <label>Attach files (up to 10)</label>
               <div class="upload-area" id="announcementUploadArea" onclick="document.getElementById('announcementFileInput').click()">
                 <span class="upload-icon">📎</span>
                 <div class="upload-text">Click to choose files</div>
-                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files • 50 MB each</div>
+                <div class="upload-hint">or drag &amp; drop • images, PDFs, documents • max 10 files • 50 MB each</div>
               </div>
-              <input type="file" id="announcementFileInput" multiple style="display:none" />
+              <input type="file" id="announcementFileInput" multiple
+                     accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip"
+                     style="display:none" />
               <div id="announcementPreviews" class="previews"></div>
             </div>
             <div class="form-group">
@@ -619,13 +618,15 @@
               <textarea id="postContent" required placeholder="Write the full article here…"></textarea>
             </div>
             <div class="form-group">
-              <label>Attach files (any type, up to 10)</label>
+              <label>Attach files (up to 10)</label>
               <div class="upload-area" id="postUploadArea" onclick="document.getElementById('postFileInput').click()">
                 <span class="upload-icon">📎</span>
                 <div class="upload-text">Click to choose files</div>
-                <div class="upload-hint">or drag &amp; drop • images, videos, audio, PDFs, documents • max 10 files • 50 MB each</div>
+                <div class="upload-hint">or drag &amp; drop • images, PDFs, documents • max 10 files • 50 MB each</div>
               </div>
-              <input type="file" id="postFileInput" multiple style="display:none" />
+              <input type="file" id="postFileInput" multiple
+                     accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip"
+                     style="display:none" />
               <div id="postPreviews" class="previews"></div>
             </div>
             <div class="form-group">
@@ -651,7 +652,6 @@
 
   <div id="toastContainer" class="toast-container"></div>
 
-  <!-- Inactivity warning modal -->
   <div id="inactivityModal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="modal-icon warn">⏱️</div>
@@ -664,7 +664,6 @@
     </div>
   </div>
 
-  <!-- Draft recovery modal -->
   <div id="draftModal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="modal-icon">📝</div>
@@ -690,17 +689,11 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
-    // ==========================================================
-    // UPLOAD PROXY CONFIGURATION (Cloudflare Pages Function)
-    // ==========================================================
     const UPLOAD_PROXY_URL = '/api/upload';
     const MAX_FILES = 10;
 
-    // ==========================================================
-    // INACTIVITY / SESSION CONFIG
-    // ==========================================================
-    const IDLE_MS = 60 * 1000;          // 1 minute idle before warning
-    const COUNTDOWN_SECONDS = 20;       // countdown length
+    const IDLE_MS = 60 * 1000;
+    const COUNTDOWN_SECONDS = 20;
     const SESSION_FLAG = 'admin_tab_authenticated';
 
     let currentUser = null;
@@ -712,9 +705,7 @@
       post:         { existing: [], removed: [], pending: [] }
     };
 
-    // ==========================================================
-    // HELPERS
-    // ==========================================================
+    // ---------- helpers ----------
     function escapeHtml(text) {
       if (text === null || text === undefined) return '';
       const div = document.createElement('div');
@@ -740,33 +731,68 @@
     }
     function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
 
+    // ---------- FILE TYPE DETECTION ----------
+    // Returns 'image' | 'pdf' | 'document' for accepted files,
+    // and null for anything we do NOT accept (video, audio, anything else).
     function getFileTypeFromMime(mimeType, filename) {
-      if (!mimeType) mimeType = '';
-      if (mimeType.startsWith('image/')) return 'image';
-      if (mimeType.startsWith('video/')) return 'video';
-      if (mimeType.startsWith('audio/')) return 'audio';
-      if (mimeType === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) return 'pdf';
-      return 'document';
+      const mime = (mimeType || '').toLowerCase();
+      const name = (filename || '').toLowerCase();
+
+      // Hard reject video and audio
+      if (mime.startsWith('video/')) return null;
+      if (mime.startsWith('audio/')) return null;
+
+      // Images
+      if (mime.startsWith('image/')) return 'image';
+
+      // PDF
+      if (mime === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
+
+      // Documents — a small allowlist of common office/document types
+      const docExtensions = [
+        '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
+        '.txt', '.csv', '.rtf', '.odt', '.ods', '.odp', '.zip'
+      ];
+      const docMimes = [
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'text/plain',
+        'text/csv',
+        'application/rtf',
+        'application/vnd.oasis.opendocument.text',
+        'application/vnd.oasis.opendocument.spreadsheet',
+        'application/vnd.oasis.opendocument.presentation',
+        'application/zip',
+        'application/x-zip-compressed'
+      ];
+      if (docMimes.includes(mime)) return 'document';
+      if (docExtensions.some(ext => name.endsWith(ext))) return 'document';
+
+      // Everything else is rejected
+      return null;
     }
+
     function getFileIcon(type) {
       if (type === 'image') return '🖼️';
+      if (type === 'pdf') return '📄';
+      if (type === 'document') return '📎';
+      // Legacy values from previous versions (video/audio) still render safely
       if (type === 'video') return '🎬';
       if (type === 'audio') return '🎵';
-      if (type === 'pdf') return '📄';
       return '📎';
     }
 
-    // ==========================================================
-    // AUTH GUARD — requires the per-tab flag AND a valid PostBase session
-    // ==========================================================
+    // ---------- auth ----------
     async function requireAuth() {
       const tabAuthed = sessionStorage.getItem(SESSION_FLAG) === 'true';
       if (!tabAuthed) {
-        // Fresh tab (or tab was closed) — always ask for password again
         window.location.replace('admin-login.html');
         return false;
       }
-
       try {
         const { data, error } = await postbase.auth.getSession();
         if (error) throw error;
@@ -798,9 +824,7 @@
       await performLogout();
     });
 
-    // ==========================================================
-    // INACTIVITY TIMER
-    // ==========================================================
+    // ---------- inactivity ----------
     let idleTimer = null;
     let countdownInterval = null;
     let countdownRemaining = COUNTDOWN_SECONDS;
@@ -817,7 +841,6 @@
       countdownRemaining = COUNTDOWN_SECONDS;
       document.getElementById('inactivityCountdown').textContent = countdownRemaining;
       document.getElementById('inactivityModal').classList.remove('hidden');
-
       countdownInterval = setInterval(() => {
         countdownRemaining--;
         document.getElementById('inactivityCountdown').textContent = countdownRemaining;
@@ -845,9 +868,7 @@
       document.addEventListener(evt, resetIdleTimer, { passive: true });
     });
 
-    // ==========================================================
-    // DRAFT SAVE / RESTORE
-    // ==========================================================
+    // ---------- drafts ----------
     const DRAFT_KEYS = {
       announcement: 'ghs_draft_announcement',
       post: 'ghs_draft_post'
@@ -867,17 +888,16 @@
       const pendingFiles = formState[kind].pending.map(f => f.name);
 
       if (!title && !content && pendingFiles.length === 0) {
-        localStorage.removeItem(DRAFT_KEYS[kind]);
+        try { localStorage.removeItem(DRAFT_KEYS[kind]); } catch (e) {}
         return;
       }
-
       try {
         localStorage.setItem(DRAFT_KEYS[kind], JSON.stringify({
           id, title, content, published,
           pendingFiles,
           savedAt: Date.now()
         }));
-      } catch (e) { /* quota errors are ignorable */ }
+      } catch (e) { /* ignore */ }
     }
 
     function getDraft(kind) {
@@ -899,18 +919,14 @@
         const filesEl = document.getElementById('draftModalFiles');
         const yesBtn = document.getElementById('draftContinueBtn');
         const noBtn = document.getElementById('draftDiscardBtn');
-
         nameEl.textContent = kind === 'announcement' ? 'announcement' : 'post';
-
         if (draft.pendingFiles && draft.pendingFiles.length > 0) {
           filesEl.textContent = 'Files you had selected: ' + draft.pendingFiles.join(', ') +
             ' — you\'ll need to re-select them.';
         } else {
           filesEl.textContent = '';
         }
-
         modal.classList.remove('hidden');
-
         function cleanup() {
           modal.classList.add('hidden');
           yesBtn.removeEventListener('click', onYes);
@@ -918,13 +934,11 @@
         }
         function onYes() { cleanup(); resolve(true); }
         function onNo() { cleanup(); clearDraft(kind); resolve(false); }
-
         yesBtn.addEventListener('click', onYes);
         noBtn.addEventListener('click', onNo);
       });
     }
 
-    // Wire draft-save to inputs
     ['announcement', 'post'].forEach(kind => {
       const titleEl = document.getElementById(kind + 'Title');
       const contentEl = document.getElementById(kind + 'Content');
@@ -932,9 +946,7 @@
       if (contentEl) contentEl.addEventListener('input', () => saveDraft(kind));
     });
 
-    // ==========================================================
-    // TABS
-    // ==========================================================
+    // ---------- tabs ----------
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
@@ -945,39 +957,31 @@
       });
     });
 
-    // ==========================================================
-    // UPLOAD
-    // ==========================================================
+    // ---------- upload ----------
     async function uploadToPostFile(file) {
       const formData = new FormData();
       formData.append('file', file);
-
       const res = await fetch(UPLOAD_PROXY_URL, {
         method: 'POST',
         body: formData
       });
-
       if (!res.ok) {
         let text = '';
-        try { text = await res.text(); } catch (e) { /* ignore */ }
+        try { text = await res.text(); } catch (e) {}
         throw new Error(`Upload failed (${res.status}): ${text.substring(0, 150)}`);
       }
-
       const json = await res.json();
       const url = json.url;
       if (!url) throw new Error('No URL returned from upload');
       return url;
     }
 
-    // ==========================================================
-    // MEDIA UI
-    // ==========================================================
+    // ---------- media UI ----------
     function renderPreviews(kind) {
       const container = document.getElementById(kind + 'Previews');
       const state = formState[kind];
       const total = state.existing.length + state.pending.length;
       const area = document.getElementById(kind + 'UploadArea');
-
       if (total >= MAX_FILES) area.classList.add('disabled');
       else area.classList.remove('disabled');
 
@@ -997,8 +1001,6 @@
         let previewContent;
         if (type === 'image') {
           previewContent = `<img src="${URL.createObjectURL(file)}" alt="" />`;
-        } else if (type === 'video') {
-          previewContent = `<video src="${URL.createObjectURL(file)}" muted></video>`;
         } else {
           previewContent = `<span class="file-icon">${getFileIcon(type)}</span>`;
         }
@@ -1042,10 +1044,20 @@
         showToast('You can add up to ' + MAX_FILES + ' files.', 'error');
         return;
       }
-      const files = Array.from(fileList);
-      const accepted = files.slice(0, room);
+      const allFiles = Array.from(fileList);
+      // Reject video/audio and any unsupported type
+      const allowed = allFiles.filter(f => getFileTypeFromMime(f.type, f.name) !== null);
+      const rejectedCount = allFiles.length - allowed.length;
+      const accepted = allowed.slice(0, room);
       state.pending.push(...accepted);
-      if (files.length > room) {
+
+      if (rejectedCount > 0) {
+        showToast(
+          `${rejectedCount} file${rejectedCount === 1 ? '' : 's'} skipped — only images, PDFs, and documents are allowed.`,
+          'error'
+        );
+      }
+      if (allowed.length > room) {
         showToast(`Only ${room} more file${room === 1 ? '' : 's'} could be added.`, 'error');
       }
       renderPreviews(kind);
@@ -1055,12 +1067,10 @@
     function setupUploadArea(kind) {
       const area = document.getElementById(kind + 'UploadArea');
       const input = document.getElementById(kind + 'FileInput');
-
       input.addEventListener('change', (e) => {
         handleFiles(kind, e.target.files);
         input.value = '';
       });
-
       area.addEventListener('dragover', (e) => {
         e.preventDefault();
         if (!area.classList.contains('disabled')) area.classList.add('dragover');
@@ -1093,31 +1103,26 @@
       for (const id of state.removed) {
         await postbase.from('media').delete().eq('id', id);
       }
-
       if (state.pending.length === 0) return { success: true, uploaded: 0, failed: 0 };
 
       let uploaded = 0;
       let failed = 0;
-
       for (const file of state.pending) {
+        const fileType = getFileTypeFromMime(file.type, file.name);
+        // Defense-in-depth: skip anything that somehow slipped through
+        if (fileType === null) { failed++; continue; }
         try {
           const url = await uploadToPostFile(file);
-          const fileType = getFileTypeFromMime(file.type, file.name);
           const payload = { file_url: url, file_type: fileType };
           payload[column] = parentId;
           const { error } = await postbase.from('media').insert(payload);
-          if (error) {
-            console.error('Insert media error:', error);
-            failed++;
-          } else {
-            uploaded++;
-          }
+          if (error) { console.error('Insert media error:', error); failed++; }
+          else { uploaded++; }
         } catch (err) {
           console.error('Upload failed for', file.name, ':', err);
           failed++;
         }
       }
-
       return { success: true, uploaded, failed };
     }
 
@@ -1126,9 +1131,7 @@
       renderPreviews(kind);
     }
 
-    // ==========================================================
-    // ANNOUNCEMENTS
-    // ==========================================================
+    // ---------- announcements ----------
     async function loadAnnouncements() {
       const container = document.getElementById('announcementsList');
       container.innerHTML = '<div class="state-box"><span class="icon">⏳</span>Loading announcements…</div>';
@@ -1200,7 +1203,6 @@
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       resetFormMedia('announcement');
 
-      // Check for a draft that matches this form (new form, or editing the same id)
       const draft = getDraft('announcement');
       const draftMatches = draft && (
         (item && draft.id === item.id) ||
@@ -1236,7 +1238,6 @@
         document.getElementById('announcementTitle').value = item.title;
         document.getElementById('announcementContent').value = item.content;
         document.getElementById('announcementPublished').checked = item.published;
-
         loadExistingMedia('announcement', item.id).then(rows => {
           formState.announcement.existing = rows;
           renderPreviews('announcement');
@@ -1255,7 +1256,6 @@
       document.getElementById('announcementForm').reset();
       document.getElementById('announcementId').value = '';
       resetFormMedia('announcement');
-      // Do NOT clear the draft here — the user may reopen to continue
     }
 
     document.getElementById('newAnnouncementBtn').addEventListener('click', () => openAnnouncementForm());
@@ -1281,7 +1281,6 @@
 
       let savedId = id;
       let error;
-
       if (id) {
         ({ error } = await postbase
           .from('announcements')
@@ -1302,7 +1301,6 @@
         showToast('Save failed: ' + (error.message || 'Unknown error'), 'error');
         return;
       }
-
       if (!savedId) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalLabel;
@@ -1329,9 +1327,7 @@
         showToast(id ? 'Announcement updated.' : 'Announcement created.', 'success');
       }
 
-      // Success — clear the draft
       clearDraft('announcement');
-
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
       closeAnnouncementForm();
@@ -1348,12 +1344,10 @@
         const item = announcementsCache.find(a => a.id === id);
         if (item) openAnnouncementForm(item);
       }
-
       if (action === 'delete-announcement') {
         const item = announcementsCache.find(a => a.id === id);
         if (!item) return;
         if (!confirm('Delete "' + item.title + '"?\n\nThis cannot be undone.')) return;
-
         btn.disabled = true;
         const { error } = await postbase.from('announcements').delete().eq('id', id);
         if (error) {
@@ -1366,9 +1360,7 @@
       }
     });
 
-    // ==========================================================
-    // POSTS
-    // ==========================================================
+    // ---------- posts ----------
     async function loadPosts() {
       const container = document.getElementById('postsList');
       container.innerHTML = '<div class="state-box"><span class="icon">⏳</span>Loading posts…</div>';
@@ -1475,7 +1467,6 @@
         document.getElementById('postTitle').value = item.title;
         document.getElementById('postContent').value = item.content;
         document.getElementById('postPublished').checked = item.published;
-
         loadExistingMedia('post', item.id).then(rows => {
           formState.post.existing = rows;
           renderPreviews('post');
@@ -1519,7 +1510,6 @@
 
       let savedId = id;
       let error;
-
       if (id) {
         ({ error } = await postbase
           .from('posts')
@@ -1540,7 +1530,6 @@
         showToast('Save failed: ' + (error.message || 'Unknown error'), 'error');
         return;
       }
-
       if (!savedId) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalLabel;
@@ -1568,7 +1557,6 @@
       }
 
       clearDraft('post');
-
       submitBtn.disabled = false;
       submitBtn.textContent = originalLabel;
       closePostForm();
@@ -1585,12 +1573,10 @@
         const item = postsCache.find(p => p.id === id);
         if (item) openPostForm(item);
       }
-
       if (action === 'delete-post') {
         const item = postsCache.find(p => p.id === id);
         if (!item) return;
         if (!confirm('Delete "' + item.title + '"?\n\nThis cannot be undone.')) return;
-
         btn.disabled = true;
         const { error } = await postbase.from('posts').delete().eq('id', id);
         if (error) {
@@ -1603,18 +1589,14 @@
       }
     });
 
-    // ==========================================================
-    // MEDIA STAT
-    // ==========================================================
+    // ---------- media stat ----------
     async function updateMediaStat() {
       const { data, error } = await postbase.from('media').select('id');
       if (error) { document.getElementById('statMedia').textContent = '0'; return; }
       document.getElementById('statMedia').textContent = (data || []).length;
     }
 
-    // ==========================================================
-    // BOOT
-    // ==========================================================
+    // ---------- boot ----------
     (async function init() {
       const authenticated = await requireAuth();
       if (!authenticated) return;
