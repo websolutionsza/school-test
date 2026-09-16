@@ -155,7 +155,7 @@
       margin-bottom: 14px; align-self: flex-start;
     }
 
-    /* Media gallery inside card */
+    /* Media grid inside cards (images only) */
     .card-media {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
@@ -163,8 +163,7 @@
       margin-top: 14px;
       margin-bottom: 4px;
     }
-    .card-media img,
-    .card-media video {
+    .card-media img {
       width: 100%; aspect-ratio: 1;
       object-fit: cover;
       border-radius: 6px;
@@ -172,16 +171,13 @@
       transition: transform 0.15s, opacity 0.15s;
       border: 1px solid var(--border);
     }
-    .card-media img:hover,
-    .card-media video:hover { transform: scale(1.03); opacity: 0.92; }
+    .card-media img:hover { transform: scale(1.03); opacity: 0.92; }
     .card-media.gallery-1 { grid-template-columns: 1fr; }
-    .card-media.gallery-1 img,
-    .card-media.gallery-1 video { aspect-ratio: 16 / 10; border-radius: 8px; }
+    .card-media.gallery-1 img { aspect-ratio: 16 / 10; border-radius: 8px; }
     .card-media.gallery-2 { grid-template-columns: 1fr 1fr; }
-    .card-media.gallery-2 img,
-    .card-media.gallery-2 video { aspect-ratio: 1; }
+    .card-media.gallery-2 img { aspect-ratio: 1; }
 
-    /* Audio and file attachment items */
+    /* Attachments (PDFs and documents) */
     .card-attachments {
       margin-top: 14px;
       display: grid;
@@ -232,12 +228,16 @@
       cursor: pointer;
       font-family: inherit;
       transition: opacity 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .attachment-btn:hover { opacity: 0.85; }
     .attachment-btn.view { background: var(--primary); color: #fff; }
     .attachment-btn.download { background: var(--bg-white); color: var(--text-dark); border: 1px solid var(--border); }
 
-    /* Lightbox (images/video) */
+    /* Lightbox (images only) */
     .lightbox {
       display: none;
       position: fixed; inset: 0;
@@ -249,8 +249,7 @@
       animation: fadeIn 0.2s ease;
     }
     .lightbox.open { display: flex; }
-    .lightbox img,
-    .lightbox video {
+    .lightbox img {
       max-width: 100%; max-height: 90vh;
       border-radius: 8px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
@@ -268,51 +267,6 @@
     }
     .lightbox .close-btn:hover { background: rgba(255,255,255,0.3); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    /* PDF viewer modal */
-    .pdf-viewer {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.92);
-      z-index: 1000;
-      flex-direction: column;
-      padding: 20px;
-      animation: fadeIn 0.2s ease;
-    }
-    .pdf-viewer.open { display: flex; }
-    .pdf-viewer-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 12px;
-      color: #fff;
-    }
-    .pdf-viewer-header .pdf-title {
-      font-weight: 700;
-      font-size: 0.95rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .pdf-viewer-close {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15); color: #fff;
-      border: none; font-size: 1.4rem;
-      cursor: pointer; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .pdf-viewer-close:hover { background: rgba(255,255,255,0.3); }
-    .pdf-viewer iframe {
-      flex: 1;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      background: #fff;
-    }
-    .pdf-viewer-actions {
-      padding-top: 12px;
-      display: flex; gap: 10px; justify-content: flex-end;
-    }
 
     .state-message {
       text-align: center; padding: 40px 20px;
@@ -435,22 +389,10 @@
     </div>
   </footer>
 
-  <!-- Image/Video Lightbox -->
+  <!-- Lightbox (images only) -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
     <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">✕</button>
     <div id="lightboxContent"></div>
-  </div>
-
-  <!-- PDF Viewer Modal -->
-  <div id="pdfViewer" class="pdf-viewer">
-    <div class="pdf-viewer-header">
-      <span class="pdf-title" id="pdfTitle">Document</span>
-      <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
-    </div>
-    <iframe id="pdfFrame" src=""></iframe>
-    <div class="pdf-viewer-actions">
-      <button class="attachment-btn download" onclick="downloadCurrentPdf()">⬇ Download</button>
-    </div>
   </div>
 
   <script>
@@ -463,22 +405,18 @@
       });
     });
 
-    // ---------- Lightbox ----------
+    // Lightbox — images only
     function openLightbox(url, type, event) {
       if (event) event.stopPropagation();
       const lb = document.getElementById('lightbox');
       const content = document.getElementById('lightboxContent');
-      if (type === 'video') {
-        content.innerHTML = `<video src="${url}" controls autoplay></video>`;
-      } else {
-        content.innerHTML = `<img src="${url}" alt="" />`;
-      }
+      content.innerHTML = `<img src="${url}" alt="" />`;
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
     function closeLightbox(event) {
       if (event && event.target && event.target.closest('#lightboxContent')) {
-        if (event.target.tagName === 'VIDEO' || event.target.tagName === 'IMG') return;
+        if (event.target.tagName === 'IMG') return;
       }
       const lb = document.getElementById('lightbox');
       lb.classList.remove('open');
@@ -486,34 +424,8 @@
       document.body.style.overflow = '';
     }
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeLightbox(); closePdfViewer(); }
+      if (e.key === 'Escape') closeLightbox();
     });
-
-    // ---------- PDF Viewer ----------
-    let currentPdfUrl = '';
-    function openPdfViewer(url, name) {
-      currentPdfUrl = url;
-      document.getElementById('pdfTitle').textContent = name || 'Document';
-      document.getElementById('pdfFrame').src = url;
-      document.getElementById('pdfViewer').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closePdfViewer() {
-      document.getElementById('pdfViewer').classList.remove('open');
-      document.getElementById('pdfFrame').src = '';
-      currentPdfUrl = '';
-      document.body.style.overflow = '';
-    }
-    function downloadCurrentPdf() {
-      if (!currentPdfUrl) return;
-      const a = document.createElement('a');
-      a.href = currentPdfUrl;
-      a.download = 'document.pdf';
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
   </script>
 
   <script type="module">
@@ -531,61 +443,37 @@
       div.textContent = String(text);
       return div.innerHTML;
     }
+
     function formatDate(iso) {
       if (!iso) return '';
       const d = new Date(iso);
       return d.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
     }
-    function getFileIcon(type) {
-      if (type === 'image') return '🖼️';
-      if (type === 'video') return '🎬';
-      if (type === 'audio') return '🎵';
-      if (type === 'pdf') return '📄';
-      return '📎';
-    }
 
-    function renderMediaCard(media, itemId) {
+    // Renders images, PDFs, and documents only. Video and audio are intentionally not shown.
+    function renderMediaCard(media) {
       if (!media || media.length === 0) return '';
-      const imagesAndVideos = media.filter(m => m.file_type === 'image' || m.file_type === 'video');
-      const audios = media.filter(m => m.file_type === 'audio');
+
+      const images = media.filter(m => m.file_type === 'image');
       const pdfs = media.filter(m => m.file_type === 'pdf');
       const docs = media.filter(m => m.file_type === 'document');
 
       let html = '';
 
-      // Images and videos (gallery)
-      if (imagesAndVideos.length > 0) {
-        const cls = imagesAndVideos.length === 1 ? 'card-media gallery-1'
-                 : imagesAndVideos.length === 2 ? 'card-media gallery-2'
+      // Images — grid gallery with lightbox
+      if (images.length > 0) {
+        const cls = images.length === 1 ? 'card-media gallery-1'
+                 : images.length === 2 ? 'card-media gallery-2'
                  : 'card-media';
-        const items = imagesAndVideos.map(m => {
-          if (m.file_type === 'video') {
-            return `<video src="${escapeHtml(m.file_url)}" muted
-              onclick="openLightbox('${escapeHtml(m.file_url).replace(/'/g, "\\'")}', 'video', event)"></video>`;
-          }
+        const items = images.map(m => {
+          const url = escapeHtml(m.file_url).replace(/'/g, "\\'");
           return `<img src="${escapeHtml(m.file_url)}" alt="" loading="lazy"
-            onclick="openLightbox('${escapeHtml(m.file_url).replace(/'/g, "\\'")}', 'image', event)" />`;
+            onclick="openLightbox('${url}', 'image', event)" />`;
         }).join('');
         html += `<div class="${cls}">${items}</div>`;
       }
 
-      // Audio players
-      if (audios.length > 0) {
-        html += '<div class="card-attachments">';
-        audios.forEach(m => {
-          html += `
-            <div class="attachment-item">
-              <span class="attach-icon">🎵</span>
-              <div class="attach-body">
-                <div class="attach-name">Audio file</div>
-                <audio controls src="${escapeHtml(m.file_url)}" style="width:100%; margin-top:4px;"></audio>
-              </div>
-            </div>`;
-        });
-        html += '</div>';
-      }
-
-      // PDFs
+      // PDFs — View opens in a new tab, Download saves
       if (pdfs.length > 0) {
         html += '<div class="card-attachments">';
         pdfs.forEach(m => {
@@ -598,16 +486,15 @@
                 <div class="attach-type">PDF Document</div>
               </div>
               <div class="attachment-actions">
-                <button class="attachment-btn view"
-                  onclick="openPdfViewer('${escapeHtml(m.file_url).replace(/'/g, "\\'")}', '${escapeHtml(name).replace(/'/g, "\\'")}')">View</button>
-                <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank">Download</a>
+                <a class="attachment-btn view" href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener">View</a>
+                <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank" rel="noopener">Download</a>
               </div>
             </div>`;
         });
         html += '</div>';
       }
 
-      // Other documents
+      // Other documents — download only
       if (docs.length > 0) {
         html += '<div class="card-attachments">';
         docs.forEach(m => {
@@ -620,7 +507,7 @@
                 <div class="attach-type">File</div>
               </div>
               <div class="attachment-actions">
-                <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank">Download</a>
+                <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank" rel="noopener">Download</a>
               </div>
             </div>`;
         });
@@ -675,7 +562,7 @@
             <span class="card-badge">Announcement</span>
             <h3>${escapeHtml(item.title)}</h3>
             <p>${escapeHtml(item.content)}</p>
-            ${renderMediaCard(media, item.id)}
+            ${renderMediaCard(media)}
             <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
           </article>
         `;
@@ -711,7 +598,7 @@
             <div class="card-icon">📰</div>
             <h3>${escapeHtml(item.title)}</h3>
             <p>${escapeHtml(item.content)}</p>
-            ${renderMediaCard(media, item.id)}
+            ${renderMediaCard(media)}
             <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
           </article>
         `;
