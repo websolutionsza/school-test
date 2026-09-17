@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Announcements — Greenwood High School</title>
   <meta name="description" content="All announcements from Greenwood High School.">
 
@@ -35,16 +35,22 @@
       background: var(--bg-light);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      padding-bottom: env(safe-area-inset-bottom);
     }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
-    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left));
+    }
 
     /* HEADER */
     .site-header {
       background: var(--bg-white);
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
+      padding-top: env(safe-area-inset-top);
     }
     .nav-bar { display: flex; align-items: center; justify-content: space-between; height: 72px; }
     .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.3px; }
@@ -65,6 +71,7 @@
       display: none; background: none; border: none;
       font-size: 1.5rem; cursor: pointer; color: var(--text-dark);
       padding: 8px; border-radius: var(--radius-sm);
+      min-width: 44px; min-height: 44px;
     }
     .nav-toggle:hover { background: var(--bg-light); }
     @media (max-width: 768px) {
@@ -76,7 +83,7 @@
         box-shadow: var(--shadow-md);
       }
       .nav-links.open { display: flex; }
-      .nav-links a { padding: 12px 16px; }
+      .nav-links a { padding: 14px 16px; }
     }
 
     /* HERO */
@@ -99,16 +106,18 @@
       padding: 28px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
       display: flex; flex-direction: column; min-height: 200px;
+      min-width: 0;
     }
     .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
     .card h3 {
       font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;
       color: var(--text-dark); line-height: 1.35;
+      word-break: break-word;
     }
     .card p {
       font-size: 0.95rem; color: var(--text-medium);
       line-height: 1.7; flex: 1;
-      white-space: pre-wrap;
+      white-space: pre-wrap; word-break: break-word;
     }
     .card-meta {
       font-size: 0.82rem; color: var(--text-light);
@@ -123,15 +132,14 @@
       margin-bottom: 14px; align-self: flex-start;
     }
 
-    /* MEDIA GRID (images + videos) */
+    /* MEDIA GRID (images only) */
     .card-media {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
       gap: 6px;
       margin-top: 16px;
     }
-    .card-media img,
-    .card-media video {
+    .card-media img {
       width: 100%; aspect-ratio: 1;
       object-fit: cover;
       border-radius: 6px;
@@ -139,16 +147,13 @@
       transition: transform 0.15s, opacity 0.15s;
       border: 1px solid var(--border);
     }
-    .card-media img:hover,
-    .card-media video:hover { transform: scale(1.03); opacity: 0.92; }
+    .card-media img:hover { transform: scale(1.03); opacity: 0.92; }
     .card-media.gallery-1 { grid-template-columns: 1fr; }
-    .card-media.gallery-1 img,
-    .card-media.gallery-1 video { aspect-ratio: 16 / 10; border-radius: 8px; }
+    .card-media.gallery-1 img { aspect-ratio: 16 / 10; border-radius: 8px; }
     .card-media.gallery-2 { grid-template-columns: 1fr 1fr; }
-    .card-media.gallery-2 img,
-    .card-media.gallery-2 video { aspect-ratio: 1; }
+    .card-media.gallery-2 img { aspect-ratio: 1; }
 
-    /* ATTACHMENTS (audio, PDF, docs) */
+    /* ATTACHMENTS (PDFs, documents) */
     .card-attachments {
       margin-top: 14px;
       display: grid;
@@ -163,6 +168,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       font-size: 0.85rem;
+      min-width: 0;
     }
     .attachment-item .attach-icon {
       font-size: 1.4rem;
@@ -191,9 +197,9 @@
       flex-shrink: 0;
     }
     .attachment-btn {
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 700;
       border: none;
       cursor: pointer;
@@ -203,33 +209,41 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-height: 40px;
     }
     .attachment-btn:hover { opacity: 0.85; }
     .attachment-btn.view { background: var(--primary); color: #fff; }
     .attachment-btn.download { background: var(--bg-white); color: var(--text-dark); border: 1px solid var(--border); }
 
-    /* LIGHTBOX */
+    @media (max-width: 500px) {
+      .attachment-item { flex-wrap: wrap; }
+      .attachment-actions { width: 100%; justify-content: flex-end; margin-top: 4px; }
+    }
+
+    /* LIGHTBOX (images only) */
     .lightbox {
       display: none;
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.92);
       z-index: 999;
       align-items: center; justify-content: center;
-      padding: 20px;
+      padding: max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-left))
+               max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
       cursor: zoom-out;
       animation: fadeIn 0.2s ease;
     }
     .lightbox.open { display: flex; }
-    .lightbox img,
-    .lightbox video {
+    .lightbox img {
       max-width: 100%; max-height: 90vh;
       border-radius: 8px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
       cursor: default;
     }
     .lightbox .close-btn {
-      position: absolute; top: 16px; right: 20px;
-      width: 42px; height: 42px;
+      position: absolute;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(20px, env(safe-area-inset-right));
+      width: 44px; height: 44px;
       border-radius: 50%;
       background: rgba(255,255,255,0.15); color: #fff;
       border: none; font-size: 1.4rem;
@@ -239,52 +253,6 @@
     }
     .lightbox .close-btn:hover { background: rgba(255,255,255,0.3); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    /* PDF VIEWER MODAL */
-    .pdf-viewer {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.92);
-      z-index: 1000;
-      flex-direction: column;
-      padding: 20px;
-      animation: fadeIn 0.2s ease;
-    }
-    .pdf-viewer.open { display: flex; }
-    .pdf-viewer-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 12px;
-      color: #fff;
-    }
-    .pdf-viewer-header .pdf-title {
-      font-weight: 700;
-      font-size: 0.95rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 12px;
-    }
-    .pdf-viewer-close {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15); color: #fff;
-      border: none; font-size: 1.4rem;
-      cursor: pointer; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .pdf-viewer-close:hover { background: rgba(255,255,255,0.3); }
-    .pdf-viewer iframe {
-      flex: 1;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      background: #fff;
-    }
-    .pdf-viewer-actions {
-      padding-top: 12px;
-      display: flex; gap: 10px; justify-content: flex-end;
-    }
 
     /* STATE MESSAGES */
     .state-message {
@@ -302,7 +270,10 @@
     .state-message .icon { display: block; font-size: 2.5rem; margin-bottom: 12px; }
 
     /* FOOTER */
-    .site-footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 28px; }
+    .site-footer {
+      background: #0f172a; color: #cbd5e1;
+      padding: 56px 0 max(28px, env(safe-area-inset-bottom));
+    }
     .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 36px; margin-bottom: 40px; }
     .footer-col h4 { color: #fff; font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.2px; }
     .footer-col p, .footer-col a {
@@ -337,9 +308,6 @@
 </head>
 <body>
 
-  <!-- ============================
-       HEADER / NAV
-       ============================ -->
   <header class="site-header">
     <div class="container">
       <nav class="nav-bar">
@@ -358,9 +326,6 @@
     </div>
   </header>
 
-  <!-- ============================
-       PAGE HERO
-       ============================ -->
   <section class="page-hero">
     <div class="container">
       <h1>School Announcements</h1>
@@ -368,9 +333,6 @@
     </div>
   </section>
 
-  <!-- ============================
-       ANNOUNCEMENTS LIST
-       ============================ -->
   <section class="section">
     <div class="container">
       <div id="announcementsGrid" class="card-grid">
@@ -379,9 +341,6 @@
     </div>
   </section>
 
-  <!-- ============================
-       FOOTER
-       ============================ -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -407,22 +366,10 @@
     </div>
   </footer>
 
-  <!-- Lightbox for images/videos -->
+  <!-- Lightbox (images only) -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
     <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">✕</button>
     <div id="lightboxContent"></div>
-  </div>
-
-  <!-- PDF viewer modal -->
-  <div id="pdfViewer" class="pdf-viewer">
-    <div class="pdf-viewer-header">
-      <span class="pdf-title" id="pdfTitle">Document</span>
-      <button class="pdf-viewer-close" onclick="closePdfViewer()">✕</button>
-    </div>
-    <iframe id="pdfFrame" src=""></iframe>
-    <div class="pdf-viewer-actions">
-      <button class="attachment-btn download" onclick="downloadCurrentPdf()">⬇ Download</button>
-    </div>
   </div>
 
   <script>
@@ -435,57 +382,26 @@
       });
     });
 
-    // Lightbox
+    // Lightbox — images only
     function openLightbox(url, type, event) {
       if (event) event.stopPropagation();
       const lb = document.getElementById('lightbox');
       const content = document.getElementById('lightboxContent');
-      if (type === 'video') {
-        content.innerHTML = `<video src="${url}" controls autoplay></video>`;
-      } else {
-        content.innerHTML = `<img src="${url}" alt="" />`;
-      }
+      content.innerHTML = `<img src="${url}" alt="" />`;
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
     function closeLightbox(event) {
       if (event && event.target && event.target.closest('#lightboxContent')) {
-        if (event.target.tagName === 'VIDEO' || event.target.tagName === 'IMG') return;
+        if (event.target.tagName === 'IMG') return;
       }
       const lb = document.getElementById('lightbox');
       lb.classList.remove('open');
       document.getElementById('lightboxContent').innerHTML = '';
       document.body.style.overflow = '';
     }
-
-    // PDF viewer
-    let currentPdfUrl = '';
-    function openPdfViewer(url, name) {
-      currentPdfUrl = url;
-      document.getElementById('pdfTitle').textContent = name || 'Document';
-      document.getElementById('pdfFrame').src = url;
-      document.getElementById('pdfViewer').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closePdfViewer() {
-      document.getElementById('pdfViewer').classList.remove('open');
-      document.getElementById('pdfFrame').src = '';
-      currentPdfUrl = '';
-      document.body.style.overflow = '';
-    }
-    function downloadCurrentPdf() {
-      if (!currentPdfUrl) return;
-      const a = document.createElement('a');
-      a.href = currentPdfUrl;
-      a.download = 'document.pdf';
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeLightbox(); closePdfViewer(); }
+      if (e.key === 'Escape') closeLightbox();
     });
   </script>
 
@@ -511,56 +427,34 @@
       return d.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 
+    // Renders images, PDFs, and documents only. Video and audio are intentionally not shown.
     function renderMediaCard(media) {
       if (!media || media.length === 0) return '';
 
-      const imagesAndVideos = media.filter(m => m.file_type === 'image' || m.file_type === 'video');
-      const audios = media.filter(m => m.file_type === 'audio');
+      const images = media.filter(m => m.file_type === 'image');
       const pdfs = media.filter(m => m.file_type === 'pdf');
       const docs = media.filter(m => m.file_type === 'document');
 
       let html = '';
 
-      // Images and videos
-      if (imagesAndVideos.length > 0) {
-        const cls = imagesAndVideos.length === 1 ? 'card-media gallery-1'
-                 : imagesAndVideos.length === 2 ? 'card-media gallery-2'
+      // Images — grid gallery with lightbox
+      if (images.length > 0) {
+        const cls = images.length === 1 ? 'card-media gallery-1'
+                 : images.length === 2 ? 'card-media gallery-2'
                  : 'card-media';
-        const items = imagesAndVideos.map(m => {
+        const items = images.map(m => {
           const url = escapeHtml(m.file_url).replace(/'/g, "\\'");
-          if (m.file_type === 'video') {
-            return `<video src="${escapeHtml(m.file_url)}" muted preload="metadata"
-              onclick="openLightbox('${url}', 'video', event)"></video>`;
-          }
           return `<img src="${escapeHtml(m.file_url)}" alt="" loading="lazy"
             onclick="openLightbox('${url}', 'image', event)" />`;
         }).join('');
         html += `<div class="${cls}">${items}</div>`;
       }
 
-      // Audio
-      if (audios.length > 0) {
-        html += '<div class="card-attachments">';
-        audios.forEach(m => {
-          html += `
-            <div class="attachment-item">
-              <span class="attach-icon">🎵</span>
-              <div class="attach-body">
-                <div class="attach-name">Audio file</div>
-                <audio controls src="${escapeHtml(m.file_url)}" style="width:100%; margin-top:4px;"></audio>
-              </div>
-            </div>`;
-        });
-        html += '</div>';
-      }
-
-      // PDFs
+      // PDFs — View opens in a new tab, Download saves
       if (pdfs.length > 0) {
         html += '<div class="card-attachments">';
         pdfs.forEach(m => {
           const name = (m.file_url || '').split('/').pop().substring(0, 30) || 'Document.pdf';
-          const url = escapeHtml(m.file_url).replace(/'/g, "\\'");
-          const safeName = escapeHtml(name).replace(/'/g, "\\'");
           html += `
             <div class="attachment-item">
               <span class="attach-icon">📄</span>
@@ -569,8 +463,7 @@
                 <div class="attach-type">PDF Document</div>
               </div>
               <div class="attachment-actions">
-                <button class="attachment-btn view"
-                  onclick="openPdfViewer('${url}', '${safeName}')">View</button>
+                <a class="attachment-btn view" href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener">View</a>
                 <a class="attachment-btn download" href="${escapeHtml(m.file_url)}" download target="_blank" rel="noopener">Download</a>
               </div>
             </div>`;
@@ -578,7 +471,7 @@
         html += '</div>';
       }
 
-      // Other documents
+      // Other documents — download only
       if (docs.length > 0) {
         html += '<div class="card-attachments">';
         docs.forEach(m => {
@@ -632,7 +525,6 @@
         return;
       }
 
-      // Fetch all media for these announcements in one query
       const ids = data.map(a => a.id);
       const { data: mediaRows, error: mediaError } = await postbase
         .from('media')
