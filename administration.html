@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Dashboard — Greenwood High School Admin</title>
 
   <style>
@@ -51,11 +51,12 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      padding-top: env(safe-area-inset-top);
     }
     .admin-header-inner {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left));
       height: 72px;
       display: flex;
       align-items: center;
@@ -99,9 +100,14 @@
     @media (max-width: 640px) {
       .user-chip { display: none; }
       .admin-brand-text .title { font-size: 0.95rem; }
+      .icon-btn { padding: 9px 12px; }
     }
 
-    .admin-main { max-width: 1400px; margin: 0 auto; padding: 32px 24px 80px; }
+    .admin-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px max(24px, env(safe-area-inset-right)) 80px max(24px, env(safe-area-inset-left));
+    }
 
     .stats-grid {
       display: grid;
@@ -136,6 +142,7 @@
       background: var(--bg-white); border: 1px solid var(--border);
       border-radius: var(--radius-sm); padding: 5px;
       margin-bottom: 24px; overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .tab-btn {
       padding: 10px 20px; border-radius: 6px;
@@ -143,6 +150,7 @@
       color: var(--text-medium); background: transparent;
       border: none; cursor: pointer; white-space: nowrap;
       transition: background 0.15s, color 0.15s;
+      min-height: 44px;
     }
     .tab-btn:hover { background: var(--bg-hover); color: var(--text-dark); }
     .tab-btn.active { background: var(--primary); color: #fff; }
@@ -163,6 +171,7 @@
       font-weight: 700; font-size: 0.9rem;
       cursor: pointer; border: none; font-family: inherit;
       transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+      min-height: 44px;
     }
     .btn:active { transform: scale(0.98); }
     .btn-primary { background: var(--primary); color: #fff; }
@@ -178,7 +187,7 @@
     .btn-danger { background: var(--danger); color: #fff; }
     .btn-danger:hover:not(:disabled) { background: var(--danger-dark); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-sm { padding: 7px 14px; font-size: 0.82rem; font-weight: 700; }
+    .btn-sm { padding: 8px 14px; font-size: 0.82rem; font-weight: 700; min-height: 40px; }
 
     .form-panel {
       background: var(--bg-white);
@@ -216,6 +225,7 @@
     .form-checkbox {
       display: flex; align-items: center; gap: 10px;
       font-size: 0.9rem; color: var(--text-dark); font-weight: 600;
+      min-height: 44px;
     }
     .form-checkbox input {
       width: 18px; height: 18px;
@@ -291,7 +301,7 @@
     .preview-remove {
       position: absolute;
       top: 6px; right: 6px;
-      width: 24px; height: 24px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       background: rgba(0,0,0,0.65);
       color: #fff;
@@ -371,7 +381,9 @@
     .state-box.error { background: #fef2f2; border-color: #fecaca; color: var(--danger); }
 
     .toast-container {
-      position: fixed; top: 88px; right: 24px;
+      position: fixed;
+      top: calc(88px + env(safe-area-inset-top));
+      right: max(24px, env(safe-area-inset-right));
       z-index: 200;
       display: flex; flex-direction: column; gap: 10px;
       max-width: 340px;
@@ -472,11 +484,11 @@
     .modal-actions .btn { min-width: 120px; }
 
     @media (max-width: 640px) {
-      .admin-main { padding: 20px 16px 60px; }
-      .admin-header-inner { padding: 0 16px; height: 64px; }
+      .admin-main { padding: 20px max(16px, env(safe-area-inset-right)) 60px max(16px, env(safe-area-inset-left)); }
+      .admin-header-inner { padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); height: 64px; }
       .form-panel { padding: 22px 18px; }
       .item-card { padding: 18px; }
-      .toast-container { right: 12px; left: 12px; max-width: none; }
+      .toast-container { right: max(12px, env(safe-area-inset-right)); left: max(12px, env(safe-area-inset-left)); max-width: none; }
       .stat-value { font-size: 1.4rem; }
       .previews { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
     }
@@ -503,8 +515,8 @@
           <span class="user-name" id="userName">Loading…</span>
           <span class="user-email" id="userEmail"></span>
         </div>
-        <a href="index.html" class="icon-btn" title="View public site">🌐 Site</a>
-        <button id="logoutBtn" class="icon-btn danger" title="Sign out">↩ Logout</button>
+        <button id="goToSiteBtn" class="icon-btn" title="View public site" type="button">🌐 Site</button>
+        <button id="logoutBtn" class="icon-btn danger" title="Sign out" type="button">↩ Logout</button>
       </div>
     </div>
   </header>
@@ -780,7 +792,7 @@
       if (type === 'image') return '🖼️';
       if (type === 'pdf') return '📄';
       if (type === 'document') return '📎';
-      // Legacy values from previous versions (video/audio) still render safely
+      // Legacy values from old data rows still render safely
       if (type === 'video') return '🎬';
       if (type === 'audio') return '🎵';
       return '📎';
@@ -813,15 +825,26 @@
       }
     }
 
-    async function performLogout() {
+    async function signOutAndClear() {
       try { await postbase.auth.signOut(); } catch (err) { /* ignore */ }
-      sessionStorage.removeItem(SESSION_FLAG);
+      try { sessionStorage.removeItem(SESSION_FLAG); } catch (e) { /* ignore */ }
+    }
+
+    async function performLogout() {
+      await signOutAndClear();
       window.location.replace('admin-login.html');
     }
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       if (!confirm('Sign out of the admin dashboard?')) return;
       await performLogout();
+    });
+
+    // "🌐 Site" leaves the admin area → sign out first, clear the per-tab flag,
+    // then navigate. This ensures a subsequent "Admin" click requires credentials again.
+    document.getElementById('goToSiteBtn').addEventListener('click', async () => {
+      await signOutAndClear();
+      window.location.href = 'index.html';
     });
 
     // ---------- inactivity ----------
@@ -1045,7 +1068,6 @@
         return;
       }
       const allFiles = Array.from(fileList);
-      // Reject video/audio and any unsupported type
       const allowed = allFiles.filter(f => getFileTypeFromMime(f.type, f.name) !== null);
       const rejectedCount = allFiles.length - allowed.length;
       const accepted = allowed.slice(0, room);
@@ -1109,7 +1131,6 @@
       let failed = 0;
       for (const file of state.pending) {
         const fileType = getFileTypeFromMime(file.type, file.name);
-        // Defense-in-depth: skip anything that somehow slipped through
         if (fileType === null) { failed++; continue; }
         try {
           const url = await uploadToPostFile(file);
