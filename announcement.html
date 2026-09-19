@@ -3,15 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Announcements — Greenwood High School</title>
+  <title>Greenwood High School | Announcements</title>
   <meta name="description" content="All announcements from Greenwood High School.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/school%20test%20favicon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --primary: #1a56db;
-      --primary-dark: #1e3a8a;
-      --primary-light: #dbeafe;
-      --accent: #f59e0b;
+      --primary: #1e3a8a; /* Deep Navy Blue */
+      --primary-dark: #172554;
+      --primary-light: #eff6ff;
+      --accent: #b45309; /* Muted Amber/Gold */
       --text-dark: #111827;
       --text-medium: #4b5563;
       --text-light: #9ca3af;
@@ -19,12 +27,13 @@
       --bg-light: #f8fafc;
       --border: #e5e7eb;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
       --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
       --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 22px;
-      --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-head: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       --max-width: 1200px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,6 +45,7 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       padding-bottom: env(safe-area-inset-bottom);
+      overflow-x: hidden;
     }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
@@ -51,156 +61,245 @@
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
       padding-top: env(safe-area-inset-top);
+      box-shadow: var(--shadow-sm);
     }
-    .nav-bar { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.3px; }
-    .logo-mark {
-      width: 40px; height: 40px; background: var(--primary); color: #fff;
-      border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.15rem; font-weight: 800;
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-family: var(--font-head);
+      font-weight: 700; 
+      font-size: 1.35rem; 
+      color: var(--primary); 
+      letter-spacing: -0.5px; 
     }
-    .nav-links { display: flex; gap: 6px; list-style: none; align-items: center; }
+    .logo img {
+      height: 55px;
+      width: auto;
+      object-fit: contain;
+    }
+    .nav-links { display: flex; gap: 4px; list-style: none; align-items: center; }
     .nav-links a {
-      padding: 9px 16px; border-radius: var(--radius-sm);
-      font-size: 0.95rem; font-weight: 600; color: var(--text-medium);
+      padding: 10px 18px; 
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem; 
+      font-weight: 600; 
+      color: var(--text-medium);
       transition: background 0.2s, color 0.2s;
     }
-    .nav-links a:hover, .nav-links a.active { background: var(--primary-light); color: var(--primary-dark); }
-    .nav-links .admin-link { color: var(--text-light); font-size: 0.85rem; }
+    .nav-links a:hover, .nav-links a.active { 
+      background: var(--primary-light); 
+      color: var(--primary); 
+    }
+    .nav-links .admin-link { 
+      color: var(--text-light); 
+      font-size: 0.85rem; 
+      margin-left: 8px;
+      border: 1px solid var(--border);
+    }
+    .nav-links .admin-link:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: var(--bg-white);
+    }
     .nav-toggle {
-      display: none; background: none; border: none;
-      font-size: 1.5rem; cursor: pointer; color: var(--text-dark);
-      padding: 8px; border-radius: var(--radius-sm);
+      display: none; 
+      background: none; 
+      border: none;
+      cursor: pointer; 
+      color: var(--text-dark);
+      padding: 8px;
       min-width: 44px; min-height: 44px;
     }
-    .nav-toggle:hover { background: var(--bg-light); }
+    .nav-toggle svg { width: 28px; height: 28px; }
     @media (max-width: 768px) {
       .nav-toggle { display: block; }
       .nav-links {
-        display: none; position: absolute; top: 72px; left: 0; right: 0;
-        background: var(--bg-white); flex-direction: column; align-items: stretch;
-        padding: 12px 20px 20px; border-bottom: 1px solid var(--border);
+        display: none; 
+        position: absolute; 
+        top: 80px; left: 0; right: 0;
+        background: var(--bg-white); 
+        flex-direction: column; align-items: stretch;
+        padding: 16px 24px 24px; 
+        border-bottom: 1px solid var(--border);
         box-shadow: var(--shadow-md);
+        gap: 8px;
       }
       .nav-links.open { display: flex; }
       .nav-links a { padding: 14px 16px; }
+      .nav-links .admin-link { margin-left: 0; margin-top: 8px; text-align: center; }
     }
 
-    /* HERO */
+    /* PAGE HERO */
     .page-hero {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: #fff; padding: 64px 0 56px; text-align: center;
+      background: var(--primary-dark);
+      color: #fff; 
+      padding: 80px 0 64px; 
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .page-hero h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
-    .page-hero p { font-size: 1.05rem; opacity: 0.92; max-width: 560px; margin: 0 auto; }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(23, 37, 84, 0.85), rgba(23, 37, 84, 0.95)),
+                  url('https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/back%20photo%20test%20school.jpg');
+      background-size: cover;
+      background-position: center;
+      filter: blur(4px);
+      transform: scale(1.05);
+      z-index: -1;
+    }
+    .page-hero h1 { 
+      font-family: var(--font-head);
+      font-size: 2.5rem; 
+      font-weight: 700; 
+      margin-bottom: 12px; 
+      letter-spacing: -0.5px; 
+    }
+    .page-hero p { 
+      font-size: 1.1rem; 
+      opacity: 0.9; 
+      max-width: 640px; 
+      margin: 0 auto; 
+    }
 
     /* SECTIONS */
-    .section { padding: 56px 0 72px; }
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .section { padding: 72px 0; }
+    .card-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+      gap: 28px; 
+    }
 
     /* CARDS */
     .card {
       background: var(--bg-white);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 28px;
+      padding: 32px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
       display: flex; flex-direction: column; min-height: 200px;
       min-width: 0;
     }
-    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
+    .card:hover { 
+      transform: translateY(-4px); 
+      box-shadow: var(--shadow-lg); 
+      border-color: transparent; 
+    }
     .card h3 {
-      font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;
-      color: var(--text-dark); line-height: 1.35;
+      font-family: var(--font-head);
+      font-size: 1.25rem; 
+      font-weight: 600; 
+      margin-bottom: 10px;
+      color: var(--text-dark); 
+      line-height: 1.35;
       word-break: break-word;
     }
     .card p {
-      font-size: 0.95rem; color: var(--text-medium);
-      line-height: 1.7; flex: 1;
+      font-size: 0.95rem; 
+      color: var(--text-medium);
+      line-height: 1.65; 
+      flex: 1;
       white-space: pre-wrap; word-break: break-word;
     }
     .card-meta {
-      font-size: 0.82rem; color: var(--text-light);
-      margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
-      display: flex; align-items: center; gap: 6px; font-weight: 500;
+      font-size: 0.85rem; 
+      color: var(--text-light);
+      margin-top: 20px; 
+      padding-top: 16px; 
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px; font-weight: 500;
     }
+    .card-meta svg { width: 16px; height: 16px; }
     .card-badge {
-      display: inline-block; font-size: 0.7rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.6px;
-      padding: 5px 11px; border-radius: 999px;
-      background: var(--accent); color: #fff;
-      margin-bottom: 14px; align-self: flex-start;
+      display: inline-block; 
+      font-size: 0.7rem; 
+      font-weight: 700;
+      text-transform: uppercase; 
+      letter-spacing: 0.6px;
+      padding: 6px 12px; 
+      border-radius: var(--radius-sm);
+      background: var(--accent); 
+      color: #fff;
+      margin-bottom: 16px; 
+      align-self: flex-start;
     }
 
     /* MEDIA GRID (images only) */
     .card-media {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 6px;
+      gap: 8px;
       margin-top: 16px;
     }
     .card-media img {
       width: 100%; aspect-ratio: 1;
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
       transition: transform 0.15s, opacity 0.15s;
       border: 1px solid var(--border);
     }
-    .card-media img:hover { transform: scale(1.03); opacity: 0.92; }
+    .card-media img:hover { transform: scale(1.03); opacity: 0.9; }
     .card-media.gallery-1 { grid-template-columns: 1fr; }
-    .card-media.gallery-1 img { aspect-ratio: 16 / 10; border-radius: 8px; }
+    .card-media.gallery-1 img { aspect-ratio: 16 / 10; border-radius: var(--radius-sm); }
     .card-media.gallery-2 { grid-template-columns: 1fr 1fr; }
     .card-media.gallery-2 img { aspect-ratio: 1; }
 
     /* ATTACHMENTS (PDFs, documents) */
     .card-attachments {
-      margin-top: 14px;
+      margin-top: 16px;
       display: grid;
-      gap: 8px;
+      gap: 10px;
     }
     .attachment-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
+      gap: 12px;
+      padding: 12px 14px;
       background: var(--bg-light);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       min-width: 0;
     }
     .attachment-item .attach-icon {
-      font-size: 1.4rem;
+      color: var(--primary);
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
     }
+    .attachment-item .attach-icon svg { width: 24px; height: 24px; }
     .attachment-item .attach-body {
       flex: 1;
       min-width: 0;
     }
     .attachment-item .attach-name {
-      font-weight: 700;
+      font-weight: 600;
       color: var(--text-dark);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .attachment-item .attach-type {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: var(--text-light);
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
     .attachment-actions {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       flex-shrink: 0;
     }
     .attachment-btn {
       padding: 8px 14px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 700;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
       border: none;
       cursor: pointer;
       font-family: inherit;
@@ -235,64 +334,100 @@
     .lightbox.open { display: flex; }
     .lightbox img {
       max-width: 100%; max-height: 90vh;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
       cursor: default;
     }
     .lightbox .close-btn {
       position: absolute;
-      top: max(16px, env(safe-area-inset-top));
+      top: max(20px, env(safe-area-inset-top));
       right: max(20px, env(safe-area-inset-right));
       width: 44px; height: 44px;
       border-radius: 50%;
       background: rgba(255,255,255,0.15); color: #fff;
-      border: none; font-size: 1.4rem;
-      cursor: pointer; font-weight: 700;
+      border: none; 
+      cursor: pointer; 
       display: flex; align-items: center; justify-content: center;
       z-index: 2;
+      transition: background 0.2s;
     }
     .lightbox .close-btn:hover { background: rgba(255,255,255,0.3); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* STATE MESSAGES */
     .state-message {
-      text-align: center; padding: 60px 20px;
-      color: var(--text-medium); font-size: 0.98rem;
+      text-align: center; 
+      padding: 60px 20px;
+      color: var(--text-medium); 
+      font-size: 1rem;
       grid-column: 1 / -1;
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
     }
     .state-message .spinner {
-      display: inline-block; width: 22px; height: 22px;
-      border: 2px solid var(--border); border-top-color: var(--primary);
+      display: inline-block; width: 24px; height: 24px;
+      border: 3px solid var(--border); border-top-color: var(--primary);
       border-radius: 50%; animation: spin 0.7s linear infinite;
-      margin-right: 10px; vertical-align: middle;
+      margin-right: 12px; vertical-align: middle;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .state-message .icon { display: block; font-size: 2.5rem; margin-bottom: 12px; }
+    .state-message svg { 
+      width: 48px; 
+      height: 48px; 
+      display: block; 
+      margin: 0 auto 16px; 
+      color: var(--text-light); 
+    }
 
     /* FOOTER */
     .site-footer {
-      background: #0f172a; color: #cbd5e1;
-      padding: 56px 0 max(28px, env(safe-area-inset-bottom));
+      background: #111827; 
+      color: #9ca3af;
+      padding: 64px 0 max(32px, env(safe-area-inset-bottom));
     }
-    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 36px; margin-bottom: 40px; }
-    .footer-col h4 { color: #fff; font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.2px; }
+    .footer-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+      gap: 40px; 
+      margin-bottom: 48px; 
+    }
+    .footer-col h4 { 
+      color: #fff; 
+      font-family: var(--font-head);
+      font-size: 1.1rem; 
+      font-weight: 600; 
+      margin-bottom: 18px; 
+    }
     .footer-col p, .footer-col a {
-      font-size: 0.9rem; line-height: 1.9; color: #94a3b8;
-      display: block; transition: color 0.15s;
+      font-size: 0.95rem; 
+      line-height: 1.8; 
+      color: #9ca3af;
+      display: block; 
+      transition: color 0.15s;
+      margin-bottom: 4px;
     }
     .footer-col a:hover { color: #fff; }
+    .footer-col .icon-row { display: flex; align-items: center; gap: 10px; }
+    .footer-col .icon-row svg { width: 18px; height: 18px; color: #6b7280; flex-shrink: 0; }
+    
     .footer-bottom {
-      border-top: 1px solid #1e293b; padding-top: 22px;
-      text-align: center; font-size: 0.82rem; color: #64748b;
+      border-top: 1px solid #374151; 
+      padding-top: 28px;
+      text-align: center; 
+      font-size: 0.9rem; 
+      color: #6b7280;
     }
+    .footer-bottom a { color: #9ca3af; font-weight: 500; }
+    .footer-bottom a:hover { color: #fff; }
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
-      .page-hero { padding: 48px 0 40px; }
-      .page-hero h1 { font-size: 1.7rem; }
-      .page-hero p { font-size: 0.98rem; }
-      .section { padding: 40px 0 56px; }
-      .card { padding: 22px; }
+      .page-hero { padding: 56px 0 48px; }
+      .page-hero h1 { font-size: 1.9rem; }
+      .page-hero p { font-size: 1rem; }
+      .section { padding: 48px 0 56px; }
+      .card { padding: 24px; }
       .card-grid { grid-template-columns: 1fr; }
     }
 
@@ -304,6 +439,9 @@
     .fade-in:nth-child(4) { animation-delay: 0.18s; }
     .fade-in:nth-child(5) { animation-delay: 0.24s; }
     .fade-in:nth-child(6) { animation-delay: 0.30s; }
+    .fade-in:nth-child(7) { animation-delay: 0.36s; }
+    .fade-in:nth-child(8) { animation-delay: 0.42s; }
+    .fade-in:nth-child(9) { animation-delay: 0.48s; }
   </style>
 </head>
 <body>
@@ -312,14 +450,17 @@
     <div class="container">
       <nav class="nav-bar">
         <a href="index.html" class="logo">
-          <span class="logo-mark">G</span>
-          Greenwood High
+          <img src="https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/school%20test%20logo.png" alt="Greenwood High School Logo">
+          <span>Greenwood High</span>
         </a>
-        <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleNav()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
         <ul class="nav-links" id="navLinks">
           <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
           <li><a href="announcement.html" class="active">Announcements</a></li>
-          <li><a href="contacts.html">Contact</a></li>
+          <li><a href="contact.html">Contact</a></li>
           <li><a href="admin-login.html" class="admin-link">Admin</a></li>
         </ul>
       </nav>
@@ -346,29 +487,43 @@
       <div class="footer-grid">
         <div class="footer-col">
           <h4>Greenwood High School</h4>
-          <p>123 School Road<br>Greenwood Estate<br>City, 00000</p>
+          <div class="icon-row" style="margin-bottom: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>5686 Educos Road,<br>Greenwood State,<br>Randfontein</span>
+          </div>
         </div>
         <div class="footer-col">
           <h4>Quick Links</h4>
           <a href="index.html">Home</a>
+          <a href="about.html">About</a>
           <a href="announcement.html">Announcements</a>
-          <a href="contacts.html">Contact</a>
+          <a href="contact.html">Contact</a>
+          <a href="privacy.html">Privacy Policy</a>
         </div>
         <div class="footer-col">
-          <h4>Contact</h4>
-          <p>📞 +27 00 000 0000</p>
-          <p>✉️ info@greenwoodhigh.edu</p>
+          <h4>Website Support</h4>
+          <a href="tel:+27649890296" class="icon-row">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            +27 64 989 0296
+          </a>
+          <a href="mailto:websolutionssa0@gmail.com" class="icon-row">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            websolutionssa0@gmail.com
+          </a>
         </div>
       </div>
       <div class="footer-bottom">
-        &copy; 2026 Greenwood High School. All rights reserved.
+        <p>&copy; 2026 Greenwood High. All rights reserved.</p>
+        <p style="margin-top: 8px;">Website created and developed by <a href="https://websolutionssa.pages.dev" target="_blank" rel="noopener">WebSolutionsSA</a></p>
       </div>
     </div>
   </footer>
 
   <!-- Lightbox (images only) -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-    <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">✕</button>
+    <button class="close-btn" aria-label="Close" onclick="closeLightbox(event)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
     <div id="lightboxContent"></div>
   </div>
 
@@ -414,6 +569,15 @@
       { projectId: 'ea6357bc-c34f-4dc2-b0ef-470facb6d9bb' }
     );
 
+    // SVG Icons for JS injection
+    const icons = {
+      calendar: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
+      pdf: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+      doc: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>',
+      warning: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+      inbox: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>'
+    };
+
     function escapeHtml(text) {
       if (text === null || text === undefined) return '';
       const div = document.createElement('div');
@@ -457,7 +621,7 @@
           const name = (m.file_url || '').split('/').pop().substring(0, 30) || 'Document.pdf';
           html += `
             <div class="attachment-item">
-              <span class="attach-icon">📄</span>
+              <span class="attach-icon">${icons.pdf}</span>
               <div class="attach-body">
                 <div class="attach-name">${escapeHtml(name)}</div>
                 <div class="attach-type">PDF Document</div>
@@ -478,7 +642,7 @@
           const name = (m.file_url || '').split('/').pop().substring(0, 30) || 'File';
           html += `
             <div class="attachment-item">
-              <span class="attach-icon">📎</span>
+              <span class="attach-icon">${icons.doc}</span>
               <div class="attach-body">
                 <div class="attach-name">${escapeHtml(name)}</div>
                 <div class="attach-type">File</div>
@@ -507,7 +671,7 @@
         console.error('Error loading announcements:', error);
         grid.innerHTML = `
           <div class="state-message">
-            <span class="icon">⚠️</span>
+            ${icons.warning}
             Could not load announcements right now.<br>
             Please refresh the page or try again later.
           </div>
@@ -517,7 +681,7 @@
       if (!data || data.length === 0) {
         grid.innerHTML = `
           <div class="state-message">
-            <span class="icon">📭</span>
+            ${icons.inbox}
             No announcements have been posted yet.<br>
             Please check back soon.
           </div>
@@ -549,7 +713,7 @@
             <h3>${escapeHtml(item.title)}</h3>
             <p>${escapeHtml(item.content)}</p>
             ${renderMediaCard(media)}
-            <div class="card-meta">📅 ${formatDate(item.created_at)}</div>
+            <div class="card-meta">${icons.calendar} ${formatDate(item.created_at)}</div>
           </article>
         `;
       }).join('');
