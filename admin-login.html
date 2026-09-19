@@ -6,7 +6,7 @@
   <title>Greenwood High School | Admin Login</title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/school%20test%20favicon.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/school%20test%20logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,10 +15,10 @@
 
   <style>
     :root {
-      --primary: #1e3a8a; /* Deep Navy Blue */
+      --primary: #1e3a8a;
       --primary-dark: #172554;
       --primary-light: #eff6ff;
-      --accent: #b45309; /* Muted Amber/Gold */
+      --accent: #b45309;
       --danger: #dc2626;
       --danger-bg: #fef2f2;
       --success: #166534;
@@ -63,17 +63,17 @@
     .auth-header .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       font-family: var(--font-head);
       font-weight: 700;
-      font-size: 1.35rem;
+      font-size: 1.45rem;
       color: var(--primary);
       max-width: 1200px;
       margin: 0 auto;
       letter-spacing: -0.5px;
     }
     .auth-header .logo img {
-      height: 55px;
+      height: 75px;
       width: auto;
       object-fit: contain;
     }
@@ -101,7 +101,7 @@
       transform: scale(1.05);
       z-index: -1;
     }
-    
+
     .login-card {
       background: var(--bg-white);
       border-radius: var(--radius-lg);
@@ -122,7 +122,7 @@
       margin: 0 auto 24px;
     }
     .login-icon svg { width: 28px; height: 28px; }
-    
+
     .login-card h1 {
       font-family: var(--font-head);
       font-size: 1.6rem;
@@ -162,7 +162,7 @@
       align-items: center;
     }
     .input-wrapper .input-icon svg { width: 20px; height: 20px; }
-    
+
     .form-group input {
       width: 100%;
       padding: 13px 14px 13px 44px;
@@ -279,6 +279,8 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 480px) {
+      .auth-header .logo img { height: 55px; }
+      .auth-header .logo { font-size: 1.15rem; gap: 10px; }
       .login-card { padding: 36px 28px; }
       .login-card h1 { font-size: 1.4rem; }
       .auth-main { padding: 24px 16px; }
@@ -354,11 +356,11 @@
     const loginBtn = document.getElementById('loginBtn');
     const messageBox = document.getElementById('messageBox');
 
-    // UI Enhancement: Password Visibility Toggle (Purely frontend, no auth interference)
+    // Password visibility toggle (frontend only, does not affect auth)
     const togglePassword = document.getElementById('togglePassword');
     const eyeOpen = document.getElementById('eyeOpen');
     const eyeClosed = document.getElementById('eyeClosed');
-    
+
     togglePassword.addEventListener('click', () => {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
@@ -366,7 +368,6 @@
       eyeClosed.style.display = type === 'password' ? 'none' : 'block';
     });
 
-    // SVG Icons for JS injection
     const icons = {
       error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
       success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
@@ -382,12 +383,11 @@
       messageBox.innerHTML = '';
     }
 
-    // If this tab already authenticated, and PostBase session exists, skip the form.
-    // Otherwise, always show the login form (even if a PostBase session lingers
-    // from a previous visit — this enforces re-login on a fresh tab).
+    // If this tab already authenticated AND a PostBase session exists, skip the form.
+    // Otherwise, always show the login form — this enforces re-login on a fresh tab.
     (async function checkSession() {
       const tabAuthed = sessionStorage.getItem('admin_tab_authenticated') === 'true';
-      if (!tabAuthed) return; // fresh tab → require login
+      if (!tabAuthed) return;
 
       const { data } = await postbase.auth.getSession();
       if (data && data.session) {
@@ -439,7 +439,6 @@
         return;
       }
 
-      // Mark this tab as authenticated (clears when the tab is closed).
       sessionStorage.setItem('admin_tab_authenticated', 'true');
 
       showMessage('Login successful. Redirecting…', 'success');
