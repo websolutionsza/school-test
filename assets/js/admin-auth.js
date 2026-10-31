@@ -129,7 +129,23 @@ export function initAdminLogin() {
     } catch (err) {
       setBusy(false);
       console.error("Login error:", err);
-      showMessage("Could not reach the authentication service. Please try again.", "error");
+      // Defensive: if the backend is completely unreachable (expired
+      // hosting, DNS failure, etc.), show a clean maintenance message
+      // instead of a raw error.
+      const msg = (err && err.message ? err.message : "").toLowerCase();
+      if (
+        msg.includes("failed to fetch") ||
+        msg.includes("networkerror") ||
+        msg.includes("config endpoint") ||
+        msg.includes("load failed")
+      ) {
+        showMaintenanceMode();
+      } else {
+        showMessage(
+          "Could not reach the authentication service. Please try again.",
+          "error"
+        );
+      }
     }
   });
 
@@ -138,4 +154,21 @@ export function initAdminLogin() {
     const el = $(sel);
     if (el) el.addEventListener("input", hideMessage);
   });
+}
+
+/* ---- Defensive: show maintenance mode if backend is down -------- */
+function showMaintenanceMode() {
+  const card = document.querySelector(".auth-card");
+  if (!card) return;
+  card.innerHTML =
+    '<div class="auth-icon">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>' +
+    '<line x1="12" y1="9" x2="12" y2="13"></line>' +
+    '<line x1="12" y1="17" x2="12.01" y2="17"></line>' +
+    "</svg></div>" +
+    '<h1>System offline for maintenance</h1>' +
+    '<p class="auth-subtitle">The administration service is temporarily unavailable. ' +
+    "This is usually caused by a backend connection issue. Please check back shortly, " +
+    "or contact the website administrator.</p>";
 }
