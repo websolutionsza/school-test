@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard — Greenwood High School Admin</title>
+  <meta name="description" content="Administration dashboard for managing announcements and posts.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/school%20test%20logo.png">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("ghs:theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/qol.css">
+</head>
+<body>
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner spinner-lg"></div>
+    <p>Checking your session…</p>
+  </div>
+
+  <div class="admin-shell">
+    <header class="admin-header">
+      <div class="admin-header-inner">
+        <div class="admin-brand">
+          <img src="https://raw.githubusercontent.com/websolutionsza/school-test/refs/heads/main/school%20test%20logo.png" alt="">
+          <div class="admin-brand-text">
+            <span class="title">Greenwood High</span>
+            <span class="subtitle">Admin Dashboard</span>
+          </div>
+        </div>
+        <div class="admin-actions">
+          <div class="user-chip">
+            <span class="user-name" id="userName">Loading…</span>
+            <span class="user-email" id="userEmail"></span>
+          </div>
+          <button class="icon-button theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+          <button id="goToSiteBtn" class="icon-button" type="button" title="View public site" aria-label="View public site">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Site</span>
+          </button>
+          <button id="logoutBtn" class="icon-button" type="button" title="Sign out" aria-label="Sign out" style="color: var(--color-danger); border-color: var(--color-danger);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <!-- Stats -->
+      <section class="stats-grid" aria-label="Dashboard statistics">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+          </div>
+          <div>
+            <div class="stat-value" id="statAnnouncements">—</div>
+            <div class="stat-label">Announcements</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon is-accent">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6z"/></svg>
+          </div>
+          <div>
+            <div class="stat-value" id="statPosts">—</div>
+            <div class="stat-label">Posts</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon is-success">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <div>
+            <div class="stat-value" id="statMedia">—</div>
+            <div class="stat-label">Media files</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <nav class="admin-tabs" aria-label="Manage content">
+        <button class="tab-btn is-active" type="button" data-tab="announcements" aria-current="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+          Announcements
+        </button>
+        <button class="tab-btn" type="button" data-tab="posts">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6z"/></svg>
+          Posts
+        </button>
+      </nav>
+
+      <!-- Announcements section -->
+      <section id="section-announcements" class="admin-section is-active">
+        <div class="admin-section-header">
+          <div>
+            <h2>Announcements</h2>
+            <p>Short updates shown on the home page and announcements page.</p>
+          </div>
+          <button id="newAnnouncementBtn" class="btn btn-primary" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New Announcement
+          </button>
+        </div>
+
+        <div id="announcementFormPanel" class="form-panel">
+          <h3 id="announcementFormTitle">New Announcement</h3>
+          <form id="announcementForm">
+            <input type="hidden" id="announcementId" />
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="announcementTitle">Title</label>
+                <input class="input" type="text" id="announcementTitle" required maxlength="200" placeholder="e.g. School reopens on 15 January" />
+              </div>
+              <div class="form-group">
+                <label for="announcementContent">Content</label>
+                <textarea class="textarea" id="announcementContent" required placeholder="Write the full announcement here…"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Attach files (up to 10)</label>
+                <div class="upload-area" id="announcementUploadArea">
+                  <span class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  </span>
+                  <div class="upload-text">Click to choose files</div>
+                  <div class="upload-hint">or drag &amp; drop • images, PDFs, documents • max 10 files • 50 MB each</div>
+                </div>
+                <input type="file" id="announcementFileInput" multiple
+                       accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip"
+                       style="display:none" />
+                <div id="announcementPreviews" class="previews"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-checkbox">
+                  <input type="checkbox" id="announcementPublished" checked />
+                  Publish immediately (visible on public site)
+                </label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="announcementSubmitBtn">Create Announcement</button>
+              <button type="button" class="btn btn-secondary" id="announcementCancelBtn">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="announcementsList" class="items-list" aria-live="polite">
+          <div class="state"><div class="state-icon"><span class="spinner"></span></div>Loading announcements…</div>
+        </div>
+      </section>
+
+      <!-- Posts section -->
+      <section id="section-posts" class="admin-section">
+        <div class="admin-section-header">
+          <div>
+            <h2>Posts</h2>
+            <p>Longer articles, stories, and news items.</p>
+          </div>
+          <button id="newPostBtn" class="btn btn-primary" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New Post
+          </button>
+        </div>
+
+        <div id="postFormPanel" class="form-panel">
+          <h3 id="postFormTitle">New Post</h3>
+          <form id="postForm">
+            <input type="hidden" id="postId" />
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="postTitle">Title</label>
+                <input class="input" type="text" id="postTitle" required maxlength="200" placeholder="e.g. Debate team wins regional championship" />
+              </div>
+              <div class="form-group">
+                <label for="postContent">Content</label>
+                <textarea class="textarea" id="postContent" required placeholder="Write the full article here…"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Attach files (up to 10)</label>
+                <div class="upload-area" id="postUploadArea">
+                  <span class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  </span>
+                  <div class="upload-text">Click to choose files</div>
+                  <div class="upload-hint">or drag &amp; drop • images, PDFs, documents • max 10 files • 50 MB each</div>
+                </div>
+                <input type="file" id="postFileInput" multiple
+                       accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.zip"
+                       style="display:none" />
+                <div id="postPreviews" class="previews"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-checkbox">
+                  <input type="checkbox" id="postPublished" checked />
+                  Publish immediately (visible on public site)
+                </label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="postSubmitBtn">Create Post</button>
+              <button type="button" class="btn btn-secondary" id="postCancelBtn">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="postsList" class="items-list" aria-live="polite">
+          <div class="state"><div class="state-icon"><span class="spinner"></span></div>Loading posts…</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Inactivity modal -->
+  <div id="inactivityModal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="inactivityTitle">
+    <div class="modal-card">
+      <div class="modal-icon is-warn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <h2 id="inactivityTitle">Are you still there?</h2>
+      <p>You've been inactive for a while. For security, we'll sign you out when the countdown reaches zero.</p>
+      <div class="modal-countdown" id="inactivityCountdown" aria-live="assertive">20</div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="imHereBtn">Yes, I'm here</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Draft recovery modal -->
+  <div id="draftModal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="draftTitle">
+    <div class="modal-card">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      </div>
+      <h2 id="draftTitle">Unsaved work found</h2>
+      <p>We found unsaved work on a previous <span id="draftModalName">form</span>. Would you like to continue where you left off?</p>
+      <p id="draftModalFiles" style="font-size:var(--fs-xs); color:var(--color-text-subtle); margin-top:-var(--space-3);"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="draftDiscardBtn">Discard</button>
+        <button type="button" class="btn btn-primary" id="draftContinueBtn">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to top -->
+  <button class="back-to-top" type="button" aria-label="Back to top" title="Back to top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  </button>
+
+  <script type="module" src="assets/js/config.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "./assets/js/theme.js";
+    import { initQualityOfLife } from "./assets/js/qol.js";
+    import { initAdminDashboard } from "./assets/js/admin-dashboard.js";
+
+    initThemeToggle();
+    initQualityOfLife();
+    initAdminDashboard();
+  </script>
+</body>
+</html>
