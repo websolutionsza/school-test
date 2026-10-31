@@ -132,9 +132,44 @@ async function requireAuth() {
     return true;
   } catch (err) {
     console.error("Auth check failed:", err);
+    // Defensive: if the backend is unreachable (expired hosting,
+    // network failure, etc.) show a maintenance screen instead of
+    // redirecting to login (which would also fail and loop).
+    const msg = (err && err.message ? err.message : "").toLowerCase();
+    if (
+      msg.includes("failed to fetch") ||
+      msg.includes("networkerror") ||
+      msg.includes("config endpoint") ||
+      msg.includes("load failed")
+    ) {
+      showDashboardMaintenance();
+      return false;
+    }
     sessionStorage.removeItem(SESSION_FLAG);
     window.location.replace("admin-login.html");
     return false;
+  }
+}
+
+/* ---- Defensive: show maintenance mode if backend is down -------- */
+function showDashboardMaintenance() {
+  const overlay = $("#loadingOverlay");
+  if (overlay) {
+    overlay.innerHTML =
+      '<div style="text-align:center; max-width: 480px; padding: var(--space-6);">' +
+      '<div style="width: 56px; height: 56px; margin: 0 auto var(--space-5); ' +
+      'border-radius: 50%; background: var(--color-accent-soft); ' +
+      'color: var(--color-accent-hover); display: flex; align-items: center; justify-content: center;">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>' +
+      '<line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>' +
+      '<h2 style="font-family: var(--font-display); font-size: var(--fs-lg); margin-bottom: var(--space-3);">System offline for maintenance</h2>' +
+      '<p style="color: var(--color-text-muted); font-size: var(--fs-sm); line-height: var(--lh-relaxed); margin-bottom: var(--space-6);">' +
+      "The administration dashboard cannot reach the school's database service. " +
+      "This is usually a temporary backend issue. Please check back shortly.</p>" +
+      '<a href="admin-login.html" class="btn btn-secondary">Back to login</a>' +
+      "</div>";
+    overlay.classList.remove("is-hidden");
   }
 }
 
