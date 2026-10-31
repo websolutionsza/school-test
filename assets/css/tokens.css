@@ -1,0 +1,203 @@
+/* =====================================================================
+   Greenwood High School — Design Tokens
+   Single source of truth for colors, typography, spacing, radii, motion.
+   Both light and dark themes are defined here as semantic tokens.
+   ===================================================================== */
+
+:root {
+  /* ---- Brand palette ----------------------------------------------- */
+  /* Deep institutional navy — primary. Restrained gold — accent. */
+  --navy-50:  #EAF0F8;
+  --navy-100: #D2DEEF;
+  --navy-200: #A6BCDB;
+  --navy-300: #6F8AC0;
+  --navy-400: #3F5C9B;
+  --navy-500: #1F3A6B;   /* default navy */
+  --navy-600: #16305C;
+  --navy-700: #102443;   /* primary deep */
+  --navy-800: #0B1A31;
+  --navy-900: #071222;
+
+  --gold-50:  #FBF6E7;
+  --gold-100: #F4E8C2;
+  --gold-200: #E6CC7C;
+  --gold-300: #D4B04A;
+  --gold-400: #B8902B;   /* primary gold — restrained */
+  --gold-500: #95721C;
+  --gold-600: #6E5414;
+
+  --crimson-500: #B4232A; /* error / danger */
+  --crimson-50:  #FBECEC;
+  --emerald-600: #047857; /* success */
+  --emerald-50:  #E7F4EE;
+
+  /* ---- Light theme semantic tokens -------------------------------- */
+  --color-bg:            #FFFFFF;
+  --color-bg-subtle:     #F6F7F9;
+  --color-bg-elevated:   #FFFFFF;
+  --color-surface:       #FFFFFF;
+  --color-surface-muted: #F6F7F9;
+  --color-surface-hover: #EFF2F7;
+
+  --color-border:        #E3E7ED;
+  --color-border-strong: #C8D0DC;
+  --color-divider:       #E3E7ED;
+
+  --color-text:          #1A1F2E;
+  --color-text-muted:    #4A5468;
+  --color-text-subtle:   #8B95A8;
+  --color-text-inverse:  #FFFFFF;
+
+  --color-primary:       var(--navy-700);
+  --color-primary-hover: var(--navy-800);
+  --color-primary-soft:  var(--navy-50);
+  --color-primary-on:    #FFFFFF;
+
+  --color-accent:        var(--gold-400);
+  --color-accent-hover:  var(--gold-500);
+  --color-accent-soft:   var(--gold-50);
+  --color-accent-on:     #FFFFFF;
+
+  --color-danger:        var(--crimson-500);
+  --color-danger-soft:   var(--crimson-50);
+  --color-success:       var(--emerald-600);
+  --color-success-soft:  var(--emerald-50);
+
+  --color-focus-ring:    rgba(31, 58, 107, 0.42);
+
+  /* ---- Typography -------------------------------------------------- */
+  /* Avoiding Inter/Geist/Space Grotesk.
+     Source Serif 4 = scholarly display headings.
+     Public Sans    = clean, accessible body text (US federal standard). */
+  --font-display: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
+  --font-body:    "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --fs-xxs:  0.75rem;   /* 12px */
+  --fs-xs:   0.8125rem; /* 13px */
+  --fs-sm:   0.875rem;  /* 14px */
+  --fs-base: 1rem;      /* 16px */
+  --fs-md:   1.125rem;  /* 18px */
+  --fs-lg:   1.375rem;  /* 22px */
+  --fs-xl:   1.75rem;   /* 28px */
+  --fs-2xl:  2.25rem;   /* 36px */
+  --fs-3xl:  3rem;      /* 48px */
+
+  --lh-tight:   1.15;
+  --lh-snug:    1.3;
+  --lh-normal:  1.55;
+  --lh-relaxed: 1.7;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  --tracking-tight:  -0.015em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.04em;
+  --tracking-caps:   0.08em;
+
+  /* ---- Spacing scale ---------------------------------------------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ---- Radii ------------------------------------------------------- */
+  --radius-xs:   3px;
+  --radius-sm:   5px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-pill: 999px;
+
+  /* ---- Shadows (restrained, never decorative orbs) ---------------- */
+  --shadow-xs: 0 1px 0 rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 2px 6px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.05);
+
+  /* ---- Motion ------------------------------------------------------ */
+  --motion-fast:   120ms;
+  --motion-base:   180ms;
+  --motion-slow:   280ms;
+  --ease-out:      cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Layout ------------------------------------------------------ */
+  --container-max:  1200px;
+  --container-wide: 1400px;
+  --container-read: 720px;
+  --header-height:  72px;
+
+  /* ---- Z-index scale ---------------------------------------------- */
+  --z-base:     1;
+  --z-sticky:   100;
+  --z-overlay:  500;
+  --z-toast:    800;
+  --z-modal:    1000;
+  --z-top:      2000;
+}
+
+/* ---- Dark theme --------------------------------------------------- */
+/* Toggled by [data-theme="dark"] on <html>.
+   Dark mode is NOT a colour inversion: it uses carefully chosen navy-tinted
+   surfaces so the institutional identity is preserved. */
+[data-theme="dark"] {
+  --color-bg:            #0B1424;
+  --color-bg-subtle:     #0E1A2D;
+  --color-bg-elevated:   #142340;
+  --color-surface:       #142340;
+  --color-surface-muted: #0E1A2D;
+  --color-surface-hover: #1B2C4D;
+
+  --color-border:        #25365A;
+  --color-border-strong: #324669;
+  --color-divider:       #25365A;
+
+  --color-text:          #E8EDF5;
+  --color-text-muted:    #B5C0D4;
+  --color-text-subtle:   #7A8AA8;
+  --color-text-inverse:  #0B1424;
+
+  --color-primary:       #7DA0E0;
+  --color-primary-hover: #9CB6E8;
+  --color-primary-soft:  #1B2C4D;
+  --color-primary-on:    #0B1424;
+
+  --color-accent:        #E6CC7C;
+  --color-accent-hover:  #F4E2A0;
+  --color-accent-soft:   #2A2418;
+  --color-accent-on:     #1A1408;
+
+  --color-danger:        #F87171;
+  --color-danger-soft:   #2D1A1C;
+  --color-success:       #34D399;
+  --color-success-soft:  #15302A;
+
+  --color-focus-ring:    rgba(125, 160, 224, 0.55);
+
+  --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ---- Reduced motion ---------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast:  0ms;
+    --motion-base:  0ms;
+    --motion-slow:  0ms;
+  }
+  * { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
