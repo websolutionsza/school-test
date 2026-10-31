@@ -1,0 +1,25 @@
+# Security headers for Cloudflare Pages
+# These are applied automatically to every response.
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; img-src 'self' https://raw.githubusercontent.com data:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; frame-src https://www.google.com; connect-src 'self' https://postbase-production-b4c8.up.railway.app https://postfile.net; base-uri 'self'; form-action 'self'
+
+# Hide admin pages from search engines
+/admin-login.html
+  X-Robots-Tag: noindex, nofollow
+
+/administration.html
+  X-Robots-Tag: noindex, nofollow
+
+# Never cache the runtime config endpoint (it might rotate)
+/api/config
+  Cache-Control: no-store
+
+# Allow short caching of uploaded file URLs in the browser
+/api/upload
+  Cache-Control: no-store
