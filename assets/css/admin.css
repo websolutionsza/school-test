@@ -493,9 +493,24 @@
 .auth-header {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-6) var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.auth-header .brand { font-size: var(--fs-base); }
+.auth-header .brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-md);
+}
+.auth-header .brand img {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+}
+.auth-header .brand .brand-name { font-size: var(--fs-md); }
+.auth-header .brand .brand-tag { font-size: var(--fs-xxs); }
 
 .auth-main {
   flex: 1;
