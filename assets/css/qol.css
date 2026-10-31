@@ -1,0 +1,248 @@
+/* =====================================================================
+   Greenwood High School — Quality-of-life UI
+   Back-to-top, reading progress, share menu, keyboard help, copy feedback.
+   Subtle, never decorative.
+   ===================================================================== */
+
+/* ---- Reading progress bar --------------------------------------- */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: var(--color-accent);
+  z-index: var(--z-top);
+  transition: width 80ms linear, opacity var(--motion-base) var(--ease-out);
+  opacity: 0;
+  pointer-events: none;
+}
+.reading-progress.is-visible { opacity: 1; }
+
+/* ---- Back to top ------------------------------------------------ */
+.back-to-top {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-primary-on);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity var(--motion-base) var(--ease-out),
+              transform var(--motion-base) var(--ease-out),
+              background var(--motion-base) var(--ease-out);
+}
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.back-to-top:hover { background: var(--color-primary-hover); }
+.back-to-top svg { width: 20px; height: 20px; }
+
+@media (max-width: 600px) {
+  .back-to-top { bottom: var(--space-4); right: var(--space-4); }
+}
+
+/* ---- Theme toggle button ---------------------------------------- */
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon { display: none; }
+:root:not([data-theme="dark"]) .theme-toggle .icon-sun { display: inline; }
+:root:not([data-theme="dark"]) .theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: inline; }
+
+/* ---- Share menu ------------------------------------------------- */
+.share-menu {
+  position: relative;
+  display: inline-block;
+}
+.share-menu .share-panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2);
+  min-width: 200px;
+  z-index: var(--z-overlay);
+  display: none;
+}
+.share-menu.is-open .share-panel { display: block; }
+.share-menu .share-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-3);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  font-weight: var(--fw-medium);
+  text-align: left;
+  min-height: 40px;
+}
+.share-menu .share-item:hover { background: var(--color-surface-hover); }
+.share-menu .share-item svg { width: 16px; height: 16px; color: var(--color-text-muted); }
+.share-menu .share-divider {
+  height: 1px;
+  background: var(--color-divider);
+  margin: var(--space-1) 0;
+}
+
+/* ---- Copy button with feedback ---------------------------------- */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  min-height: 36px;
+  transition: background var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out);
+}
+.copy-btn:hover { background: var(--color-surface-hover); color: var(--color-text); }
+.copy-btn svg { width: 14px; height: 14px; }
+.copy-btn.is-copied {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  border-color: transparent;
+}
+
+/* ---- Keyboard shortcuts help dialog ----------------------------- */
+.kbd {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  padding: 1px var(--space-2);
+  color: var(--color-text);
+  font-weight: var(--fw-medium);
+  min-width: 20px;
+  text-align: center;
+}
+
+.shortcuts-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--color-text-subtle);
+  font-weight: var(--fw-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  border: none;
+}
+.shortcuts-trigger:hover { color: var(--color-text); background: var(--color-surface-hover); }
+.shortcuts-trigger .kbd { margin-left: var(--space-1); }
+
+.shortcuts-dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 12, 22, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+.shortcuts-dialog.is-open { display: flex; }
+.shortcuts-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 480px;
+  width: 100%;
+  padding: var(--space-8);
+}
+.shortcuts-card h2 {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--space-2);
+}
+.shortcuts-card p {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+}
+.shortcuts-list {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.shortcuts-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+.shortcuts-list li:last-child { border-bottom: 0; }
+.shortcuts-list .shortcut-desc { font-size: var(--fs-sm); color: var(--color-text); }
+.shortcuts-list .shortcut-keys { display: flex; gap: var(--space-1); align-items: center; }
+.shortcuts-list .shortcut-keys .sep { color: var(--color-text-subtle); font-size: var(--fs-xs); }
+.shortcuts-close {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-6);
+}
+
+/* ---- Inline action button (used in cards) ---------------------- */
+.inline-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  min-height: 36px;
+  transition: background var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out);
+}
+.inline-action:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+.inline-action svg { width: 14px; height: 14px; }
+
+/* ---- Connection banner (shown if backend unreachable) ----------- */
+.connection-banner {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  padding: var(--space-3) var(--space-6);
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  border-bottom: 1px solid transparent;
+  display: none;
+}
+.connection-banner.is-visible { display: block; }
