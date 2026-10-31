@@ -150,7 +150,6 @@ const SHORTCUTS = [
   { keys: ["g", "a"], desc: "Go to About", action: () => navigate("about.html") },
   { keys: ["g", "n"], desc: "Go to Announcements", action: () => navigate("announcement.html") },
   { keys: ["g", "c"], desc: "Go to Contact", action: () => navigate("contacts.html") },
-  { keys: ["t"], desc: "Toggle light / dark theme", action: () => toggleThemeSafe() },
   { keys: ["?"], desc: "Show this keyboard shortcuts dialog", action: () => openShortcutsDialog() },
   { keys: ["Esc"], desc: "Close dialogs / menus", action: () => closeEverything() },
 ];
@@ -160,13 +159,6 @@ let gKeyTimer = null;
 
 function navigate(href) {
   window.location.href = href;
-}
-
-function toggleThemeSafe() {
-  // Lazy-load theme module to avoid circular import
-  import("./theme.js")
-    .then((m) => m.toggleTheme())
-    .catch(() => {});
 }
 
 function isTyping() {
