@@ -1,4 +1,3 @@
-[IMPLEMENTATION_REPORT.md](https://github.com/user-attachments/files/34224260/IMPLEMENTATION_REPORT.md)
 # Greenwood High School — Implementation Report
 
 ## Summary

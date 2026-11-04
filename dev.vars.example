@@ -1,0 +1,13 @@
+# Local development env vars for Wrangler (`wrangler pages dev`)
+# ----------------------------------------------------------------
+# Copy this file to `.dev.vars` and fill in the values.
+# `.dev.vars` is git-ignored — NEVER commit it.
+#
+# These same values must also be set as Cloudflare Pages environment
+# variables in the dashboard (see DEPLOYMENT.md section 4).
+
+POSTBASE_URL=https://postbase-production-b4c8.up.railway.app
+POSTBASE_ANON_KEY=pb_anon_fsq2eoaBVsA3NcKwKJnp7iH4TEb-ZoUOzSSVsbwhbFT26sOrKq1zSE94esDhwIy1
+POSTBASE_PROJECT_ID=ea6357bc-c34f-4dc2-b0ef-470facb6d9bb
+POSTFILE_API_KEY=pf_lyIGJBVbqHrpTE4qy8BLeJv6KxgJ4NoRzT_cXaz4cQs
+POSTFILE_UPLOAD_URL=https://postfile.net/v1/upload
