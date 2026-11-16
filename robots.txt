@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin-login.html
-Disallow: /administration.html
-
-Sitemap: https://greenwoodhigh.example/sitemap.xml
