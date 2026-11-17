@@ -1,0 +1,19 @@
+# Local development env vars for Wrangler (`npx wrangler pages dev`)
+# ----------------------------------------------------------------
+# Copy this file to `.dev.vars` and fill in the values.
+# `.dev.vars` is git-ignored — NEVER commit it.
+#
+# The same values must also be set in the Cloudflare Pages dashboard
+# as Production/Preview variables before deploying (see DEPLOYMENT.md).
+# The values below are PLACEHOLDERS — this file must never contain
+# real credentials.
+
+# Neon connection string (pooled connection recommended). Server-side
+# secret: the browser never receives this value.
+NEON_DATABASE_URL=postgresql://USER:PASSWORD@EP-NAME-Pooler.REGION.aws.neon.tech/DBNAME?sslmode=require
+
+# PostFile API key (used only inside /api/upload). Server-side secret.
+POSTFILE_API_KEY=pf_REPLACE_WITH_YOUR_POSTFILE_KEY
+
+# Optional override for the PostFile upload endpoint.
+POSTFILE_UPLOAD_URL=https://postfile.net/v1/upload
