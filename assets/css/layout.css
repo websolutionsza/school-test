@@ -105,6 +105,14 @@
   border-color: var(--color-primary);
   background: var(--color-surface);
 }
+/* Temporarily unavailable (server-side login lockout): the button
+   looks and behaves unavailable — muted, non-interactive, no tooltip
+   text, no countdown anywhere. Restored automatically by nav.js. */
+.nav-primary .nav-admin a.is-locked {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
 
 /* ---- Nav actions (theme toggle, etc.) ---------------------------- */
 .nav-actions {
