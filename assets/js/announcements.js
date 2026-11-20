@@ -1,17 +1,17 @@
 /* =====================================================================
    Greenwood High School — Announcements page controller
-   Renders all published announcements in an editorial list with
-   clear dates, titles, and summaries. Rendering is unchanged from the
-   original PostBase version; only the data source differs.
+   Renders all published announcements using the SAME shared card
+   component as the homepage (cards.js), so a visitor gets an identical
+   card and full-screen reading experience whether they open an
+   announcement here or from the homepage. No separate data source, no
+   duplicate announcement system — same /api/public/announcements data.
    ===================================================================== */
 
 import { apiGet } from "./api.js";
-import { escapeHtml, formatDateParts } from "./utils.js";
-import { attachLightboxTriggers } from "./media.js";
+import { escapeHtml } from "./utils.js";
+import { renderCards } from "./cards.js";
 
 const ICONS = {
-  folder:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>',
   warning:
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
   inbox:
@@ -25,34 +25,6 @@ function renderState(grid, icon, title, text) {
     '<div class="state-title">' + escapeHtml(title) + "</div>" +
     '<p class="state-text">' + escapeHtml(text) + "</p>" +
     "</div>";
-}
-
-function renderAnnouncementCard(item, media) {
-  const parts = formatDateParts(item.created_at);
-  const dateBlock = parts
-    ? '<div class="editorial-date">' +
-      '<div class="day">' + parts.day + "</div>" +
-      '<div class="month">' + parts.month + "</div>" +
-      '<div class="year">' + parts.year + "</div>" +
-      "</div>"
-    : "";
-
-  const mediaCount = (media || []).length;
-
-  return (
-    '<article class="editorial-item fade-in">' +
-    dateBlock +
-    '<div class="editorial-body">' +
-    '<h3>' + escapeHtml(item.title) + "</h3>" +
-    '<p>' + escapeHtml(item.content) + "</p>" +
-    (mediaCount > 0
-      ? '<div class="editorial-actions">' +
-        '<span class="badge">' + ICONS.folder + " " + mediaCount + " file" + (mediaCount === 1 ? "" : "s") + "</span>" +
-        "</div>"
-      : "") +
-    "</div>" +
-    "</article>"
-  );
 }
 
 async function loadAnnouncements() {
@@ -75,10 +47,12 @@ async function loadAnnouncements() {
       return;
     }
 
-    container.innerHTML = items
-      .map((item) => renderAnnouncementCard(item, item.media || []))
-      .join("");
-    attachLightboxTriggers(container);
+    // Same card design as the homepage — switch the editorial list to
+    // the shared card grid and render through cards.js.
+    container.classList.remove("editorial-list");
+    container.classList.add("card-grid");
+    items.forEach((a) => (a._media = a.media || []));
+    renderCards(container, items, { isAnnouncement: true });
   } catch (err) {
     console.error("Error loading announcements:", err);
     renderState(

@@ -2,21 +2,17 @@
    Greenwood High School — Homepage controller
    Loads latest published announcements + posts from the site's own
    /api/public endpoints (Neon via Cloudflare Pages Functions) and
-   renders them as editorial cards. Rendering is unchanged from the
-   original PostBase version; only the data source differs.
+   renders them through the shared card component (cards.js): hero
+   image, title, short preview, attachment summary and a Read More…
+   button that opens the full-screen reading experience. Cards are
+   identical to the dedicated Announcements page by construction.
    ===================================================================== */
 
 import { apiGet } from "./api.js";
-import { escapeHtml, formatDate } from "./utils.js";
-import { renderMediaCard, attachLightboxTriggers } from "./media.js";
+import { escapeHtml } from "./utils.js";
+import { renderCards } from "./cards.js";
 
 const ICONS = {
-  calendar:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
-  news:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6z"/></svg>',
-  arrow:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
   warning:
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
   inbox:
@@ -35,29 +31,6 @@ function renderState(grid, icon, title, text) {
 function renderLoading(grid) {
   grid.innerHTML =
     '<div class="state"><span class="spinner"></span> <span class="state-text">Loading…</span></div>';
-}
-
-function cardHtml(item, opts) {
-  const badge = opts.isAnnouncement
-    ? '<span class="card-badge">Announcement</span>'
-    : "";
-  const icon = opts.isAnnouncement ? "" : '<div class="card-icon">' + ICONS.news + "</div>";
-  const media = renderMediaCard(item._media || []);
-  return (
-    '<article class="card fade-in">' +
-    icon +
-    badge +
-    '<h3 class="card-title">' + escapeHtml(item.title) + "</h3>" +
-    '<p class="card-body">' + escapeHtml(item.content) + "</p>" +
-    media +
-    '<div class="card-meta">' +
-    ICONS.calendar + " " + escapeHtml(formatDate(item.created_at)) +
-    "</div>" +
-    (opts.link
-      ? '<a class="card-link" href="' + opts.link + '">Read more ' + ICONS.arrow + "</a>"
-      : "") +
-    "</article>"
-  );
 }
 
 async function loadAnnouncements() {
@@ -80,10 +53,7 @@ async function loadAnnouncements() {
     }
 
     items.forEach((a) => (a._media = a.media || []));
-    grid.innerHTML = items
-      .map((a) => cardHtml(a, { isAnnouncement: true }))
-      .join("");
-    attachLightboxTriggers(grid);
+    renderCards(grid, items, { isAnnouncement: true });
   } catch (err) {
     console.error("Error loading announcements:", err);
     renderState(
@@ -115,8 +85,7 @@ async function loadPosts() {
     }
 
     items.forEach((p) => (p._media = p.media || []));
-    grid.innerHTML = items.map((p) => cardHtml(p, {})).join("");
-    attachLightboxTriggers(grid);
+    renderCards(grid, items, { isAnnouncement: false });
   } catch (err) {
     console.error("Error loading posts:", err);
     renderState(

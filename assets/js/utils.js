@@ -48,6 +48,28 @@ export function relativeTime(iso) {
   return formatDate(iso);
 }
 
+/* ---- Clean preview truncation ------------------------------------ */
+/**
+ * Shortens text for card previews. Cuts on a word boundary (never
+ * mid-word), trims leftover spaces/punctuation, and appends an
+ * ellipsis (…) only when the text was actually shortened. Text inside
+ * the limit is returned untouched.
+ */
+export function truncatePreview(text, maxChars = 200) {
+  const value = String(text === null || text === undefined ? "" : text);
+  if (maxChars < 1 || value.length <= maxChars) return value;
+
+  let cut = value.slice(0, maxChars + 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  if (lastSpace > 0) {
+    cut = cut.slice(0, lastSpace); // keep whole words only
+  } else {
+    cut = value.slice(0, maxChars); // single very long word: hard cut
+  }
+  cut = cut.replace(/[\s,;:.!\-–—]+$/, ""); // drop trailing fragments
+  return cut + "…";
+}
+
 /* ---- DOM helpers ------------------------------------------------ */
 export function $(selector, root) {
   return (root || document).querySelector(selector);

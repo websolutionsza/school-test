@@ -13,12 +13,19 @@ const ICONS = {
     '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>',
   file:
     '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  folder:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>',
 };
 
 function iconForType(type) {
   if (type === "pdf") return ICONS.pdf;
   if (type === "document") return ICONS.doc;
   return ICONS.file;
+}
+
+/** Expose an icon by file type (used by the full-screen reader). */
+export function mediaIcon(type) {
+  return iconForType(type);
 }
 
 /**
@@ -71,6 +78,9 @@ export function renderMediaCard(media, opts) {
         '<div class="attach-type">' + escapeHtml(meta.type) + "</div>" +
         "</div>" +
         '<div class="attach-actions">' +
+        (opts.withDetails
+          ? '<button type="button" class="attach-btn more" data-doc-details="' + escapeHtml(m.file_url) + '">Read More…</button>'
+          : "") +
         '<a class="attach-btn view" href="' + escapeHtml(m.file_url) + '" target="_blank" rel="noopener">View</a>' +
         '<a class="attach-btn download" href="' + escapeHtml(m.file_url) + '" download target="_blank" rel="noopener">Download</a>' +
         "</div>" +
@@ -91,6 +101,9 @@ export function renderMediaCard(media, opts) {
         '<div class="attach-type">' + escapeHtml(meta.type) + "</div>" +
         "</div>" +
         '<div class="attach-actions">' +
+        (opts.withDetails
+          ? '<button type="button" class="attach-btn more" data-doc-details="' + escapeHtml(m.file_url) + '">Read More…</button>'
+          : "") +
         '<a class="attach-btn download" href="' + escapeHtml(m.file_url) + '" download target="_blank" rel="noopener">Download</a>' +
         "</div>" +
         "</div>";
@@ -99,6 +112,29 @@ export function renderMediaCard(media, opts) {
   }
 
   return html;
+}
+
+/**
+ * Compact attachment summary for cards: instead of dumping every file
+ * row onto the card, shows a single "N files attached" chip. The full
+ * per-file list (View / Download / Read More) lives in the full-screen
+ * reader. Images are not counted — they are shown by the card itself.
+ * @param {Array<{file_url:string, file_type:string}>} media
+ * @returns {string} HTML
+ */
+export function renderAttachmentSummary(media) {
+  const files = (media || []).filter((m) => m.file_type !== "image");
+  if (files.length === 0) return "";
+  const n = files.length;
+  return (
+    '<div class="attach-summary">' +
+    ICONS.folder +
+    " " +
+    n +
+    " attached file" +
+    (n === 1 ? "" : "s") +
+    "</div>"
+  );
 }
 
 /* ---- Lightbox --------------------------------------------------- */

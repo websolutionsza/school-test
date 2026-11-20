@@ -63,6 +63,64 @@
         if (mq.matches) setOpen(false);
       });
     }
+
+    watchAdminLockout();
+  }
+
+  /* ------------------------------------------------------------------
+     Admin button lockout awareness (server enforces the restriction).
+     While the server reports a login lockout for this visitor, the
+     Admin button is made completely unresponsive — no navigation, no
+     countdown, no messages. A periodic server check restores it
+     automatically when the lock expires. Presentation only: every
+     login attempt is still verified (and refused) by the backend.
+     ------------------------------------------------------------------ */
+  function watchAdminLockout() {
+    var adminLink = document.querySelector(".nav-admin a");
+    if (!adminLink || typeof fetch !== "function") return;
+
+    var locked = false;
+    var timer = null;
+
+    function guard(e) {
+      if (locked) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+
+    function apply(isLocked) {
+      locked = isLocked;
+      if (locked) {
+        adminLink.classList.add("is-locked");
+        adminLink.setAttribute("aria-disabled", "true");
+        adminLink.addEventListener("click", guard);
+        if (!timer) timer = setInterval(check, 3000);
+      } else {
+        adminLink.classList.remove("is-locked");
+        adminLink.removeAttribute("aria-disabled");
+        adminLink.removeEventListener("click", guard);
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+    }
+
+    function check() {
+      fetch("/api/auth/session", { headers: { Accept: "application/json" } })
+        .then(function (r) {
+          return r && r.ok ? r.json() : null;
+        })
+        .then(function (d) {
+          apply(Boolean(d && d.loginLocked && !d.authenticated));
+        })
+        .catch(function () {
+          /* backend unreachable — leave the button as-is */
+        });
+    }
+
+    check();
   }
 
   // Run immediately if DOM is already parsed, otherwise wait

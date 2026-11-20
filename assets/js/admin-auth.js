@@ -58,6 +58,28 @@ function looksLikeNetworkError(message) {
   );
 }
 
+/* ---- Lockout presentation (server enforces the real restriction) -- */
+/* Disables the sign-in form while the server-side lockout is active.
+   No countdown and no duration details are shown — the form is simply
+   temporarily unavailable, and access restores automatically. */
+function setLockoutUi(locked) {
+  const btn = $("#loginBtn");
+  const email = $("#email");
+  const password = $("#password");
+  const toggle = $("#togglePassword");
+  [btn, email, password, toggle].forEach((el) => {
+    if (el) el.disabled = locked;
+  });
+  if (locked) {
+    showMessage(
+      "Administrator sign-in is temporarily unavailable. Please try again later.",
+      "error"
+    );
+  } else {
+    hideMessage();
+  }
+}
+
 export function initAdminLogin() {
   const form = $("#loginForm");
   if (!form) return;
@@ -95,6 +117,36 @@ export function initAdminLogin() {
     }
   })();
 
+  // Lockout awareness: if sign-in is temporarily locked server-side
+  // (3 consecutive failed attempts), disable the form and poll until
+  // the server restores access. This only reflects state — the real
+  // restriction is enforced server-side on every login attempt.
+  (async function watchLockout() {
+    let timer = null;
+
+    const apply = (locked) => {
+      setLockoutUi(locked);
+      if (locked && !timer) timer = setInterval(poll, 3000);
+      if (!locked && timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    async function poll() {
+      try {
+        const data = await apiGet("/api/auth/session");
+        apply(
+          Boolean(data && data.loginLocked && data.authenticated === false)
+        );
+      } catch (e) {
+        /* backend unreachable — leave the form as-is */
+      }
+    }
+
+    poll();
+  })();
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     hideMessage();
@@ -122,6 +174,12 @@ export function initAdminLogin() {
         // hosting, DNS failure, etc.), show a clean maintenance message
         // instead of a raw error.
         showMaintenanceMode();
+        return;
+      }
+      if (err && err.data && err.data.locked) {
+        // 3rd consecutive failure: the server has locked sign-in for a
+        // short, undisclosed window. Go straight to the public homepage.
+        window.location.replace("index.html");
         return;
       }
       if (err && err.status === 429) {

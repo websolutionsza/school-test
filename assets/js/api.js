@@ -35,6 +35,9 @@ async function request(path, options) {
       (data && data.error) || "Request failed (" + response.status + ")."
     );
     error.status = response.status;
+    // Full parsed body (e.g. { locked: true } on login lockout) so
+    // callers can branch on more than the status code. Read-only.
+    error.data = data || null;
     throw error;
   }
   return data;
