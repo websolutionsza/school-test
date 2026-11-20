@@ -1,3 +1,72 @@
+[CHANGES.md](https://github.com/user-attachments/files/35135792/CHANGES.md)
+# CHANGES — UI improvements & admin security (20 November 2026)
+
+Scope: **enhancement of the existing system only**. No rebuild, no
+redesign of working pages, no database changes, no schema migration.
+All announcements, posts, media, the admin account and every existing
+table/column/record are untouched.
+
+## 1. Files added
+
+| File | Purpose |
+|---|---|
+| `lib/login-guard.js` | Server-side 3-strikes lockout state machine (pure module, unit-tested). After 3 consecutive failed logins within 10 minutes, that IP is locked out of `POST /api/auth/login` for 30 seconds. State lives in Worker memory — **no new database table**. Successful login or lock expiry resets the counter. |
+| `assets/js/cards.js` | ONE shared announcement/post card component used by the homepage AND the Announcements page: hero image → title → cleanly-truncated preview (word-boundary safe, `…` when shortened) → attachment summary chip → date → **Read More…** button. |
+| `assets/js/reader.js` | Full-screen reading experience: complete announcement/post view (hero image, full text, every attachment with its existing View/Download plus a per-document Read More…) and a document details view (type icon, file name, type, added date, View/Download). X button or Escape closes; the page is never reloaded and the visitor's scroll position is restored. Closing a document view returns into the announcement you were reading. |
+
+## 2. Files changed
+
+| File | Change |
+|---|---|
+| `assets/js/home.js` | Renders announcements and posts through the shared `cards.js` (previously dumped the full content into every card). States/empty/loading handling unchanged. |
+| `assets/js/announcements.js` | Dedicated Announcements page now renders the SAME shared cards (was an editorial list with full text). Same data source, no duplicate system. |
+| `assets/js/utils.js` | Added `truncatePreview(text, maxChars)` — word-boundary-safe truncation with ellipsis. Existing helpers untouched. |
+| `assets/js/media.js` | Added `renderAttachmentSummary()` (compact "N attached files" chip for cards) and an optional `withDetails` flag on `renderMediaCard()` that adds a per-document "Read More…" button inside the reader. Existing row markup/View/Download preserved; `renderMediaCard` remains backward compatible. |
+| `assets/js/api.js` | Error objects now carry the parsed response body as `error.data` (read-only addition) so the login page can detect `{ locked: true }`. |
+| `assets/js/admin-auth.js` | On a 3rd consecutive failed attempt (server responds `{ locked: true }`) the visitor is redirected to the public homepage immediately. On page load the form checks `/api/auth/session` and, while locked, is disabled with the message "Administrator sign-in is temporarily unavailable." — no countdown, no duration — and polls every 3s until the server restores access. |
+| `assets/js/nav.js` | While the server reports a lockout, the nav **Admin button is completely unresponsive** (muted, `pointer-events: none`, click prevented, `aria-disabled`), with an automatic restore via a 3-second server poll. |
+| `lib/auth.js` | `handleLogin` consults the guard: locked IPs are rejected **before credentials are checked** (429 + `{ locked: true }`, message never mentions the duration); 3rd failure creates the 30s lock; success resets the counter. The existing 8-failures/10-minute limiter is kept as a backstop. Exports `isLoginLocked()`. |
+| `functions/api/[[route]].js` | `GET /api/auth/session` now also returns `loginLocked` (boolean) so public pages can reflect the lock state. |
+| `assets/css/components.css` | Card hero image (edge-to-edge top image), attachment summary chip, Read More button, `attach-btn.more`, and the full `.reader` section — all built on existing design tokens (light/dark themes work automatically). |
+| `assets/css/layout.css` | `.nav-admin a.is-locked` style (muted, non-interactive). |
+| `CHANGES.md` | This section. |
+
+## 3. Files removed
+
+| File | Why |
+|---|---|
+| `functions/api/health.js` | Temporary diagnostic endpoint from the deployment debugging session (2026-11-18). No longer needed; it reported env-var/connection status publicly. |
+
+## 4. Security notes
+
+- The lockout is a **real server-side restriction**: every login attempt is
+  evaluated by the Worker, so refreshing, opening a new tab, or re-opening
+  the login URL cannot bypass it. State is in Worker memory (per
+  Cloudflare isolate/PoP) because no existing table fits and no new table
+  was allowed; the wider backstop remains the 8-per-10-minute limiter and
+  the WAF rule recommended in DEPLOYMENT.md.
+- No credentials, hashes, durations or countdowns are exposed anywhere.
+
+## 5. Verification performed before delivery
+
+- `node --check` on all 22 JS files: clean.
+- Unit tests: `scripts/test-login-guard.mjs` (20 assertions) and
+  `scripts/test-truncate.mjs` (15 assertions) — all passing. One real bug
+  found and fixed by these tests (epoch-0 falsy handling in the guard).
+- Full browser test (headless Chromium against a local rig implementing
+  the same API contract, using the real `login-guard.js`): card layout
+  and truncation on homepage + Announcements page; image/no-image/no-media
+  variants; reader opens with complete text and attachments; X and Escape
+  close; scroll position restored exactly (1500→1500); document details
+  round-trip returns into the announcement at the same inner scroll;
+  lockout sequence (2 failures → usable, 3rd → redirect, locked button
+  unresponsive, direct URL + refresh blocked, no countdown, automatic
+  restore after 30s, correct login works afterwards, sign-out confirm
+  intact); iPhone-14 emulation (no overflow, 44px touch targets, close
+  button reachable); dark theme rendering. Zero unexpected console errors.
+
+---
+
 # CHANGES — Neon PostgreSQL migration (16 November 2026)
 
 Scope: **database migration only**. No page was redesigned, no feature
