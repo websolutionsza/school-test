@@ -1,3 +1,4 @@
+[IMPLEMENTATION_REPORT.md](https://github.com/user-attachments/files/35135829/IMPLEMENTATION_REPORT.md)
 # Greenwood High School — Implementation Report
 
 > **Note (16 November 2026):** This report describes the *original PostBase* build.
