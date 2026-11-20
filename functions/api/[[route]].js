@@ -34,6 +34,7 @@ import {
   handleLogout,
   getSessionUser,
   requireAdmin,
+  isLoginLocked,
 } from "../../lib/auth.js";
 import {
   isUuid,
@@ -236,7 +237,11 @@ async function handle(request, env) {
   if (path === "auth/session" && method === "GET") {
     try {
       const user = await getSessionUser(env, request);
-      if (!user) return json({ authenticated: false });
+      if (!user) {
+        // loginLocked lets the public UI show the Admin button and the
+        // login form as temporarily unavailable during the lockout.
+        return json({ authenticated: false, loginLocked: isLoginLocked(request) });
+      }
       return json({
         authenticated: true,
         user: { name: user.name, email: user.email },
