@@ -1,3 +1,4 @@
+[DEPLOYMENT.md](https://github.com/user-attachments/files/35135813/DEPLOYMENT.md)
 # Greenwood High School — Deployment Guide (Neon edition)
 
 This guide covers deploying the Greenwood High School website to
