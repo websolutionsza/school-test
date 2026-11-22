@@ -119,8 +119,14 @@ export function renderRecentPages(targetSelector) {
   const filtered = items.filter((e) => e.path !== currentPath);
 
   if (filtered.length === 0) {
-    target.innerHTML =
-      '<p class="empty">Pages you visit on this site will appear here for quick access.</p>';
+    // Nothing to show yet: remove the whole widget (its section
+    // wrapper included) so no empty block is left before the footer.
+    const section = target.closest("section");
+    if (section) {
+      section.remove();
+    } else {
+      target.innerHTML = "";
+    }
     return;
   }
 
@@ -141,7 +147,13 @@ function initRecentlyViewed() {
   recordCurrentPage();
   // Render into any [data-recent-pages] containers on the page
   const targets = $all("[data-recent-pages]");
-  targets.forEach((t) => renderRecentPages("#" + t.id || t));
+  targets.forEach((t) => {
+    if (t.id) {
+      renderRecentPages("#" + t.id);
+    } else {
+      renderRecentPages(t);
+    }
+  });
 }
 
 /* ---- Keyboard shortcuts ----------------------------------------- */

@@ -4,7 +4,7 @@
    Renders images, PDFs, and document attachments consistently.
    ===================================================================== */
 
-import { escapeHtml, friendlyDocumentLabel } from "./utils.js";
+import { escapeHtml, friendlyDocumentLabel, formatDate } from "./utils.js";
 
 const ICONS = {
   pdf:
@@ -28,10 +28,27 @@ export function mediaIcon(type) {
   return iconForType(type);
 }
 
+/** Small "type · added date" metadata line for attachment rows. */
+function attachmentMeta(m) {
+  let text = "";
+  const meta = friendlyDocumentLabel(m.file_url);
+  text += meta.type;
+  if (m.created_at) {
+    const added = formatDate(m.created_at, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+    if (added) text += " · Added " + added;
+  }
+  return text;
+}
+
 /**
  * Renders the media block for a card (images + attachments).
  * @param {Array<{file_url:string, file_type:string}>} media
- * @param {object} opts - { openLightbox: function(url) }
+ * @param {object} opts - { withDetails: boolean } — adds a per-document
+ *   "Read More…" button (used inside the full-screen reader).
  * @returns {string} HTML
  */
 export function renderMediaCard(media, opts) {
@@ -75,7 +92,7 @@ export function renderMediaCard(media, opts) {
         '<span class="attach-icon">' + ICONS.pdf + "</span>" +
         '<div class="attach-body">' +
         '<div class="attach-name">' + escapeHtml(meta.name) + "</div>" +
-        '<div class="attach-type">' + escapeHtml(meta.type) + "</div>" +
+        '<div class="attach-type">' + escapeHtml(attachmentMeta(m)) + "</div>" +
         "</div>" +
         '<div class="attach-actions">' +
         (opts.withDetails
@@ -98,7 +115,7 @@ export function renderMediaCard(media, opts) {
         '<span class="attach-icon">' + iconForType("document") + "</span>" +
         '<div class="attach-body">' +
         '<div class="attach-name">' + escapeHtml(meta.name) + "</div>" +
-        '<div class="attach-type">' + escapeHtml(meta.type) + "</div>" +
+        '<div class="attach-type">' + escapeHtml(attachmentMeta(m)) + "</div>" +
         "</div>" +
         '<div class="attach-actions">' +
         (opts.withDetails
@@ -116,24 +133,34 @@ export function renderMediaCard(media, opts) {
 
 /**
  * Compact attachment summary for cards: instead of dumping every file
- * row onto the card, shows a single "N files attached" chip. The full
- * per-file list (View / Download / Read More) lives in the full-screen
- * reader. Images are not counted — they are shown by the card itself.
+ * row onto the card, shows a single small "N files attached" chip.
+ * It renders as a BUTTON — clicking it opens the full-screen reader,
+ * where the per-file View / Download / details live. This keeps
+ * attachments reachable even on short announcements that have no
+ * Read More button. Images are not counted — they are shown by the
+ * card itself.
  * @param {Array<{file_url:string, file_type:string}>} media
+ * @param {number} index - card item index (wires the chip to its item)
  * @returns {string} HTML
  */
-export function renderAttachmentSummary(media) {
+export function renderAttachmentSummary(media, index) {
   const files = (media || []).filter((m) => m.file_type !== "image");
   if (files.length === 0) return "";
   const n = files.length;
   return (
-    '<div class="attach-summary">' +
+    '<button type="button" class="attach-summary" data-attach-index="' +
+    (index === undefined ? 0 : index) +
+    '" aria-label="View ' +
+    n +
+    " attached file" +
+    (n === 1 ? "" : "s") +
+    '">' +
     ICONS.folder +
     " " +
     n +
     " attached file" +
     (n === 1 ? "" : "s") +
-    "</div>"
+    "</button>"
   );
 }
 
