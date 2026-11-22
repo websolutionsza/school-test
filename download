@@ -1,0 +1,20 @@
+# Never commit local env vars
+.dev.vars
+.env
+.env.local
+.env.*.local
+
+# Cloudflare Wrangler
+.wrangler/
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log

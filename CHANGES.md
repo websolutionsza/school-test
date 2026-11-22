@@ -1,4 +1,68 @@
 [CHANGES.md](https://github.com/user-attachments/files/35135792/CHANGES.md)
+# CHANGES — Layout refinement, compact cards & spacing fixes (22 November 2026)
+
+Scope: **visual refinement of the already-improved system**. Same rules
+as before: no database changes, no rebuild, existing functionality
+preserved. Diagnosed against the LIVE site, then fixed at the root.
+
+## Problems found on the live site (measured, not guessed)
+
+1. **Oversized black graphics under School News / Posts** — the post
+   card rendered a decorative `<div class="card-icon">` containing a
+   news-icon SVG that had NO width/height attributes and NO CSS sizing
+   rule anywhere. Browsers size such SVGs at their default
+   **300×150 px** (measured live: 302×302 px blocks). That was the
+   "large black graphic". Removed the decorative block entirely — no
+   replacement graphic, no reserved space.
+2. **Every card stretched to the same height** — all announcement
+   cards measured exactly 645 px (and post cards 881 px) regardless of
+   content: the grid's default `stretch` alignment plus
+   `.card-body { flex: 1 }` forced short cards to grow and pushed
+   their dates/Read More down, creating large blank areas. Fixed with
+   `align-items: start` on `.card-grid` so every card keeps its
+   natural, content-driven height.
+3. **Empty 232 px block before the footer** — the "Recently viewed"
+   widget rendered an empty-state message ("Pages you visit…") into a
+   section that sat between the content and the footer even when the
+   visitor had no page history. The widget (and its whole section) is
+   now removed from the DOM when there is nothing to show; it still
+   appears normally once pages have been visited.
+4. **Read More shown even for one-line messages** — now appears ONLY
+   when the message is actually shortened; short messages display in
+   full with no ellipsis and no reading view invitation.
+5. **Loose internal spacing** — card padding reduced 32→24 px, date
+   separator spacing tightened, Read More sits directly under the
+   preview, image bottom gap tightened.
+
+## Files changed
+
+| File | Change |
+|---|---|
+| `assets/js/cards.js` | Removed the giant unsized news icon (root cause of the black graphics). Read More only when content > 200 chars (short messages shown in full). Card order: image → title → preview → Read More → attachment chip → date. Date line omitted when a record has no date. |
+| `assets/js/media.js` | The "N attached files" chip is now a real BUTTON that opens the full-screen reader (so documents stay downloadable even on short announcements with no Read More). Attachment rows show "TYPE · Added <date>" metadata. |
+| `assets/js/qol.js` | Recently-viewed widget: when there is no history, the widget's section is removed entirely (kills the empty block before the footer). Also fixed a latent `"#" + id || id` bug. |
+| `assets/css/components.css` | `.card-grid { align-items: start }` (natural heights). `.announcement-card` padding 24 px (hero margins matched). `.card-meta` spacing tightened. Read More / chip spacing tightened + hover/focus states for the chip. Reader hero image capped at `max-height: 460px`. |
+| `functions/api/health.js` | **Deleted (again)** — the temporary diagnostic endpoint was still in the repo. It must also be deleted on GitHub. |
+| `CHANGES.md` | This section. |
+
+## Verification performed
+
+- `node --check` on all changed JS; all 35 unit tests still pass.
+- Full browser test on a local rig with seeded short/long ×
+  image/no-image announcements and posts: card heights now vary with
+  content (633 / 412 / 249 / 470 / 555 / 133 px — previously all 645);
+  zero elements larger than 100 px that aren't content; short cards
+  show the complete message with no Read More; image-less cards have
+  no placeholder; the no-date record shows no date line; chip opens
+  the reader; reader + document details + scroll restore unchanged.
+- Mobile (390 px): no horizontal overflow, close button reachable.
+- LIVE site: lockout state, Admin-button unresponsiveness, form
+  disabling with no countdown, automatic restore after ~30 s, and a
+  clean 401 (fresh counter) after expiry all confirmed on
+  school-test-ena.pages.dev.
+
+---
+
 # CHANGES — UI improvements & admin security (20 November 2026)
 
 Scope: **enhancement of the existing system only**. No rebuild, no
