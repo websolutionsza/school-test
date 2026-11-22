@@ -106,6 +106,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--space-6);
+  /* Content-driven heights: cards top-align and keep their natural
+     size instead of stretching to match the tallest card in the row. */
+  align-items: start;
 }
 
 .card-badge {
@@ -146,8 +149,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-5);
-  padding-top: var(--space-4);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
   border-top: 1px solid var(--color-divider);
   color: var(--color-text-subtle);
   font-size: var(--fs-xs);
@@ -297,11 +300,17 @@
 @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
 
 /* ---- Cards: hero image, attachment summary, Read More ------------ */
+/* Announcement/post cards are compact and content-driven: tighter
+   padding than generic cards, natural height (the grid never stretches
+   a short card to match its neighbours). */
+.announcement-card { padding: var(--space-6); }
+
 /* Card hero image: announcement/post image at the very top of the
    card, edge-to-edge, consistent proportions across cards. Cards
-   without an image simply omit the hero and keep their layout. */
+   without an image simply omit the hero — no placeholder, no reserved
+   space, no oversized fallback graphics. */
 .card-hero {
-  margin: calc(-1 * var(--space-8)) calc(-1 * var(--space-8)) var(--space-5);
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-4);
   overflow: hidden;
   border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0;
   border-bottom: 1px solid var(--color-border);
@@ -314,13 +323,16 @@
   cursor: zoom-in;
 }
 
-/* Attachment summary chip on cards (details live in the reader) */
+/* Attachment summary chip on cards — rendered as a small BUTTON that
+   opens the full-screen reader, so attached documents stay reachable
+   even on short announcements without a Read More button. */
 .attach-summary {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   padding: var(--space-1) var(--space-3);
+  font-family: var(--font-body);
   font-size: var(--fs-xxs);
   font-weight: var(--fw-semibold);
   letter-spacing: var(--tracking-caps);
@@ -330,15 +342,30 @@
   border: 1px solid var(--color-border);
   color: var(--color-text-muted);
   align-self: flex-start;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--motion-base) var(--ease-out),
+              color var(--motion-base) var(--ease-out),
+              border-color var(--motion-base) var(--ease-out);
+}
+.attach-summary:hover {
+  background: var(--color-primary-soft);
+  border-color: var(--color-border-strong);
+  color: var(--color-primary);
+}
+.attach-summary:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 .attach-summary svg { width: 12px; height: 12px; flex-shrink: 0; }
 
-/* Read More… button on cards (opens the full-screen reader) */
+/* Read More… button on cards (opens the full-screen reader). Sits
+   directly after the preview — no large gaps. */
 .readmore-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   padding: 0;
   min-height: 44px;
   background: none;
@@ -429,6 +456,7 @@
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
+  max-height: 460px; /* sensible cap for very tall source images */
   object-fit: cover;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
